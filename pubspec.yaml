@@ -7,8 +7,16 @@ environment:
   sdk: '>=2.19.4 <3.0.0'
 
 dependencies:
+  cloud_firestore: ^4.4.5
+  cupertino_icons: ^1.0.5
+  firebase_analytics: ^10.1.6
+  firebase_auth: ^4.3.0
+  firebase_core: ^2.8.0
   flutter:
     sdk: flutter
+  path: ^1.8.2
+  path_provider: ^2.0.14
+  sqflite: ^2.2.6
 
 dev_dependencies:
   flutter_test:

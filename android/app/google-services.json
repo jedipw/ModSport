@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "692593899826",
+    "project_id": "modsport-702fa",
+    "storage_bucket": "modsport-702fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692593899826:android:57b1fd3b932e845e60ff2b",
+        "android_client_info": {
+          "package_name": "com.example.modsport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692593899826-m0sthr109m3dp6nt4ujjr0959hcg7l34.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwYCWAgRuX_sWYhvNJGOFWFf-F9hNzlY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692593899826-m0sthr109m3dp6nt4ujjr0959hcg7l34.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "692593899826-kr2855i0i3ktv1mrfp4vlasgo7edj0r3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.modsport"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
