@@ -3,4 +3,4 @@ const detailRoute = '/detail/';
 const disableRoute = '/disable/';
 const homeRoute = '/home/';
 const reservationRoute = '/reservation/';
-const statusRoute = '/reservation';
+const statusRoute = '/status/';
