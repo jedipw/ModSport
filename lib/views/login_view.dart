@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/routes.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -7,7 +8,24 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
-      body: const Text('Login Page'),
+      body: Center(
+        child: TextButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.orange)),
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              homeRoute,
+              (route) => false,
+            );
+          },
+          child: const Text(
+            "Login!",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

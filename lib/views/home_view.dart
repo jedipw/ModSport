@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/routes.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -6,8 +7,68 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: const Text('Home Page'),
+      appBar: AppBar(
+        title: const Text('Home'),
+        actions: const [
+          IconButton(
+            icon: Icon(Icons.dehaze),
+            onPressed: null,
+          )
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  reservationRoute,
+                );
+              },
+              child: const Text(
+                "Reservation",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            TextButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  statusRoute,
+                );
+              },
+              child: const Text(
+                "Status",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            TextButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  loginRoute,
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                "Log out!",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
