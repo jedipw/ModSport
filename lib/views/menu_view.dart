@@ -1,17 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/routes.dart';
 
-class StatusView extends StatelessWidget {
-  const StatusView({super.key});
+class MenuView extends StatelessWidget {
+  const MenuView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Status')),
+      appBar: AppBar(title: const Text('Menu')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            TextButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  loginRoute,
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                "Log out!",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            TextButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  helpCenterRoute,
+                );
+              },
+              child: const Text(
+                "Help Center",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            TextButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  statusRoute,
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                "Status",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
             TextButton(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.orange)),
@@ -23,37 +70,6 @@ class StatusView extends StatelessWidget {
               },
               child: const Text(
                 "Home",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            TextButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
-              onPressed: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  menuRoute,
-                  (route) => false,
-                );
-              },
-              child: const Text(
-                "Menu",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            TextButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.orange)),
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  detailRoute,
-                );
-              },
-              child: const Text(
-                'Detailed status',
                 style: TextStyle(
                   color: Colors.white,
                 ),

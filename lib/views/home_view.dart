@@ -39,8 +39,9 @@ class HomeView extends StatelessWidget {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.orange)),
               onPressed: () {
-                Navigator.of(context).pushNamed(
+                Navigator.of(context).pushNamedAndRemoveUntil(
                   statusRoute,
+                  (route) => false,
                 );
               },
               child: const Text(
@@ -55,12 +56,12 @@ class HomeView extends StatelessWidget {
                   backgroundColor: MaterialStateProperty.all(Colors.orange)),
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  loginRoute,
+                  menuRoute,
                   (route) => false,
                 );
               },
               child: const Text(
-                "Log out!",
+                "Menu",
                 style: TextStyle(
                   color: Colors.white,
                 ),
