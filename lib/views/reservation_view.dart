@@ -46,13 +46,13 @@ class _ReservationViewState extends State<ReservationView> {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('Are you sure?'),
+                            title: const Text('Are you sure?'),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('No'),
+                                child: const Text('No'),
                               ),
                               TextButton(
                                 onPressed: () {
@@ -61,7 +61,7 @@ class _ReservationViewState extends State<ReservationView> {
                                   });
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Yes'),
+                                child: const Text('Yes'),
                               ),
                             ],
                           ),
