@@ -10,13 +10,12 @@ class StatusView extends StatefulWidget {
 }
 
 class _StatusViewState extends State<StatusView> {
-  // ignore: prefer_final_fields
-  int _currentIndex = 1;
+  final int _currentNavbarIndex = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: modSportNavBar(_currentIndex, context),
+      bottomNavigationBar: modSportNavBar(_currentNavbarIndex, context),
       appBar: AppBar(title: const Text('Status')),
       body: Center(
         child: TextButton(

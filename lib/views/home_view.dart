@@ -10,13 +10,12 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  // ignore: prefer_final_fields
-  int _currentIndex = 0;
+  final int _currentNavbarIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: modSportNavBar(_currentIndex, context),
+        bottomNavigationBar: modSportNavBar(_currentNavbarIndex, context),
         appBar: AppBar(
           title: const Text('Home'),
           actions: const [

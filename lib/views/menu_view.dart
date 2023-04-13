@@ -10,13 +10,12 @@ class MenuView extends StatefulWidget {
 }
 
 class _MenuViewState extends State<MenuView> {
-  // ignore: prefer_final_fields
-  int _currentIndex = 2;
+  final int _currentNavbarIndex = 2;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: modSportNavBar(_currentIndex, context),
+      bottomNavigationBar: modSportNavBar(_currentNavbarIndex, context),
       appBar: AppBar(title: const Text('Menu')),
       body: Center(
         child: Column(

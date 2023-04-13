@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/routes.dart';
 
-BottomNavigationBar modSportNavBar(currentIndex, context) {
+BottomNavigationBar modSportNavBar(currentNavbarIndex, context) {
   return BottomNavigationBar(
-    currentIndex: currentIndex,
+    currentIndex: currentNavbarIndex,
     type: BottomNavigationBarType.fixed,
     iconSize: 40,
     selectedFontSize: 0,
