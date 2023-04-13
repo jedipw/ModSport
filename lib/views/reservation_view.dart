@@ -32,74 +32,42 @@ class _ReservationViewState extends State<ReservationView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 60,
-                  width: 125,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: _isReserved
-                          ? MaterialStateProperty.all(Colors.red)
-                          : MaterialStateProperty.all(Colors.green),
-                    ),
-                    onPressed: () {
-                      if (_isReserved) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Are you sure?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('No'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isReserved = false;
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Yes'),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        setState(() {
-                          _isReserved = true;
-                        });
-                      }
-                    },
-                    child: Text(
-                      _isReserved ? "Cancel" : "Reserve",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                ReserveButton(
+                  isReserved: _isReserved,
+                  onPressed: () {
+                    if (_isReserved) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Are you sure?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('No'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isReserved = false;
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Yes'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      setState(() {
+                        _isReserved = true;
+                      });
+                    }
+                  },
                 ),
                 const SizedBox(width: 75),
-                SizedBox(
-                  height: 60,
-                  width: 125,
-                  child: TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.grey)),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        disableRoute,
-                      );
-                    },
-                    child: const Text(
-                      "Disable",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
+                const DisableButton(),
               ],
             ),
           ],
@@ -217,6 +185,65 @@ class _TimeSlotState extends State<TimeSlot> {
           },
         );
       },
+    );
+  }
+}
+
+class ReserveButton extends StatelessWidget {
+  final bool isReserved;
+  final VoidCallback onPressed;
+
+  const ReserveButton({
+    Key? key,
+    required this.isReserved,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 60,
+      width: 125,
+      child: TextButton(
+        style: ButtonStyle(
+          backgroundColor: isReserved
+              ? MaterialStateProperty.all(Colors.red)
+              : MaterialStateProperty.all(Colors.green),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          isReserved ? "Cancel" : "Reserve",
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DisableButton extends StatelessWidget {
+  const DisableButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 60,
+      width: 125,
+      child: TextButton(
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.grey)),
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            disableRoute,
+          );
+        },
+        child: const Text(
+          "Disable",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      ),
     );
   }
 }
