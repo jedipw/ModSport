@@ -14,19 +14,21 @@ BottomNavigationBar modSportNavBar(currentNavbarIndex, context) {
     selectedItemColor: const Color.fromARGB(
         255, 225, 115, 37), // The color of the selected item.
     unselectedItemColor: Colors.black, // The color of the unselected items.
-    items: const [
+    items: [
       // A list of BottomNavigationBarItems.
-      BottomNavigationBarItem(
+      const BottomNavigationBarItem(
         icon: Icon(Icons.home), // The icon of the item.
         label:
             '', // The label of the item (empty string since we don't want a label).
       ),
-      BottomNavigationBarItem(
+      const BottomNavigationBarItem(
         icon: Icon(Icons.rule),
         label: '',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.account_circle_outlined),
+        icon: (currentNavbarIndex == 2
+            ? const Icon(Icons.account_circle)
+            : const Icon(Icons.account_circle_outlined)),
         label: '',
       ),
     ],
