@@ -17,7 +17,10 @@ class _StatusViewState extends State<StatusView> {
     return Scaffold(
       bottomNavigationBar: modSportNavBar(
           _currentNavbarIndex, context), // add the custom bottom navigation bar
-      appBar: AppBar(title: const Text('Status')), // add the app bar
+      appBar: AppBar(
+        title: const Text('Status'),
+        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+      ), // add the app bar
       body: Center(
         child: TextButton(
           style: ButtonStyle(

@@ -9,7 +9,10 @@ class DetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // This widget is the app bar at the top of the screen
-      appBar: AppBar(title: const Text('Detail')),
+      appBar: AppBar(
+        title: const Text('Detail'),
+        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+      ),
       // This widget is the body of the screen, which displays the text 'Detail Page' at the center of the screen
       body: const Center(child: Text('Detail Page')),
     );

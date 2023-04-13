@@ -20,6 +20,7 @@ class _HomeViewState extends State<HomeView> {
             context), // Display the navbar with the current index
         appBar: AppBar(
           title: const Text('Home'),
+          backgroundColor: const Color.fromARGB(255, 225, 115, 37),
         ),
         body: Center(
             child: TextButton(

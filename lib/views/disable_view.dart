@@ -9,7 +9,10 @@ class DisableView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // An app bar with a title
-      appBar: AppBar(title: const Text('Disable')),
+      appBar: AppBar(
+        title: const Text('Disable'),
+        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+      ),
       // A Center widget containing a Text widget
       body: const Center(
         child: Text('Disable Page'),

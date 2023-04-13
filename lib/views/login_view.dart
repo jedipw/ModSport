@@ -10,7 +10,10 @@ class LoginView extends StatelessWidget {
     // required method to build the UI
     return Scaffold(
       // scaffold widget provides a basic app bar, drawer and body
-      appBar: AppBar(title: const Text('Login')), // app bar with a title
+      appBar: AppBar(
+        title: const Text('Login'),
+        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+      ), // app bar with a title
       body: Center(
         // centers child widget in the screen
         child: TextButton(

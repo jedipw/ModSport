@@ -18,8 +18,9 @@ class _MenuViewState extends State<MenuView> {
     return Scaffold(
       bottomNavigationBar: modSportNavBar(_currentNavbarIndex, context),
       appBar: AppBar(
-          title: const Text(
-              'Menu')), // AppBar widget is used to display the title of the page
+        title: const Text('Menu'),
+        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+      ), // AppBar widget is used to display the title of the page
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

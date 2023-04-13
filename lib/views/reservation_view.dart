@@ -24,7 +24,10 @@ class _ReservationViewState extends State<ReservationView> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Setting up the app bar
-      appBar: AppBar(title: const Text('Facility1')),
+      appBar: AppBar(
+        title: const Text('Facility1'),
+        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+      ),
       // Setting up the body
       body: Container(
         // Adding padding to the container
