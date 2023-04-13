@@ -14,9 +14,12 @@ class _MenuViewState extends State<MenuView> {
 
   @override
   Widget build(BuildContext context) {
+    // Scaffold widget is used to create the basic structure of the page
     return Scaffold(
       bottomNavigationBar: modSportNavBar(_currentNavbarIndex, context),
-      appBar: AppBar(title: const Text('Menu')),
+      appBar: AppBar(
+          title: const Text(
+              'Menu')), // AppBar widget is used to display the title of the page
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -25,6 +28,7 @@ class _MenuViewState extends State<MenuView> {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.orange)),
               onPressed: () {
+                // Navigate to login page and remove all the routes in the stack
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   loginRoute,
                   (route) => false,
@@ -41,6 +45,7 @@ class _MenuViewState extends State<MenuView> {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.orange)),
               onPressed: () {
+                // Navigate to Help Center page
                 Navigator.of(context).pushNamed(
                   helpCenterRoute,
                 );

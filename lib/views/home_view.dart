@@ -10,29 +10,26 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final int _currentNavbarIndex = 0;
+  final int _currentNavbarIndex =
+      0; // Define current selected index of the navbar
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: modSportNavBar(_currentNavbarIndex, context),
+        bottomNavigationBar: modSportNavBar(_currentNavbarIndex,
+            context), // Display the navbar with the current index
         appBar: AppBar(
           title: const Text('Home'),
-          actions: const [
-            IconButton(
-              icon: Icon(Icons.dehaze),
-              onPressed: null,
-            )
-          ],
         ),
         body: Center(
             child: TextButton(
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              backgroundColor: MaterialStateProperty.all(
+                  Colors.orange)), // Set the button background color
           onPressed: () {
             Navigator.of(context).pushNamed(
               reservationRoute,
-            );
+            ); // Navigate to the reservation route
           },
           child: const Text(
             "Reservation",

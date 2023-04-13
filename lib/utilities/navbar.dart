@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/routes.dart';
 
+// This function returns a BottomNavigationBar widget with three items and specific properties.
 BottomNavigationBar modSportNavBar(currentNavbarIndex, context) {
   return BottomNavigationBar(
-    currentIndex: currentNavbarIndex,
-    type: BottomNavigationBarType.fixed,
-    iconSize: 40,
-    selectedFontSize: 0,
-    unselectedFontSize: 0,
-    selectedItemColor: const Color.fromARGB(255, 225, 115, 37),
-    unselectedItemColor: Colors.black,
+    currentIndex:
+        currentNavbarIndex, // The index of the currently selected item.
+    type:
+        BottomNavigationBarType.fixed, // The type of the bottom navigation bar.
+    iconSize: 40, // The size of the icons.
+    selectedFontSize: 0, // The font size of the selected item's label.
+    unselectedFontSize: 0, // The font size of the unselected item's label.
+    selectedItemColor: const Color.fromARGB(
+        255, 225, 115, 37), // The color of the selected item.
+    unselectedItemColor: Colors.black, // The color of the unselected items.
     items: const [
+      // A list of BottomNavigationBarItems.
       BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: '',
+        icon: Icon(Icons.home), // The icon of the item.
+        label:
+            '', // The label of the item (empty string since we don't want a label).
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.rule),
@@ -25,18 +31,26 @@ BottomNavigationBar modSportNavBar(currentNavbarIndex, context) {
       ),
     ],
     onTap: (index) {
+      // Called when an item is tapped.
       switch (index) {
+        // Switch statement to determine the tapped item.
         case 0:
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(homeRoute, (route) => false);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              homeRoute,
+              (route) =>
+                  false); // Navigates to the homeRoute and removes all previous routes.
           break;
         case 1:
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(statusRoute, (route) => false);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              statusRoute,
+              (route) =>
+                  false); // Navigates to the statusRoute and removes all previous routes.
           break;
         case 2:
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(menuRoute, (route) => false);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              menuRoute,
+              (route) =>
+                  false); // Navigates to the menuRoute and removes all previous routes.
           break;
       }
     },

@@ -15,16 +15,17 @@ class _StatusViewState extends State<StatusView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: modSportNavBar(_currentNavbarIndex, context),
-      appBar: AppBar(title: const Text('Status')),
+      bottomNavigationBar: modSportNavBar(
+          _currentNavbarIndex, context), // add the custom bottom navigation bar
+      appBar: AppBar(title: const Text('Status')), // add the app bar
       body: Center(
         child: TextButton(
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.orange)),
+              backgroundColor: MaterialStateProperty.all(
+                  Colors.orange)), // set button style with background color
           onPressed: () {
             Navigator.of(context).pushNamed(
-              detailRoute,
-            );
+                detailRoute); // navigate to the detailed status page when button is pressed
           },
           child: const Text(
             'Detailed status',

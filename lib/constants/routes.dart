@@ -1,3 +1,4 @@
+// Define named routes for navigation
 const loginRoute = '/login/';
 const detailRoute = '/detail/';
 const disableRoute = '/disable/';
