@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+// Importing route constants and custom page route transitions
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/utilities/page_route.dart';
+
+// Importing the views/screens used in the app
 import 'package:modsport/views/detail_view.dart';
 import 'package:modsport/views/disable_view.dart';
 import 'package:modsport/views/help_center_view.dart';
@@ -9,6 +14,8 @@ import 'package:modsport/views/login_view.dart';
 import 'package:modsport/views/menu_view.dart';
 import 'package:modsport/views/reservation_view.dart';
 import 'package:modsport/views/status_view.dart';
+
+// Importing Firebase options
 import 'firebase_options.dart';
 
 void main() async {
@@ -16,69 +23,69 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Running the app
   runApp(const MainApp());
 }
 
+// MainApp widget that builds the app
 class MainApp extends StatelessWidget {
   const MainApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // Setting the initial route for the app
       initialRoute: loginRoute,
+
+      // Generating routes for each screen/view in the app
       onGenerateRoute: (settings) {
         switch (settings.name) {
+          // Routing for the LoginView screen
           case loginRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const LoginView(), settings: settings);
+
+          // Routing for the DetailView screen
           case detailRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const DetailView(), settings: settings);
+
+          // Routing for the DisableView screen
           case disableRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const DisableView(), settings: settings);
+
+          // Routing for the HomeView screen
           case homeRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const HomeView(), settings: settings);
+
+          // Routing for the ReservationView screen
           case reservationRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const ReservationView(), settings: settings);
+
+          // Routing for the StatusView screen
           case statusRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const StatusView(), settings: settings);
+
+          // Routing for the HelpCenterView screen
           case helpCenterRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const HelpCenterView(), settings: settings);
+
+          // Routing for the MenuView screen
           case menuRoute:
-            return NoAnimationPageRoute(
+            return ModSportPageRoute(
                 builder: (_) => const MenuView(), settings: settings);
+
+          // Return null for any unknown routes
           default:
             return null;
         }
       },
     );
-  }
-}
-
-// Route that removes the sliding animation for specific routes
-class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
-  final List<String> excludedRoutes = [
-    homeRoute,
-    statusRoute,
-    menuRoute,
-  ];
-
-  NoAnimationPageRoute(
-      {required WidgetBuilder builder, required RouteSettings settings})
-      : super(builder: builder, settings: settings);
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    if (excludedRoutes.contains(settings.name)) {
-      return child;
-    }
-    return super
-        .buildTransitions(context, animation, secondaryAnimation, child);
   }
 }
