@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/routes.dart';
 import 'package:intl/intl.dart';
 
+bool hasRole = true;
+
+final int numOfDay = hasRole ? 30 : 7;
+
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
   const ReservationView({super.key});
@@ -33,16 +37,16 @@ class _ReservationViewState extends State<ReservationView> {
               children: [
                 Image.asset(
                   'assets/images/badmintoncourt1.jpg',
-                  height: 200,
+                  height: 240,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
                 Column(
                   children: [
-                    const SizedBox(height: 70),
+                    const SizedBox(height: 60),
                     Row(
                       children: [
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pop();
@@ -64,12 +68,12 @@ class _ReservationViewState extends State<ReservationView> {
                   child: Container(
                     decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(50.0),
-                        topRight: Radius.circular(50.0),
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0),
                       ),
                       color: Colors.white,
                     ),
-                    margin: const EdgeInsets.only(top: 175),
+                    margin: const EdgeInsets.only(top: 200),
                   ),
                 ),
               ],
@@ -147,56 +151,67 @@ class _ReservationViewState extends State<ReservationView> {
                 ),
               ],
             ),
-            const SizedBox(height: 30),
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 19),
-                child: const TimeSlot(),
+              child: Stack(
+                children: [
+                  Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 20),
+                      child: const TimeSlot()),
+                  Positioned(
+                    bottom: 20,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: const Color.fromRGBO(255, 255, 255, 0.75),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if (_selectedDateIndex < 7)
+                            ReserveButton(
+                              isReserved: _isReserved,
+                              onPressed: () {
+                                if (_isReserved) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Are you sure?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('No'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _isReserved = false;
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Yes'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  setState(() {
+                                    _isReserved = true;
+                                  });
+                                }
+                              },
+                            ),
+                          if (hasRole) ...[
+                            const DisableButton(),
+                          ]
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ReserveButton(
-                  isReserved: _isReserved,
-                  onPressed: () {
-                    if (_isReserved) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Are you sure?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('No'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _isReserved = false;
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Yes'),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      setState(() {
-                        _isReserved = true;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(width: 75),
-                const DisableButton(),
-              ],
-            ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -220,7 +235,7 @@ class DateList extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = DateTime.now(); // Get the current date.
     final endDate = today
-        .add(const Duration(days: 30)); // Calculate the end date of the list.
+        .add(Duration(days: numOfDay)); // Calculate the end date of the list.
     final dateList = List.generate(
       endDate
           .difference(today)
@@ -329,17 +344,17 @@ class TimeSlot extends StatefulWidget {
 class _TimeSlotState extends State<TimeSlot> {
   // A list of time slots as TimeSlotData objects
   final List<TimeSlotData> timeSlots = [
-    TimeSlotData(timeSlot: '0.00 - 2.00', reservedSeats: 3, maxSeats: 4),
-    TimeSlotData(timeSlot: '2.00 - 4.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '6.00 - 8.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '8.00 - 10.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '10.00 - 12.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '12.00 - 14.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '14.00 - 16.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '16.00 - 18.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '18.00 - 20.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '20.00 - 22.00', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '22.00 - 24.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '13.00 - 13.59', reservedSeats: 3, maxSeats: 4),
+    TimeSlotData(timeSlot: '14.00 - 14.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '15.00 - 15.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '16.00 - 16.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '17.00 - 17.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '18.00 - 18.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '19.00 - 19.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '20.00 - 20.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '21.00 - 21.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '22.00 - 22.59', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '23.00 - 23.59', reservedSeats: 0, maxSeats: 4),
   ];
 
   // The index of the selected time slot
@@ -354,7 +369,7 @@ class _TimeSlotState extends State<TimeSlot> {
 
     // Builds a ListView of RadioListTile widgets
     return ListView.builder(
-      padding: EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 10),
       shrinkWrap: true,
       itemCount: timeSlots.length,
       itemBuilder: (context, index) {
@@ -409,40 +424,38 @@ class _TimeSlotState extends State<TimeSlot> {
                           ),
                         ),
                       ),
-                title: Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        timeSlots[index].timeSlot,
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 22,
-                          height: 1.5,
-                          color: Color(0xFFE17325),
-                        ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      timeSlots[index].timeSlot,
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 22,
+                        height: 1.5,
+                        color: Color(0xFFE17325),
                       ),
-                      Row(
-                        children: [
-                          const Icon(Icons.people),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${timeSlots[index].reservedSeats}/${timeSlots[index].maxSeats}',
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 22,
-                              height: 1.5,
-                              color: Color(0xFF808080),
-                            ),
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.people),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${timeSlots[index].reservedSeats}/${timeSlots[index].maxSeats}',
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 22,
+                            height: 1.5,
+                            color: Color(0xFF808080),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 value: index,
                 groupValue: _selectedTimeSlot,
