@@ -14,59 +14,165 @@ class ReservationView extends StatefulWidget {
 
 // Creating a State object called _ReservationViewState
 class _ReservationViewState extends State<ReservationView> {
-  // Initializing two variables
-  int _selectedDateIndex = 0; // Index of the selected date in DateList
-  bool _isReserved =
-      false; // Boolean indicating if a facility is reserved or not
+  int _selectedDateIndex = 0;
+  bool _isReserved = false;
 
-  // Override method to build the widget tree
   @override
   Widget build(BuildContext context) {
+    String buildingName =
+        'King Mongkut\'s 190th Anniversary Memorial Building - 3rd Floor';
+    List<String> parts = buildingName.split(RegExp(r'\s+(?=-\s)'));
+
     return Scaffold(
-      // Setting up the app bar
-      appBar: AppBar(
-        title: const Text('Facility1'),
-        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
-      ),
-      // Setting up the body
       body: Container(
-        // Adding padding to the container
-        padding: const EdgeInsets.fromLTRB(8, 15, 0, 50),
+        color: Colors.white,
         child: Column(
           children: [
-            // Adding the DateList widget to the column
-            DateList(
-              selectedIndex: _selectedDateIndex,
-              onSelected: (index) => setState(() {
-                _selectedDateIndex = index;
-              }),
+            // Use a Stack widget to position the arrow button on top of the image
+            Stack(
+              children: [
+                Image.asset(
+                  'assets/images/badmintoncourt1.jpg',
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Column(
+                  children: [
+                    const SizedBox(height: 70),
+                    Row(
+                      children: [
+                        SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE17325),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                            fixedSize: const Size.fromRadius(25),
+                          ),
+                          child: const Icon(Icons.arrow_back_ios,
+                              color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Positioned.fill(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50.0),
+                        topRight: Radius.circular(50.0),
+                      ),
+                      color: Colors.white,
+                    ),
+                    margin: const EdgeInsets.only(top: 175),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 50),
-            // Adding the TimeSlot widget to the column
-            const Expanded(child: TimeSlot()),
-            // Adding a row of buttons to the column
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 16,
+                ),
+                Column(
+                  children: const [
+                    Text(
+                      'Badminton Court 1',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        height: 1.5, // 39/26 = 1.5
+                        color: Color(0xFFE17325),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 12,
+                ),
+                const Icon(
+                  Icons.location_on_outlined,
+                  color: Color(0x99000000),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 1.5, // 21/14 = 1.5
+                        color: Color(0x99000000),
+                        letterSpacing: 0,
+                      ),
+                      children: [
+                        TextSpan(text: '${parts[0]} '),
+                        TextSpan(text: parts.sublist(1).join(' - ')),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 100),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: DateList(
+                    selectedIndex: _selectedDateIndex,
+                    onSelected: (index) => setState(() {
+                      _selectedDateIndex = index;
+                    }),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 19),
+                child: const TimeSlot(),
+              ),
+            ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Adding the ReserveButton widget to the row
                 ReserveButton(
                   isReserved: _isReserved,
                   onPressed: () {
-                    // If the facility is already reserved, show a confirmation dialog
                     if (_isReserved) {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Are you sure?'),
                           actions: [
-                            // Button to cancel the action
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                               child: const Text('No'),
                             ),
-                            // Button to confirm the action
                             TextButton(
                               onPressed: () {
                                 setState(() {
@@ -80,7 +186,6 @@ class _ReservationViewState extends State<ReservationView> {
                         ),
                       );
                     } else {
-                      // If the facility is not reserved, reserve it
                       setState(() {
                         _isReserved = true;
                       });
@@ -88,10 +193,10 @@ class _ReservationViewState extends State<ReservationView> {
                   },
                 ),
                 const SizedBox(width: 75),
-                // Adding the DisableButton widget to the row
                 const DisableButton(),
               ],
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -139,30 +244,53 @@ class DateList extends StatelessWidget {
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
                       selectedIndex == index
-                          ? Colors.orange
-                          : Colors.grey[300], // Highlight the selected date.
+                          ? const Color(0xFFE17325)
+                          : Colors.white, // Highlight the selected date.
+                    ),
+                    side: MaterialStateProperty.all(
+                      const BorderSide(
+                        color: Color(0xFFE17325), // Set the border color here.
+                        width: 1, // Set the border width here.
+                      ),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            20), // Set the border radius here.
+                      ),
                     ),
                   ),
                   onPressed: () => onSelected(
-                      index), // Call the onSelected callback when a date is pressed.
+                    index,
+                  ), // Call the onSelected callback when a date is pressed.
                   child: Column(
                     children: [
                       const SizedBox(height: 4),
                       Text(
                         DateFormat('EEE').format(dateList[index]).substring(
                             0, 3), // Display the day of the week for the date.
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17,
+                          color: selectedIndex == index
+                              ? Colors.white
+                              : const Color(0xFFE17325),
                         ),
                       ),
+                      const SizedBox(height: 8),
                       Text(
                         DateFormat('d').format(dateList[
                             index]), // Display the day of the month for the date.
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          fontSize: 20,
+                          color: selectedIndex == index
+                              ? Colors.white
+                              : const Color(0xFFE17325),
                         ),
                       ),
                     ],
@@ -177,6 +305,18 @@ class DateList extends StatelessWidget {
   }
 }
 
+class TimeSlotData {
+  final String timeSlot;
+  final int reservedSeats;
+  final int maxSeats;
+
+  TimeSlotData({
+    required this.timeSlot,
+    required this.reservedSeats,
+    required this.maxSeats,
+  });
+}
+
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
 class TimeSlot extends StatefulWidget {
   const TimeSlot({super.key});
@@ -187,19 +327,19 @@ class TimeSlot extends StatefulWidget {
 
 // The State class for the TimeSlot widget
 class _TimeSlotState extends State<TimeSlot> {
-  // A list of time slots as strings
-  final List<String> timeSlots = [
-    '0.00 - 2.00',
-    '2.00 - 4.00',
-    '6.00 - 8.00',
-    '8.00 - 10.00',
-    '10.00 - 12.00',
-    '12.00 - 14.00',
-    '14.00 - 16.00',
-    '16.00 - 18.00',
-    '18.00 - 20.00',
-    '20.00 - 22.00',
-    '22.00 - 24.00',
+  // A list of time slots as TimeSlotData objects
+  final List<TimeSlotData> timeSlots = [
+    TimeSlotData(timeSlot: '0.00 - 2.00', reservedSeats: 3, maxSeats: 4),
+    TimeSlotData(timeSlot: '2.00 - 4.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '6.00 - 8.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '8.00 - 10.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '10.00 - 12.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '12.00 - 14.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '14.00 - 16.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '16.00 - 18.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '18.00 - 20.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '20.00 - 22.00', reservedSeats: 0, maxSeats: 4),
+    TimeSlotData(timeSlot: '22.00 - 24.00', reservedSeats: 0, maxSeats: 4),
   ];
 
   // The index of the selected time slot
@@ -207,22 +347,116 @@ class _TimeSlotState extends State<TimeSlot> {
 
   @override
   Widget build(BuildContext context) {
+    // Set the inactive radio button color
+    final ThemeData theme = Theme.of(context).copyWith(
+      unselectedWidgetColor: Colors.white,
+    );
+
     // Builds a ListView of RadioListTile widgets
     return ListView.builder(
+      padding: EdgeInsets.only(top: 10),
       shrinkWrap: true,
       itemCount: timeSlots.length,
       itemBuilder: (context, index) {
         // Builds a RadioListTile widget for each item in the list
-        return RadioListTile(
-          title: Text(timeSlots[index]),
-          value: index,
-          groupValue: _selectedTimeSlot,
-          onChanged: (value) {
-            // Sets the selected time slot to the one that was tapped
-            setState(() {
-              _selectedTimeSlot = value!;
-            });
-          },
+        return Theme(
+          data: theme,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 4,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ListTileTheme(
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
+              selectedColor: const Color(0xFFE17325),
+              child: RadioListTile(
+                secondary: _selectedTimeSlot == index
+                    ? Container(
+                        width: 24,
+                        height: 24,
+                        margin: const EdgeInsets.only(left: 15),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFE17325),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 24,
+                        height: 24,
+                        margin: const EdgeInsets.only(left: 15),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.transparent,
+                          border: Border.all(
+                            width: 2,
+                            color: const Color(0xFFE17325),
+                          ),
+                        ),
+                      ),
+                title: Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        timeSlots[index].timeSlot,
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 22,
+                          height: 1.5,
+                          color: Color(0xFFE17325),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.people),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${timeSlots[index].reservedSeats}/${timeSlots[index].maxSeats}',
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 22,
+                              height: 1.5,
+                              color: Color(0xFF808080),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                value: index,
+                groupValue: _selectedTimeSlot,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedTimeSlot = value!;
+                  });
+                },
+                activeColor: Colors.white,
+                selectedTileColor: const Color(0xFFE17325),
+                controlAffinity: ListTileControlAffinity.trailing,
+              ),
+            ),
+          ),
         );
       },
     );
@@ -244,23 +478,38 @@ class ReserveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
-      width: 125,
+      height: 55,
+      width: 140,
       child: TextButton(
         style: ButtonStyle(
-          backgroundColor:
-              isReserved // Set the background color based on the isReserved value
-                  ? MaterialStateProperty.all(Colors.red)
-                  : MaterialStateProperty.all(Colors.green),
+          side: MaterialStateProperty.all(
+            BorderSide(
+              color: isReserved
+                  ? const Color(0xFFCC0019)
+                  : const Color(0xFFE17325),
+              width: 3,
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
         ),
         onPressed: onPressed, // Assign the onPressed callback to the button
         child: Text(
           isReserved
-              ? "Cancel"
-              : "Reserve", // Set the button text based on the isReserved value
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
+              ? "CANCEL"
+              : "RESERVE", // Set the button text based on the isReserved value
+          style: TextStyle(
+            color:
+                isReserved ? const Color(0xFFCC0019) : const Color(0xFFE17325),
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins',
+            fontStyle: FontStyle.normal,
+            height: 1.5,
           ),
         ),
       ),
@@ -274,20 +523,40 @@ class DisableButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
-      width: 125,
+      height: 55,
+      width: 140,
       child: TextButton(
         style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(
-                Colors.grey)), // Set the button background color to grey
+          side: MaterialStateProperty.all(
+            const BorderSide(
+              color: Color(0xFFCC0019),
+              width: 3,
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ), // Set the button background color to grey
+
         onPressed: () {
           Navigator.of(context).pushNamed(
             disableRoute, // Navigate to the disableRoute when the button is pressed
           );
         },
+
         child: const Text(
-          "Disable", // Set the button text to "Disable"
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          "DISABLE", // Set the button text to "Disable"
+          style: TextStyle(
+            color: Color(0xFFCC0019),
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins',
+            fontStyle: FontStyle.normal,
+            height: 1.5,
+          ),
         ),
       ),
     );
