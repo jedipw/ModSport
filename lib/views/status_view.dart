@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/navbar.dart';
 import 'package:modsport/views/detail_view.dart';
 
