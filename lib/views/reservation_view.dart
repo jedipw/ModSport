@@ -9,7 +9,9 @@ final int numOfDay = hasRole ? 30 : 7;
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
-  const ReservationView({super.key});
+  const ReservationView({super.key, required this.zoneId});
+
+  final String zoneId;
 
   // Override method to create a State object
   @override
@@ -23,9 +25,11 @@ class _ReservationViewState extends State<ReservationView> {
 
   @override
   Widget build(BuildContext context) {
-    String buildingName =
+    String zoneName =
+        widget.zoneId == '123456' ? 'Badminton Court 1' : 'Unknown Court';
+    String facilityName =
         'King Mongkut\'s 190th Anniversary Memorial Building - 3rd Floor';
-    List<String> parts = buildingName.split(RegExp(r'\s+(?=-\s)'));
+    List<String> parts = facilityName.split(RegExp(r'\s+(?=-\s)'));
 
     return Scaffold(
       body: Container(
@@ -86,10 +90,10 @@ class _ReservationViewState extends State<ReservationView> {
                   width: 16,
                 ),
                 Column(
-                  children: const [
+                  children: [
                     Text(
-                      'Badminton Court 1',
-                      style: TextStyle(
+                      zoneName,
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
