@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/navbar.dart';
+import 'package:modsport/views/reservation_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -28,12 +28,15 @@ class _HomeViewState extends State<HomeView> {
               backgroundColor: MaterialStateProperty.all(
                   Colors.orange)), // Set the button background color
           onPressed: () {
-            Navigator.of(context).pushNamed(
-              reservationRoute,
-            ); // Navigate to the reservation route
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ReservationView(zoneId: '123456'),
+              ),
+            );
           },
           child: const Text(
-            "Reservation",
+            "Badminton Court 1",
             style: TextStyle(
               color: Colors.white,
             ),

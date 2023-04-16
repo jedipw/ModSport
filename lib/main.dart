@@ -6,13 +6,11 @@ import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/page_route.dart';
 
 // Importing the views/screens used in the app
-import 'package:modsport/views/detail_view.dart';
 import 'package:modsport/views/disable_view.dart';
 import 'package:modsport/views/help_center_view.dart';
 import 'package:modsport/views/home_view.dart';
 import 'package:modsport/views/login_view.dart';
 import 'package:modsport/views/menu_view.dart';
-import 'package:modsport/views/reservation_view.dart';
 import 'package:modsport/views/status_view.dart';
 
 // Importing Firebase options
@@ -46,11 +44,6 @@ class MainApp extends StatelessWidget {
             return ModSportPageRoute(
                 builder: (_) => const LoginView(), settings: settings);
 
-          // Routing for the DetailView screen
-          case detailRoute:
-            return ModSportPageRoute(
-                builder: (_) => const DetailView(), settings: settings);
-
           // Routing for the DisableView screen
           case disableRoute:
             return ModSportPageRoute(
@@ -60,11 +53,6 @@ class MainApp extends StatelessWidget {
           case homeRoute:
             return ModSportPageRoute(
                 builder: (_) => const HomeView(), settings: settings);
-
-          // Routing for the ReservationView screen
-          case reservationRoute:
-            return ModSportPageRoute(
-                builder: (_) => const ReservationView(), settings: settings);
 
           // Routing for the StatusView screen
           case statusRoute:

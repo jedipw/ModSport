@@ -9,7 +9,9 @@ final int numOfDay = hasRole ? 30 : 7;
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
-  const ReservationView({super.key});
+  const ReservationView({super.key, required this.zoneId});
+
+  final String zoneId;
 
   // Override method to create a State object
   @override
@@ -23,9 +25,11 @@ class _ReservationViewState extends State<ReservationView> {
 
   @override
   Widget build(BuildContext context) {
-    String buildingName =
+    String zoneName =
+        widget.zoneId == '123456' ? 'Badminton Court 1' : 'Unknown Court';
+    String facilityName =
         'King Mongkut\'s 190th Anniversary Memorial Building - 3rd Floor';
-    List<String> parts = buildingName.split(RegExp(r'\s+(?=-\s)'));
+    List<String> parts = facilityName.split(RegExp(r'\s+(?=-\s)'));
 
     return Scaffold(
       body: Container(
@@ -86,10 +90,10 @@ class _ReservationViewState extends State<ReservationView> {
                   width: 16,
                 ),
                 Column(
-                  children: const [
+                  children: [
                     Text(
-                      'Badminton Court 1',
-                      style: TextStyle(
+                      zoneName,
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
@@ -303,6 +307,57 @@ class _ReservationViewState extends State<ReservationView> {
                                 } else {
                                   setState(() {
                                     _isReserved = true;
+                                  });
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    barrierColor: Colors.white.withOpacity(0.5),
+                                    builder: (BuildContext context) {
+                                      return Center(
+                                        child: AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          contentPadding: EdgeInsets.zero,
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const SizedBox(height: 60),
+                                              Container(
+                                                width: 100,
+                                                height: 100,
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.green,
+                                                ),
+                                                child: const Icon(Icons.check,
+                                                    color: Colors.white,
+                                                    size: 80),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              const Text(
+                                                'Success!',
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins',
+                                                  color: Colors.black,
+                                                  height: 1.3,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(height: 60),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  Future.delayed(const Duration(seconds: 1),
+                                      () {
+                                    Navigator.of(context).pop();
                                   });
                                 }
                               },
