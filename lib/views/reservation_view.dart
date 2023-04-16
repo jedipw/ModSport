@@ -155,9 +155,10 @@ class _ReservationViewState extends State<ReservationView> {
               child: Stack(
                 children: [
                   Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20, horizontal: 20),
-                      child: const TimeSlot()),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 20),
+                    child: const TimeSlot(),
+                  ),
                   Positioned(
                     bottom: 20,
                     left: 0,
@@ -174,26 +175,130 @@ class _ReservationViewState extends State<ReservationView> {
                                 if (_isReserved) {
                                   showDialog(
                                     context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Are you sure?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('No'),
+                                    barrierColor: Colors.white.withOpacity(0.5),
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
                                         ),
-                                        TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              _isReserved = false;
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Yes'),
+                                        contentPadding: EdgeInsets.zero,
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Column(
+                                              children: const [
+                                                SizedBox(height: 40),
+                                                Text(
+                                                  'Are you sure\nyou want to\ncancel ?',
+                                                  style: TextStyle(
+                                                    fontSize: 25.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Poppins',
+                                                    color: Color(0xFFCC0019),
+                                                    height: 1.3,
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                SizedBox(height: 30),
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 84,
+                                                      height: 43,
+                                                      child: TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            _isReserved = false;
+                                                          });
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                            const Color(
+                                                                0xFF009900),
+                                                          ),
+                                                          foregroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                            Colors.white,
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'Yes',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            fontStyle: FontStyle
+                                                                .normal,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 20.0,
+                                                            height: 1.2,
+                                                            letterSpacing: 0.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 34.0),
+                                                    SizedBox(
+                                                      width: 84,
+                                                      height: 43,
+                                                      child: TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                            const Color(
+                                                                0xFFCC0019),
+                                                          ),
+                                                          foregroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                            Colors.white,
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'No',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            fontStyle: FontStyle
+                                                                .normal,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 20.0,
+                                                            height: 1.2,
+                                                            letterSpacing: 0.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 30),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   );
                                 } else {
                                   setState(() {
@@ -369,7 +474,7 @@ class _TimeSlotState extends State<TimeSlot> {
 
     // Builds a ListView of RadioListTile widgets
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 70),
       shrinkWrap: true,
       itemCount: timeSlots.length,
       itemBuilder: (context, index) {
@@ -393,80 +498,87 @@ class _TimeSlotState extends State<TimeSlot> {
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
               selectedColor: const Color(0xFFE17325),
-              child: RadioListTile(
-                secondary: _selectedTimeSlot == index
-                    ? Container(
-                        width: 24,
-                        height: 24,
-                        margin: const EdgeInsets.only(left: 15),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFFE17325),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 16,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const NeverScrollableScrollPhysics(),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 1,
+                  child: RadioListTile(
+                    secondary: _selectedTimeSlot == index
+                        ? Container(
+                            width: 24,
+                            height: 24,
+                            margin: const EdgeInsets.only(left: 15),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFFE17325),
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            width: 24,
+                            height: 24,
+                            margin: const EdgeInsets.only(left: 15),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.transparent,
+                              border: Border.all(
+                                width: 2,
+                                color: const Color(0xFFE17325),
+                              ),
+                            ),
                           ),
-                        ),
-                      )
-                    : Container(
-                        width: 24,
-                        height: 24,
-                        margin: const EdgeInsets.only(left: 15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.transparent,
-                          border: Border.all(
-                            width: 2,
-                            color: const Color(0xFFE17325),
-                          ),
-                        ),
-                      ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      timeSlots[index].timeSlot,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 22,
-                        height: 1.5,
-                        color: Color(0xFFE17325),
-                      ),
-                    ),
-                    Row(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.people),
-                        const SizedBox(width: 8),
                         Text(
-                          '${timeSlots[index].reservedSeats}/${timeSlots[index].maxSeats}',
+                          timeSlots[index].timeSlot,
                           style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w500,
                             fontSize: 22,
                             height: 1.5,
-                            color: Color(0xFF808080),
+                            color: Color(0xFFE17325),
                           ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.people),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${timeSlots[index].reservedSeats}/${timeSlots[index].maxSeats}',
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                                height: 1.5,
+                                color: Color(0xFF808080),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                    value: index,
+                    groupValue: _selectedTimeSlot,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedTimeSlot = value!;
+                      });
+                    },
+                    activeColor: Colors.white,
+                    selectedTileColor: const Color(0xFFE17325),
+                    controlAffinity: ListTileControlAffinity.trailing,
+                  ),
                 ),
-                value: index,
-                groupValue: _selectedTimeSlot,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedTimeSlot = value!;
-                  });
-                },
-                activeColor: Colors.white,
-                selectedTileColor: const Color(0xFFE17325),
-                controlAffinity: ListTileControlAffinity.trailing,
               ),
             ),
           ),
