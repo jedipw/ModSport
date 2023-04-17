@@ -32,10 +32,8 @@ class _ReservationViewState extends State<ReservationView> {
         'King Mongkut\'s 190th Anniversary Memorial Building - 3rd Floor';
     List<String> parts = facilityName.split(RegExp(r'\s+(?=-\s)'));
 
-    final DateTime now =
-        DateTime.now().add(Duration(days: _selectedDateIndex));
+    final DateTime now = DateTime.now().add(Duration(days: _selectedDateIndex));
     // A list of time slots as TimeSlotData objects
-
     bool isTimeSlotExpired(DateTime endTime) {
       final DateTime now = DateTime.now();
       return now.isAfter(endTime);
@@ -149,8 +147,7 @@ class _ReservationViewState extends State<ReservationView> {
     ];
 
     List<DateTime> disabledReservation = [
-      DateTime(2023, 4, 17, 14, 0, 0),
-      DateTime(2023, 4, 19, 16, 0, 0),
+      DateTime(2023, 4, 17, 15, 0, 0),
     ];
 
     List<UserReservationData> userReservation = [
@@ -162,7 +159,37 @@ class _ReservationViewState extends State<ReservationView> {
           startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '123'),
       UserReservationData(
           startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
     ];
+
+    int tempTimeSlot = -1;
+
+    int countNumOfReservation(DateTime startTime) {
+      int num = 0;
+      for (int i = 0; i < userReservation.length; i++) {
+        if (startTime == userReservation[i].startTime) {
+          num++;
+        }
+      }
+      return num;
+    }
+
+    for (int i = 0; i < reservationDB.length; i++) {
+      for (int j = 0; j < disabledReservation.length; j++) {
+        if (reservationDB[i]
+                .startTime
+                .isAtSameMomentAs(disabledReservation[j]) ||
+            countNumOfReservation(reservationDB[i].startTime) ==
+                reservationDB[i].capacity) {
+          break;
+        } else if (j == disabledReservation.length - 1) {
+          tempTimeSlot = i;
+        }
+      }
+      if (tempTimeSlot != -1) break;
+    }
+    int selectedTimeSlot = tempTimeSlot == -1 ? 0 : tempTimeSlot;
 
     return Scaffold(
       body: Container(
@@ -284,7 +311,7 @@ class _ReservationViewState extends State<ReservationView> {
                     onSelected: (index) => (index != _selectedDateIndex)
                         ? setState(() {
                             _selectedDateIndex = index;
-                            _selectedTimeSlot = 0;
+                            selectedTimeSlot = 0;
                           })
                         : null,
                     hasRole: hasRole,
@@ -299,14 +326,15 @@ class _ReservationViewState extends State<ReservationView> {
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 20),
                     child: TimeSlot(
+                      countNumOfReservation: countNumOfReservation,
                       reservationDB: reservationDB,
                       disabledReservation: disabledReservation,
                       userReservation: userReservation,
                       selectedDateIndex: _selectedDateIndex,
-                      selectedTimeSlot: _selectedTimeSlot,
+                      selectedTimeSlot: selectedTimeSlot,
                       onChanged: (value) {
                         setState(() {
-                          _selectedTimeSlot = value!;
+                          selectedTimeSlot = value!;
                           _isReserved = false;
                         });
                       },

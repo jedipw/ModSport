@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 typedef OnChangedCallback = void Function(int? value);
+typedef CountNumOfReservationCallback = int Function(DateTime startTime);
 
 class ReservationData {
   final DateTime startTime;
@@ -28,6 +29,7 @@ class UserReservationData {
 class TimeSlot extends StatefulWidget {
   const TimeSlot(
       {super.key,
+      required this.countNumOfReservation,
       required this.reservationDB,
       required this.disabledReservation,
       required this.userReservation,
@@ -35,6 +37,7 @@ class TimeSlot extends StatefulWidget {
       required this.selectedTimeSlot,
       required this.onChanged});
 
+  final CountNumOfReservationCallback countNumOfReservation;
   final List<ReservationData> reservationDB;
   final List<DateTime> disabledReservation;
   final List<UserReservationData> userReservation;
@@ -61,16 +64,6 @@ class _TimeSlotState extends State<TimeSlot> {
       return false;
     }
 
-    int countNumOfReservation(DateTime startTime) {
-      int num = 0;
-      for (int i = 0; i < widget.userReservation.length; i++) {
-        if (startTime == widget.userReservation[i].startTime) {
-          num++;
-        }
-      }
-      return num;
-    }
-
     // Set the inactive radio button color
     final ThemeData theme = Theme.of(context).copyWith(
       unselectedWidgetColor: Colors.white,
@@ -84,7 +77,7 @@ class _TimeSlotState extends State<TimeSlot> {
       itemBuilder: (context, index) {
         // Builds a RadioListTile widget for each item in the list
         final int numOfReservation =
-            countNumOfReservation(widget.reservationDB[index].startTime);
+            widget.countNumOfReservation(widget.reservationDB[index].startTime);
         return Theme(
           data: theme,
           child: Container(
@@ -169,7 +162,7 @@ class _TimeSlotState extends State<TimeSlot> {
                           selectedTileColor: const Color(0xFFE17325),
                           controlAffinity: ListTileControlAffinity.trailing,
                         )
-                      : countNumOfReservation(
+                      : widget.countNumOfReservation(
                                   widget.reservationDB[index].startTime) ==
                               widget.reservationDB[index].capacity
                           ? RadioListTile(
