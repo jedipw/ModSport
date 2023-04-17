@@ -5,7 +5,7 @@ import 'package:modsport/utilities/reservation/time_slot.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
 
-bool hasRole = true;
+bool hasRole = false;
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
@@ -22,7 +22,7 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   int _selectedDateIndex = 0;
   bool _isReserved = false;
-  int _selectedTimeSlot = 0;
+  int selectedTimeSlot = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +148,7 @@ class _ReservationViewState extends State<ReservationView> {
 
     List<DateTime> disabledReservation = [
       DateTime(2023, 4, 17, 15, 0, 0),
+      DateTime(2023, 4, 17, 18, 0, 0),
     ];
 
     List<UserReservationData> userReservation = [
@@ -159,6 +160,12 @@ class _ReservationViewState extends State<ReservationView> {
           startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '123'),
       UserReservationData(
           startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
       UserReservationData(
           startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
     ];
@@ -189,7 +196,9 @@ class _ReservationViewState extends State<ReservationView> {
       }
       if (tempTimeSlot != -1) break;
     }
-    int selectedTimeSlot = tempTimeSlot == -1 ? 0 : tempTimeSlot;
+    if (tempTimeSlot != -1 && selectedTimeSlot < tempTimeSlot) {
+      selectedTimeSlot = tempTimeSlot;
+    }
 
     return Scaffold(
       body: Container(
