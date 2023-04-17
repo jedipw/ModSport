@@ -334,6 +334,7 @@ class _ReservationViewState extends State<ReservationView> {
                         ? setState(() {
                             _selectedDateIndex = index;
                             selectedTimeSlot = -1;
+                            _isReserved = false;
                             key = UniqueKey();
                           })
                         : null,
