@@ -4,8 +4,8 @@ import 'package:modsport/constants/routes.dart';
 import 'package:intl/intl.dart';
 
 bool hasRole = true;
-
 final int numOfDay = hasRole ? 30 : 7;
+typedef OnChangedCallback = void Function(int? value);
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
@@ -22,6 +22,8 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   int _selectedDateIndex = 0;
   bool _isReserved = false;
+  int _selectedTimeSlot = 0;
+  Key key = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +150,12 @@ class _ReservationViewState extends State<ReservationView> {
                 Expanded(
                   child: DateList(
                     selectedIndex: _selectedDateIndex,
-                    onSelected: (index) => setState(() {
-                      _selectedDateIndex = index;
-                    }),
+                    onSelected: (index) => (index != _selectedDateIndex)
+                        ? setState(() {
+                            _selectedDateIndex = index;
+                            key = UniqueKey();
+                          })
+                        : null,
                   ),
                 ),
               ],
@@ -161,7 +166,17 @@ class _ReservationViewState extends State<ReservationView> {
                   Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 20),
-                    child: const TimeSlot(),
+                    child: TimeSlot(
+                      selectedDateIndex: _selectedDateIndex,
+                      key: key,
+                      selectedTimeSlot: _selectedTimeSlot,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedTimeSlot = value!;
+                          _isReserved = false;
+                        });
+                      },
+                    ),
                   ),
                   Positioned(
                     bottom: 20,
@@ -480,21 +495,39 @@ class DateList extends StatelessWidget {
   }
 }
 
-class TimeSlotData {
-  final String timeSlot;
-  final int reservedSeats;
-  final int maxSeats;
+class ReservationData {
+  final DateTime startTime;
+  final DateTime endTime;
+  final int capacity;
 
-  TimeSlotData({
-    required this.timeSlot,
-    required this.reservedSeats,
-    required this.maxSeats,
+  ReservationData({
+    required this.startTime,
+    required this.endTime,
+    required this.capacity,
+  });
+}
+
+class UserReservationData {
+  final DateTime startTime;
+  final String userId;
+
+  UserReservationData({
+    required this.startTime,
+    required this.userId,
   });
 }
 
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
 class TimeSlot extends StatefulWidget {
-  const TimeSlot({super.key});
+  const TimeSlot(
+      {super.key,
+      required this.selectedDateIndex,
+      required this.selectedTimeSlot,
+      required this.onChanged});
+
+  final int selectedDateIndex;
+  final int selectedTimeSlot;
+  final OnChangedCallback onChanged;
 
   @override
   State<TimeSlot> createState() => _TimeSlotState();
@@ -502,26 +535,161 @@ class TimeSlot extends StatefulWidget {
 
 // The State class for the TimeSlot widget
 class _TimeSlotState extends State<TimeSlot> {
-  // A list of time slots as TimeSlotData objects
-  final List<TimeSlotData> timeSlots = [
-    TimeSlotData(timeSlot: '13.00 - 13.59', reservedSeats: 3, maxSeats: 4),
-    TimeSlotData(timeSlot: '14.00 - 14.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '15.00 - 15.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '16.00 - 16.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '17.00 - 17.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '18.00 - 18.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '19.00 - 19.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '20.00 - 20.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '21.00 - 21.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '22.00 - 22.59', reservedSeats: 0, maxSeats: 4),
-    TimeSlotData(timeSlot: '23.00 - 23.59', reservedSeats: 0, maxSeats: 4),
-  ];
-
   // The index of the selected time slot
-  int _selectedTimeSlot = 0;
 
   @override
   Widget build(BuildContext context) {
+    final DateTime now =
+        DateTime.now().add(Duration(days: widget.selectedDateIndex));
+    // A list of time slots as TimeSlotData objects
+
+    bool isTimeSlotExpired(DateTime endTime) {
+      final DateTime now = DateTime.now();
+      return now.isAfter(endTime);
+    }
+
+    final List<ReservationData> reservationDB = [
+      if (!isTimeSlotExpired(DateTime(now.year, now.month, now.day, 9, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 9),
+          endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 10, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 10),
+          endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 11, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 11),
+          endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 12, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 12),
+          endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 13, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 13),
+          endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 14, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 14),
+          endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 15, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 15),
+          endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 16, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 16),
+          endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 17, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 17),
+          endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 18, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 18),
+          endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 19, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 19),
+          endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 20, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 20),
+          endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 21, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 21),
+          endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 22, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 22),
+          endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
+          capacity: 4,
+        ),
+      if (!isTimeSlotExpired(
+          DateTime(now.year, now.month, now.day, 23, 59, 59)))
+        ReservationData(
+          startTime: DateTime(now.year, now.month, now.day, 23),
+          endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
+          capacity: 4,
+        ),
+    ];
+
+    List<DateTime> disabledReservation = [
+      DateTime(2023, 4, 17, 14, 0, 0),
+      DateTime(2023, 4, 19, 16, 0, 0),
+    ];
+
+    List<UserReservationData> userReservation = [
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '12345'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '1234'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '123'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 17, 16, 0, 0), userId: '12'),
+    ];
+
+    bool isDisable(DateTime startTime) {
+      for (int i = 0; i < disabledReservation.length; i++) {
+        if (disabledReservation[i] == startTime) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    int countNumOfReservation(DateTime startTime) {
+      int num = 0;
+      for (int i = 0; i < userReservation.length; i++) {
+        if (startTime == userReservation[i].startTime) {
+          num++;
+        }
+      }
+      return num;
+    }
+
     // Set the inactive radio button color
     final ThemeData theme = Theme.of(context).copyWith(
       unselectedWidgetColor: Colors.white,
@@ -531,9 +699,11 @@ class _TimeSlotState extends State<TimeSlot> {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 70),
       shrinkWrap: true,
-      itemCount: timeSlots.length,
+      itemCount: reservationDB.length,
       itemBuilder: (context, index) {
         // Builds a RadioListTile widget for each item in the list
+        final int numOfReservation =
+            countNumOfReservation(reservationDB[index].startTime);
         return Theme(
           data: theme,
           child: Container(
@@ -558,81 +728,212 @@ class _TimeSlotState extends State<TimeSlot> {
                 physics: const NeverScrollableScrollPhysics(),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 1,
-                  child: RadioListTile(
-                    secondary: _selectedTimeSlot == index
-                        ? Container(
-                            width: 24,
-                            height: 24,
-                            margin: const EdgeInsets.only(left: 15),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFFE17325),
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 16,
+                  child: isDisable(reservationDB[index].startTime)
+                      ? RadioListTile(
+                          secondary: widget.selectedTimeSlot == index
+                              ? Container(
+                                  width: 24,
+                                  height: 24,
+                                  margin: const EdgeInsets.only(left: 15),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFF808080),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 24,
+                                  height: 24,
+                                  margin: const EdgeInsets.only(left: 15),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFF808080),
+                                    border: Border.all(
+                                      width: 2,
+                                      color: const Color(0xFF808080),
+                                    ),
+                                  ),
+                                ),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${reservationDB[index].startTime.toString().substring(11, 16)} -  ${reservationDB[index].endTime.toString().substring(11, 16)}',
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 22,
+                                  height: 1.5,
+                                  color: Color(0xFF808080),
+                                ),
                               ),
-                            ),
-                          )
-                        : Container(
-                            width: 24,
-                            height: 24,
-                            margin: const EdgeInsets.only(left: 15),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.transparent,
-                              border: Border.all(
-                                width: 2,
-                                color: const Color(0xFFE17325),
+                              Row(
+                                children: const [
+                                  Icon(Icons.block, color: Color(0xFF808080)),
+                                ],
                               ),
-                            ),
+                            ],
                           ),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          timeSlots[index].timeSlot,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 22,
-                            height: 1.5,
-                            color: Color(0xFFE17325),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(Icons.people),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${timeSlots[index].reservedSeats}/${timeSlots[index].maxSeats}',
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 22,
-                                height: 1.5,
-                                color: Color(0xFF808080),
+                          value: index,
+                          groupValue: widget.selectedTimeSlot,
+                          onChanged: null,
+                          activeColor: Colors.white,
+                          selectedTileColor: const Color(0xFFE17325),
+                          controlAffinity: ListTileControlAffinity.trailing,
+                        )
+                      : countNumOfReservation(reservationDB[index].startTime) ==
+                              reservationDB[index].capacity
+                          ? RadioListTile(
+                              secondary: widget.selectedTimeSlot == index
+                                  ? Container(
+                                      width: 24,
+                                      height: 24,
+                                      margin: const EdgeInsets.only(left: 15),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xFF808080),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 24,
+                                      height: 24,
+                                      margin: const EdgeInsets.only(left: 15),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: const Color(0xFF808080),
+                                        border: Border.all(
+                                          width: 2,
+                                          color: const Color(0xFF808080),
+                                        ),
+                                      ),
+                                    ),
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${reservationDB[index].startTime.toString().substring(11, 16)} -  ${reservationDB[index].endTime.toString().substring(11, 16)}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 22,
+                                      height: 1.5,
+                                      color: Color(0xFF808080),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.people),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '$numOfReservation/${reservationDB[index].capacity}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontStyle: FontStyle.normal,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 22,
+                                          height: 1.5,
+                                          color: Color(0xFF808080),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
+                              value: index,
+                              groupValue: widget.selectedTimeSlot,
+                              onChanged: null,
+                              activeColor: Colors.white,
+                              selectedTileColor: const Color(0xFFE17325),
+                              controlAffinity: ListTileControlAffinity.trailing,
+                            )
+                          : RadioListTile(
+                              secondary: widget.selectedTimeSlot == index
+                                  ? Container(
+                                      width: 24,
+                                      height: 24,
+                                      margin: const EdgeInsets.only(left: 15),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xFFE17325),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 24,
+                                      height: 24,
+                                      margin: const EdgeInsets.only(left: 15),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.transparent,
+                                        border: Border.all(
+                                          width: 2,
+                                          color: const Color(0xFFE17325),
+                                        ),
+                                      ),
+                                    ),
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${reservationDB[index].startTime.toString().substring(11, 16)} -  ${reservationDB[index].endTime.toString().substring(11, 16)}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 22,
+                                      height: 1.5,
+                                      color: Color(0xFFE17325),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.people),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '$numOfReservation/${reservationDB[index].capacity}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontStyle: FontStyle.normal,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 22,
+                                          height: 1.5,
+                                          color: Color(0xFF808080),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              value: index,
+                              groupValue: widget.selectedTimeSlot,
+                              onChanged: widget.onChanged,
+                              activeColor: Colors.white,
+                              selectedTileColor: const Color(0xFFE17325),
+                              controlAffinity: ListTileControlAffinity.trailing,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    value: index,
-                    groupValue: _selectedTimeSlot,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedTimeSlot = value!;
-                      });
-                    },
-                    activeColor: Colors.white,
-                    selectedTileColor: const Color(0xFFE17325),
-                    controlAffinity: ListTileControlAffinity.trailing,
-                  ),
                 ),
               ),
             ),
