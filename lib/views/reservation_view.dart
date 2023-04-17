@@ -1,11 +1,13 @@
 // Importing necessary packages and files
 import 'package:flutter/material.dart';
 import 'package:modsport/utilities/reservation/date_list.dart';
+import 'package:modsport/utilities/reservation/edit_button.dart';
+import 'package:modsport/utilities/reservation/enable_button.dart';
 import 'package:modsport/utilities/reservation/time_slot.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
 
-bool hasRole = false;
+bool hasRole = true;
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
@@ -22,7 +24,8 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   int _selectedDateIndex = 0;
   bool _isReserved = false;
-  int selectedTimeSlot = 0;
+  int selectedTimeSlot = -1;
+  Key key = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +173,14 @@ class _ReservationViewState extends State<ReservationView> {
           startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
     ];
 
-    int tempTimeSlot = -1;
+    bool isDisable(DateTime startTime) {
+      for (int i = 0; i < disabledReservation.length; i++) {
+        if (disabledReservation[i] == startTime) {
+          return true;
+        }
+      }
+      return false;
+    }
 
     int countNumOfReservation(DateTime startTime) {
       int num = 0;
@@ -182,22 +192,25 @@ class _ReservationViewState extends State<ReservationView> {
       return num;
     }
 
-    for (int i = 0; i < reservationDB.length; i++) {
-      for (int j = 0; j < disabledReservation.length; j++) {
-        if (reservationDB[i]
-                .startTime
-                .isAtSameMomentAs(disabledReservation[j]) ||
-            countNumOfReservation(reservationDB[i].startTime) ==
-                reservationDB[i].capacity) {
-          break;
-        } else if (j == disabledReservation.length - 1) {
-          tempTimeSlot = i;
+    int getFirstTimeSlot() {
+      for (int i = 0; i < reservationDB.length; i++) {
+        for (int j = 0; j < disabledReservation.length; j++) {
+          if (reservationDB[i]
+                  .startTime
+                  .isAtSameMomentAs(disabledReservation[j]) ||
+              countNumOfReservation(reservationDB[i].startTime) ==
+                  reservationDB[i].capacity) {
+            break;
+          } else if (j == disabledReservation.length - 1) {
+            return i;
+          }
         }
       }
-      if (tempTimeSlot != -1) break;
+      return 0;
     }
-    if (tempTimeSlot != -1 && selectedTimeSlot < tempTimeSlot) {
-      selectedTimeSlot = tempTimeSlot;
+
+    if (selectedTimeSlot == -1) {
+      selectedTimeSlot = getFirstTimeSlot();
     }
 
     return Scaffold(
@@ -320,7 +333,8 @@ class _ReservationViewState extends State<ReservationView> {
                     onSelected: (index) => (index != _selectedDateIndex)
                         ? setState(() {
                             _selectedDateIndex = index;
-                            selectedTimeSlot = 0;
+                            selectedTimeSlot = -1;
+                            key = UniqueKey();
                           })
                         : null,
                     hasRole: hasRole,
@@ -335,6 +349,9 @@ class _ReservationViewState extends State<ReservationView> {
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 20),
                     child: TimeSlot(
+                      key: key,
+                      isDisable: isDisable,
+                      hasRole: hasRole,
                       countNumOfReservation: countNumOfReservation,
                       reservationDB: reservationDB,
                       disabledReservation: disabledReservation,
@@ -358,7 +375,13 @@ class _ReservationViewState extends State<ReservationView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (_selectedDateIndex < 7)
+                          if (_selectedDateIndex < 7 &&
+                              countNumOfReservation(
+                                      reservationDB[selectedTimeSlot]
+                                          .startTime) !=
+                                  reservationDB[selectedTimeSlot].capacity &&
+                              !isDisable(
+                                  reservationDB[selectedTimeSlot].startTime))
                             ReserveButton(
                               isReserved: _isReserved,
                               onPressed: () {
@@ -549,7 +572,13 @@ class _ReservationViewState extends State<ReservationView> {
                               },
                             ),
                           if (hasRole) ...[
-                            const DisableButton(),
+                            if (isDisable(
+                                reservationDB[selectedTimeSlot].startTime)) ...[
+                              const EditButton(),
+                              const EnableButton(),
+                            ] else ...[
+                              const DisableButton(),
+                            ]
                           ]
                         ],
                       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 typedef OnChangedCallback = void Function(int? value);
 typedef CountNumOfReservationCallback = int Function(DateTime startTime);
+typedef IsDisableCallback = bool Function(DateTime startTime);
 
 class ReservationData {
   final DateTime startTime;
@@ -29,6 +30,8 @@ class UserReservationData {
 class TimeSlot extends StatefulWidget {
   const TimeSlot(
       {super.key,
+      required this.isDisable,
+      required this.hasRole,
       required this.countNumOfReservation,
       required this.reservationDB,
       required this.disabledReservation,
@@ -37,6 +40,8 @@ class TimeSlot extends StatefulWidget {
       required this.selectedTimeSlot,
       required this.onChanged});
 
+  final IsDisableCallback isDisable;
+  final bool hasRole;
   final CountNumOfReservationCallback countNumOfReservation;
   final List<ReservationData> reservationDB;
   final List<DateTime> disabledReservation;
@@ -55,15 +60,6 @@ class _TimeSlotState extends State<TimeSlot> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDisable(DateTime startTime) {
-      for (int i = 0; i < widget.disabledReservation.length; i++) {
-        if (widget.disabledReservation[i] == startTime) {
-          return true;
-        }
-      }
-      return false;
-    }
-
     // Set the inactive radio button color
     final ThemeData theme = Theme.of(context).copyWith(
       unselectedWidgetColor: Colors.white,
@@ -102,7 +98,7 @@ class _TimeSlotState extends State<TimeSlot> {
                 physics: const NeverScrollableScrollPhysics(),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 1,
-                  child: isDisable(widget.reservationDB[index].startTime)
+                  child: widget.isDisable(widget.reservationDB[index].startTime)
                       ? RadioListTile(
                           secondary: widget.selectedTimeSlot == index
                               ? Container(
@@ -127,7 +123,9 @@ class _TimeSlotState extends State<TimeSlot> {
                                   margin: const EdgeInsets.only(left: 15),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF808080),
+                                    color: widget.hasRole
+                                        ? Colors.white
+                                        : const Color(0xFF808080),
                                     border: Border.all(
                                       width: 2,
                                       color: const Color(0xFF808080),
@@ -157,7 +155,7 @@ class _TimeSlotState extends State<TimeSlot> {
                           ),
                           value: index,
                           groupValue: widget.selectedTimeSlot,
-                          onChanged: null,
+                          onChanged: widget.hasRole ? widget.onChanged : null,
                           activeColor: Colors.white,
                           selectedTileColor: const Color(0xFFE17325),
                           controlAffinity: ListTileControlAffinity.trailing,
@@ -189,7 +187,9 @@ class _TimeSlotState extends State<TimeSlot> {
                                       margin: const EdgeInsets.only(left: 15),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: const Color(0xFF808080),
+                                        color: widget.hasRole
+                                            ? Colors.white
+                                            : const Color(0xFF808080),
                                         border: Border.all(
                                           width: 2,
                                           color: const Color(0xFF808080),
@@ -232,7 +232,8 @@ class _TimeSlotState extends State<TimeSlot> {
                               ),
                               value: index,
                               groupValue: widget.selectedTimeSlot,
-                              onChanged: null,
+                              onChanged:
+                                  widget.hasRole ? widget.onChanged : null,
                               activeColor: Colors.white,
                               selectedTileColor: const Color(0xFFE17325),
                               controlAffinity: ListTileControlAffinity.trailing,
