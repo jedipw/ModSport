@@ -23,8 +23,6 @@ class _ReservationViewState extends State<ReservationView> {
   int _selectedDateIndex = 0;
   bool _isReserved = false;
   int _selectedTimeSlot = 0;
-  Key key = UniqueKey();
-
   @override
   Widget build(BuildContext context) {
     String zoneName =
@@ -153,7 +151,7 @@ class _ReservationViewState extends State<ReservationView> {
                     onSelected: (index) => (index != _selectedDateIndex)
                         ? setState(() {
                             _selectedDateIndex = index;
-                            key = UniqueKey();
+                            _selectedTimeSlot = 0;
                           })
                         : null,
                   ),
@@ -168,7 +166,6 @@ class _ReservationViewState extends State<ReservationView> {
                         vertical: 20, horizontal: 20),
                     child: TimeSlot(
                       selectedDateIndex: _selectedDateIndex,
-                      key: key,
                       selectedTimeSlot: _selectedTimeSlot,
                       onChanged: (value) {
                         setState(() {
