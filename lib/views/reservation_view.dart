@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:modsport/utilities/reservation/date_list.dart';
 import 'package:modsport/utilities/reservation/edit_button.dart';
 import 'package:modsport/utilities/reservation/enable_button.dart';
-import 'package:modsport/utilities/reservation/time_slot.dart';
+import 'package:modsport/utilities/reservation/time_slot_disable.dart';
+import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
+import 'package:modsport/utilities/reservation/typeclass.dart';
 
 bool hasRole = true;
 
@@ -25,6 +27,8 @@ class _ReservationViewState extends State<ReservationView> {
   int _selectedDateIndex = 0;
   bool _isReserved = false;
   int selectedTimeSlot = -1;
+  bool isDisableMenu = false;
+  List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
 
   @override
@@ -213,6 +217,10 @@ class _ReservationViewState extends State<ReservationView> {
       selectedTimeSlot = getFirstTimeSlot();
     }
 
+    if (selectedTimeSlots.isEmpty) {
+      selectedTimeSlots = List.generate(reservationDB.length, (index) => false);
+    }
+
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -321,6 +329,94 @@ class _ReservationViewState extends State<ReservationView> {
                 const SizedBox(width: 100),
               ],
             ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        isDisableMenu == true
+                            ? setState(() {
+                                isDisableMenu = false;
+                                selectedTimeSlots = [];
+                              })
+                            : null;
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        backgroundColor: isDisableMenu
+                            ? Colors.white
+                            : const Color(0xFFE17325),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                          ),
+                        ),
+                        side: const BorderSide(
+                          width: 1,
+                          color: Color(0xFFE17325),
+                        ),
+                      ),
+                      child: Text(
+                        'RESERVE',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 22,
+                          color: isDisableMenu
+                              ? const Color(0xFFE17325)
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        isDisableMenu == false
+                            ? setState(() {
+                                isDisableMenu = true;
+                              })
+                            : null;
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        backgroundColor: !isDisableMenu
+                            ? Colors.white
+                            : const Color(0xFFE17325),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                          ),
+                        ),
+                        side: const BorderSide(
+                          width: 1,
+                          color: Color(0xFFE17325),
+                        ),
+                      ),
+                      child: Text(
+                        'DISABLE',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 22,
+                          color: isDisableMenu
+                              ? Colors.white
+                              : const Color(0xFFE17325),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 30),
             Row(
               children: [
@@ -335,6 +431,7 @@ class _ReservationViewState extends State<ReservationView> {
                             _selectedDateIndex = index;
                             selectedTimeSlot = -1;
                             _isReserved = false;
+                            selectedTimeSlots = [];
                             key = UniqueKey();
                           })
                         : null,
@@ -349,23 +446,36 @@ class _ReservationViewState extends State<ReservationView> {
                   Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 20),
-                    child: TimeSlot(
-                      key: key,
-                      isDisable: isDisable,
-                      hasRole: hasRole,
-                      countNumOfReservation: countNumOfReservation,
-                      reservationDB: reservationDB,
-                      disabledReservation: disabledReservation,
-                      userReservation: userReservation,
-                      selectedDateIndex: _selectedDateIndex,
-                      selectedTimeSlot: selectedTimeSlot,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTimeSlot = value!;
-                          _isReserved = false;
-                        });
-                      },
-                    ),
+                    child: isDisableMenu
+                        ? TimeSlotDisable(
+                            key: key,
+                            userReservation: userReservation,
+                            countNumOfReservation: countNumOfReservation,
+                            reservationDB: reservationDB,
+                            selectedTimeSlots: selectedTimeSlots,
+                            onChanged: (int index, bool? value) {
+                              setState(() {
+                                selectedTimeSlots[index] = value;
+                              });
+                            },
+                          )
+                        : TimeSlotReserve(
+                            key: key,
+                            isDisable: isDisable,
+                            hasRole: hasRole,
+                            countNumOfReservation: countNumOfReservation,
+                            reservationDB: reservationDB,
+                            disabledReservation: disabledReservation,
+                            userReservation: userReservation,
+                            selectedDateIndex: _selectedDateIndex,
+                            selectedTimeSlot: selectedTimeSlot,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedTimeSlot = value!;
+                                _isReserved = false;
+                              });
+                            },
+                          ),
                   ),
                   Positioned(
                     bottom: 20,
@@ -382,7 +492,8 @@ class _ReservationViewState extends State<ReservationView> {
                                           .startTime) !=
                                   reservationDB[selectedTimeSlot].capacity &&
                               !isDisable(
-                                  reservationDB[selectedTimeSlot].startTime))
+                                  reservationDB[selectedTimeSlot].startTime) &&
+                              !isDisableMenu)
                             ReserveButton(
                               isReserved: _isReserved,
                               onPressed: () {
@@ -577,8 +688,12 @@ class _ReservationViewState extends State<ReservationView> {
                                 reservationDB[selectedTimeSlot].startTime)) ...[
                               const EditButton(),
                               const EnableButton(),
-                            ] else ...[
-                              const DisableButton(),
+                            ] else if (!selectedTimeSlots
+                                    .every((element) => element == false) ||
+                                isDisableMenu == false) ...[
+                              DisableButton(
+                                  isDisableMenu: isDisableMenu,
+                                  selectedTimeSlots: selectedTimeSlots),
                             ]
                           ]
                         ],

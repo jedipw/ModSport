@@ -1,34 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/utilities/reservation/typeclass.dart';
 
 typedef OnChangedCallback = void Function(int? value);
 typedef CountNumOfReservationCallback = int Function(DateTime startTime);
 typedef IsDisableCallback = bool Function(DateTime startTime);
 
-class ReservationData {
-  final DateTime startTime;
-  final DateTime endTime;
-  final int capacity;
-
-  ReservationData({
-    required this.startTime,
-    required this.endTime,
-    required this.capacity,
-  });
-}
-
-class UserReservationData {
-  final DateTime startTime;
-  final String userId;
-
-  UserReservationData({
-    required this.startTime,
-    required this.userId,
-  });
-}
-
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
-class TimeSlot extends StatefulWidget {
-  const TimeSlot(
+class TimeSlotReserve extends StatefulWidget {
+  const TimeSlotReserve(
       {super.key,
       required this.isDisable,
       required this.hasRole,
@@ -51,11 +30,11 @@ class TimeSlot extends StatefulWidget {
   final OnChangedCallback onChanged;
 
   @override
-  State<TimeSlot> createState() => _TimeSlotState();
+  State<TimeSlotReserve> createState() => _TimeSlotReserveState();
 }
 
 // The State class for the TimeSlot widget
-class _TimeSlotState extends State<TimeSlot> {
+class _TimeSlotReserveState extends State<TimeSlotReserve> {
   // The index of the selected time slot
 
   @override
@@ -67,7 +46,7 @@ class _TimeSlotState extends State<TimeSlot> {
 
     // Builds a ListView of RadioListTile widgets
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 70),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
       shrinkWrap: true,
       itemCount: widget.reservationDB.length,
       itemBuilder: (context, index) {
