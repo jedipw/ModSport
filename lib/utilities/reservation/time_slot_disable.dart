@@ -62,7 +62,9 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
               children: [
                 Checkbox(
                   activeColor: const Color(0xFFE17325),
-                  value: widget.selectedTimeSlots[index],
+                  value: widget.isDisable(widget.reservationDB[index].startTime)
+                      ? !widget.selectedTimeSlots[index]!
+                      : widget.selectedTimeSlots[index],
                   onChanged: (bool? value) {
                     if (!widget
                         .isDisable(widget.reservationDB[index].startTime)) {
