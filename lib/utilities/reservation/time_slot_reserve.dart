@@ -115,7 +115,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '${widget.reservationDB[index].startTime.toString().substring(11, 16)} -  ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
+                                '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontStyle: FontStyle.normal,
@@ -180,7 +180,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${widget.reservationDB[index].startTime.toString().substring(11, 16)} -  ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
+                                    '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
                                     style: const TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
@@ -253,7 +253,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${widget.reservationDB[index].startTime.toString().substring(11, 16)} -  ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
+                                    '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
                                     style: const TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
