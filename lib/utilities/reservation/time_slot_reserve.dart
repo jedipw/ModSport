@@ -10,23 +10,23 @@ class TimeSlotReserve extends StatefulWidget {
   const TimeSlotReserve(
       {super.key,
       required this.isDisable,
-      required this.hasRole,
       required this.countNumOfReservation,
       required this.reservationDB,
       required this.disabledReservation,
       required this.userReservation,
       required this.selectedDateIndex,
       required this.selectedTimeSlot,
+      required this.isReserved,
       required this.onChanged});
 
   final IsDisableCallback isDisable;
-  final bool hasRole;
   final CountNumOfReservationCallback countNumOfReservation;
   final List<ReservationData> reservationDB;
   final List<DateTime> disabledReservation;
   final List<UserReservationData> userReservation;
   final int selectedDateIndex;
   final int selectedTimeSlot;
+  final bool isReserved;
   final OnChangedCallback onChanged;
 
   @override
@@ -102,9 +102,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                                   margin: const EdgeInsets.only(left: 15),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: widget.hasRole
-                                        ? Colors.white
-                                        : const Color(0xFF808080),
+                                    color: const Color(0xFF808080),
                                     border: Border.all(
                                       width: 2,
                                       color: const Color(0xFF808080),
@@ -134,7 +132,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                           ),
                           value: index,
                           groupValue: widget.selectedTimeSlot,
-                          onChanged: widget.hasRole ? widget.onChanged : null,
+                          onChanged: null,
                           activeColor: Colors.white,
                           selectedTileColor: const Color(0xFFE17325),
                           controlAffinity: ListTileControlAffinity.trailing,
@@ -166,9 +164,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                                       margin: const EdgeInsets.only(left: 15),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: widget.hasRole
-                                            ? Colors.white
-                                            : const Color(0xFF808080),
+                                        color: const Color(0xFF808080),
                                         border: Border.all(
                                           width: 2,
                                           color: const Color(0xFF808080),
@@ -211,8 +207,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                               ),
                               value: index,
                               groupValue: widget.selectedTimeSlot,
-                              onChanged:
-                                  widget.hasRole ? widget.onChanged : null,
+                              onChanged: null,
                               activeColor: Colors.white,
                               selectedTileColor: const Color(0xFFE17325),
                               controlAffinity: ListTileControlAffinity.trailing,
@@ -284,7 +279,8 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                               ),
                               value: index,
                               groupValue: widget.selectedTimeSlot,
-                              onChanged: widget.onChanged,
+                              onChanged:
+                                  widget.isReserved ? null : widget.onChanged,
                               activeColor: Colors.white,
                               selectedTileColor: const Color(0xFFE17325),
                               controlAffinity: ListTileControlAffinity.trailing,

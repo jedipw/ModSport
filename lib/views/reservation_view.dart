@@ -390,6 +390,7 @@ class _ReservationViewState extends State<ReservationView> {
                           isDisableMenu == false
                               ? setState(() {
                                   isDisableMenu = true;
+                                  _isReserved = false;
                                 })
                               : null;
                         },
@@ -475,13 +476,13 @@ class _ReservationViewState extends State<ReservationView> {
                         : TimeSlotReserve(
                             key: key,
                             isDisable: isDisable,
-                            hasRole: hasRole,
                             countNumOfReservation: countNumOfReservation,
                             reservationDB: reservationDB,
                             disabledReservation: disabledReservation,
                             userReservation: userReservation,
                             selectedDateIndex: _selectedDateIndex,
                             selectedTimeSlot: selectedTimeSlot,
+                            isReserved: _isReserved,
                             onChanged: (value) {
                               setState(() {
                                 selectedTimeSlot = value!;
@@ -709,8 +710,8 @@ class _ReservationViewState extends State<ReservationView> {
                               EditButton(isDisableMenu: isDisableMenu),
                               EnableButton(isDisableMenu: isDisableMenu),
                             ] else if (!selectedTimeSlots
-                                    .every((element) => element == false) ||
-                                isDisableMenu == false) ...[
+                                    .every((element) => element == false) &&
+                                isDisableMenu == true) ...[
                               DisableButton(
                                   isDisableMenu: isDisableMenu,
                                   selectedTimeSlots: selectedTimeSlots),
