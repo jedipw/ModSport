@@ -154,8 +154,9 @@ class _ReservationViewState extends State<ReservationView> {
     ];
 
     List<DateTime> disabledReservation = [
-      DateTime(2023, 4, 17, 15, 0, 0),
-      DateTime(2023, 4, 17, 18, 0, 0),
+      DateTime(2023, 4, 18, 15, 0, 0),
+      DateTime(2023, 4, 18, 16, 0, 0),
+      DateTime(2023, 4, 18, 18, 0, 0),
     ];
 
     List<UserReservationData> userReservation = [
@@ -175,6 +176,14 @@ class _ReservationViewState extends State<ReservationView> {
           startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
       UserReservationData(
           startTime: DateTime(2023, 4, 17, 17, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 18, 17, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 18, 17, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 18, 17, 0, 0), userId: '12'),
+      UserReservationData(
+          startTime: DateTime(2023, 4, 18, 17, 0, 0), userId: '12'),
     ];
 
     bool isDisable(DateTime startTime) {
@@ -329,93 +338,95 @@ class _ReservationViewState extends State<ReservationView> {
                 const SizedBox(width: 100),
               ],
             ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        isDisableMenu == true
-                            ? setState(() {
-                                isDisableMenu = false;
-                                selectedTimeSlots = [];
-                              })
-                            : null;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        backgroundColor: isDisableMenu
-                            ? Colors.white
-                            : const Color(0xFFE17325),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            bottomLeft: Radius.circular(10),
-                          ),
-                        ),
-                        side: const BorderSide(
-                          width: 1,
-                          color: Color(0xFFE17325),
-                        ),
-                      ),
-                      child: Text(
-                        'RESERVE',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 22,
-                          color: isDisableMenu
-                              ? const Color(0xFFE17325)
-                              : Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        isDisableMenu == false
-                            ? setState(() {
-                                isDisableMenu = true;
-                              })
-                            : null;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        backgroundColor: !isDisableMenu
-                            ? Colors.white
-                            : const Color(0xFFE17325),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            bottomRight: Radius.circular(10),
-                          ),
-                        ),
-                        side: const BorderSide(
-                          width: 1,
-                          color: Color(0xFFE17325),
-                        ),
-                      ),
-                      child: Text(
-                        'DISABLE',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 22,
-                          color: isDisableMenu
+            if (hasRole) ...[
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          isDisableMenu == true
+                              ? setState(() {
+                                  isDisableMenu = false;
+                                  selectedTimeSlots = [];
+                                })
+                              : null;
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          backgroundColor: isDisableMenu
                               ? Colors.white
                               : const Color(0xFFE17325),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                            ),
+                          ),
+                          side: const BorderSide(
+                            width: 1,
+                            color: Color(0xFFE17325),
+                          ),
+                        ),
+                        child: Text(
+                          'RESERVE',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: isDisableMenu
+                                ? const Color(0xFFE17325)
+                                : Colors.white,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          isDisableMenu == false
+                              ? setState(() {
+                                  isDisableMenu = true;
+                                })
+                              : null;
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          backgroundColor: !isDisableMenu
+                              ? Colors.white
+                              : const Color(0xFFE17325),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                          ),
+                          side: const BorderSide(
+                            width: 1,
+                            color: Color(0xFFE17325),
+                          ),
+                        ),
+                        child: Text(
+                          'DISABLE',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: isDisableMenu
+                                ? Colors.white
+                                : const Color(0xFFE17325),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
 
             const SizedBox(height: 30),
             Row(
@@ -453,6 +464,8 @@ class _ReservationViewState extends State<ReservationView> {
                             countNumOfReservation: countNumOfReservation,
                             reservationDB: reservationDB,
                             selectedTimeSlots: selectedTimeSlots,
+                            disabledReservation: disabledReservation,
+                            isDisable: isDisable,
                             onChanged: (int index, bool? value) {
                               setState(() {
                                 selectedTimeSlots[index] = value;
@@ -684,10 +697,17 @@ class _ReservationViewState extends State<ReservationView> {
                               },
                             ),
                           if (hasRole) ...[
-                            if (isDisable(
-                                reservationDB[selectedTimeSlot].startTime)) ...[
-                              const EditButton(),
-                              const EnableButton(),
+                            if (isDisable(reservationDB[selectedTimeSlot]
+                                    .startTime) ||
+                                (isDisableMenu == true &&
+                                    selectedTimeSlots
+                                        .every((element) => element == false) &&
+                                    reservationDB.any((reservation) {
+                                      return disabledReservation
+                                          .contains(reservation.startTime);
+                                    }))) ...[
+                              EditButton(isDisableMenu: isDisableMenu),
+                              EnableButton(isDisableMenu: isDisableMenu),
                             ] else if (!selectedTimeSlots
                                     .every((element) => element == false) ||
                                 isDisableMenu == false) ...[

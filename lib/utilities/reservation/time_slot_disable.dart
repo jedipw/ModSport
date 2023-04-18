@@ -3,19 +3,25 @@ import 'package:modsport/utilities/reservation/typeclass.dart';
 
 typedef CountNumOfReservationCallback = int Function(DateTime startTime);
 typedef OnChangedCallback = void Function(int index, bool? value);
+typedef IsDisableCallback = bool Function(DateTime startTime);
 
 class TimeSlotDisable extends StatefulWidget {
-  const TimeSlotDisable(
-      {super.key,
-      required this.reservationDB,
-      required this.userReservation,
-      required this.countNumOfReservation,
-      required this.selectedTimeSlots,
-      required this.onChanged});
+  const TimeSlotDisable({
+    super.key,
+    required this.reservationDB,
+    required this.userReservation,
+    required this.countNumOfReservation,
+    required this.disabledReservation,
+    required this.selectedTimeSlots,
+    required this.onChanged,
+    required this.isDisable,
+  });
+  final List<DateTime> disabledReservation;
   final List<ReservationData> reservationDB;
   final List<UserReservationData> userReservation;
   final CountNumOfReservationCallback countNumOfReservation;
   final List<bool?> selectedTimeSlots;
+  final IsDisableCallback isDisable;
 
   final OnChangedCallback onChanged;
 
@@ -34,7 +40,9 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
             widget.countNumOfReservation(widget.reservationDB[index].startTime);
         return GestureDetector(
           onTap: () {
-            widget.onChanged(index, !widget.selectedTimeSlots[index]!);
+            if (!widget.isDisable(widget.reservationDB[index].startTime)) {
+              widget.onChanged(index, !widget.selectedTimeSlots[index]!);
+            }
           },
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -56,7 +64,10 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                   activeColor: const Color(0xFFE17325),
                   value: widget.selectedTimeSlots[index],
                   onChanged: (bool? value) {
-                    widget.onChanged(index, value);
+                    if (!widget
+                        .isDisable(widget.reservationDB[index].startTime)) {
+                      widget.onChanged(index, value);
+                    }
                   },
                   checkColor: Colors.white,
                   fillColor: MaterialStateProperty.resolveWith<Color?>(
@@ -64,13 +75,13 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                       if (states.contains(MaterialState.disabled)) {
                         return const Color(0xFFE17325);
                       }
-                      return const Color(0xFFE17325);
+                      return widget
+                              .isDisable(widget.reservationDB[index].startTime)
+                          ? const Color(0xFF808080)
+                          : const Color(0xFFE17325);
                     },
                   ),
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      color: Color(0xFFE17325),
-                    ),
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -92,12 +103,15 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                       children: [
                         Text(
                           '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w500,
                             fontSize: 22,
-                            color: Color(0xFFE17325),
+                            color: widget.isDisable(
+                                    widget.reservationDB[index].startTime)
+                                ? const Color(0xFF808080)
+                                : const Color(0xFFE17325),
                           ),
                         ),
                         Row(

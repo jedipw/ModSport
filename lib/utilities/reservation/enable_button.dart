@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class EnableButton extends StatelessWidget {
-  const EnableButton({Key? key}) : super(key: key);
+  const EnableButton({Key? key, required this.isDisableMenu}) : super(key: key);
+  final bool isDisableMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -133,16 +134,34 @@ class EnableButton extends StatelessWidget {
             },
           );
         },
-        child: const Text(
-          "ENABLE", // Set the button text to "Disable"
-          style: TextStyle(
-            color: Color(0xFF009900),
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-            fontFamily: 'Poppins',
-            fontStyle: FontStyle.normal,
-            height: 1.5,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "ENABLE", // Set the button text to "Disable"
+              style: TextStyle(
+                color: Color(0xFF009900),
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Poppins',
+                fontStyle: FontStyle.normal,
+                height: 1.5,
+              ),
+            ),
+            if (isDisableMenu == true) ...[
+              const Text(
+                " ALL", // Set the button text to "Disable"
+                style: TextStyle(
+                  color: Color(0xFF009900),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                  fontStyle: FontStyle.normal,
+                  height: 1.5,
+                ),
+              ),
+            ]
+          ],
         ),
       ),
     );
