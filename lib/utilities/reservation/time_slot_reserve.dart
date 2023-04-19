@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:modsport/utilities/reservation/typeclass.dart';
 
 typedef OnChangedCallback = void Function(int? value);
-typedef CountNumOfReservationCallback = int Function(DateTime startTime);
-typedef IsDisableCallback = bool Function(DateTime startTime);
+typedef CountNumOfReservationCallback = int Function(DateTime? startTime);
+typedef IsDisableCallback = bool Function(DateTime? startTime);
 
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
 class TimeSlotReserve extends StatefulWidget {
   const TimeSlotReserve({
     super.key,
-
     required this.countNumOfReservation,
     required this.reservationDB,
     required this.disabledReservation,

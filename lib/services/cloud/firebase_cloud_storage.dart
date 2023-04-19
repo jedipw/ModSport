@@ -25,9 +25,11 @@ class FirebaseCloudStorage {
     return documentSnapshot;
   }
 
-  Future<DocumentSnapshot> getReservation(String reservationId) async {
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection('reservation').doc(reservationId).get();
-    return documentSnapshot;
+  Future<List<DocumentSnapshot>> getReservation(String zoneId) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('reservation')
+        .where('zoneId', isEqualTo: zoneId)
+        .get();
+    return querySnapshot.docs;
   }
 }

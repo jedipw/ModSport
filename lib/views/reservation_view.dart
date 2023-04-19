@@ -3,11 +3,13 @@ import 'dart:developer' show log;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:modsport/utilities/reservation/date_list.dart';
 import 'package:modsport/utilities/reservation/edit_button.dart';
 import 'package:modsport/utilities/reservation/enable_button.dart';
 import 'package:modsport/utilities/reservation/time_slot_disable.dart';
+import 'package:modsport/utilities/reservation/time_slot_loading.dart';
 import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
@@ -33,37 +35,69 @@ class _ReservationViewState extends State<ReservationView> {
   bool _isReserved = false;
   int _selectedTimeSlot = 0;
   bool isDisableMenu = false;
+  bool timeHasLoaded = false;
   List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
   String _imgUrl = 'https://i.imgur.com/AoYPnKY.png';
   String _locationName = '';
   String _locationId = '';
   String _zoneName = '';
-  List<ReservationData> _reservation = [];
+  List<DocumentSnapshot> _reservation = [];
 
   @override
   void initState() {
     super.initState();
     _getLocationData();
     _getZoneData();
+    _getReservationData().then((value) {
+      setState(() {
+        timeHasLoaded = true;
+      });
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getLocationData();
+    _getZoneData();
+    _getReservationData().then((value) {
+      setState(() {
+        timeHasLoaded = true;
+      });
+    });
+  }
+
+  Future<void> _getReservationData() async {
+    try {
+      timeHasLoaded = false;
+      List<DocumentSnapshot> reservation =
+          await FirebaseCloudStorage().getReservation(widget.zoneId);
+
+      setState(() {
+        _reservation = reservation;
+      });
+    } catch (e) {
+      log('Error fetching location data: $e');
+    }
   }
 
   Future<void> _getZoneData() async {
     try {
       // Get the zone document snapshot
       DocumentSnapshot zoneSnapshot =
-          await FirebaseCloudStorage().getZone('TEHMJQbzdGplLBfcrZq0');
+          await FirebaseCloudStorage().getZone(widget.zoneId);
 
       String locationId = zoneSnapshot.data() != null &&
               (zoneSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('location_id')
-          ? (zoneSnapshot.data() as Map<String, dynamic>)['location_id']
+                  .containsKey('locationId')
+          ? (zoneSnapshot.data() as Map<String, dynamic>)['locationId']
           : '';
 
       String zoneName = zoneSnapshot.data() != null &&
               (zoneSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('zone_name')
-          ? (zoneSnapshot.data() as Map<String, dynamic>)['zone_name']
+                  .containsKey('zoneName')
+          ? (zoneSnapshot.data() as Map<String, dynamic>)['zoneName']
           : '';
 
       // Update the state
@@ -86,14 +120,14 @@ class _ReservationViewState extends State<ReservationView> {
       // Extract the img_url from the location snapshot
       String imgUrl = locationSnapshot.data() != null &&
               (locationSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('img_url')
-          ? (locationSnapshot.data() as Map<String, dynamic>)['img_url']
+                  .containsKey('imgUrl')
+          ? (locationSnapshot.data() as Map<String, dynamic>)['imgUrl']
           : '';
 
       String locationName = locationSnapshot.data() != null &&
               (locationSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('location_name')
-          ? (locationSnapshot.data() as Map<String, dynamic>)['location_name']
+                  .containsKey('locationName')
+          ? (locationSnapshot.data() as Map<String, dynamic>)['locationName']
           : '';
 
       // Update the state with the imgUrl
@@ -135,7 +169,7 @@ class _ReservationViewState extends State<ReservationView> {
       DateTime(2023, 4, 20, 23, 0, 0),
     ];
 
-    bool isDisable(DateTime startTime) {
+    bool isDisable(DateTime? startTime) {
       for (int i = 0; i < disabledReservation.length; i++) {
         if (disabledReservation[i] == startTime) {
           return true;
@@ -171,7 +205,7 @@ class _ReservationViewState extends State<ReservationView> {
           startTime: DateTime(2023, 4, 18, 17, 0, 0), userId: '12'),
     ];
 
-    int countNumOfReservation(DateTime startTime) {
+    int countNumOfReservation(DateTime? startTime) {
       int num = 0;
       for (int i = 0; i < userReservation.length; i++) {
         if (startTime == userReservation[i].startTime) {
@@ -182,300 +216,49 @@ class _ReservationViewState extends State<ReservationView> {
     }
 
     bool isTheSameDay(DateTime day) {
-      if (day.day == now.day) return true;
+      if (DateFormat('EEE').format(day).substring(0, 3) ==
+          DateFormat('EEE').format(now).substring(0, 3)) return true;
       return false;
     }
 
-    final List<ReservationData> reservationDB = [
-      if (isDisableMenu) ...[
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 9, 59, 59)))
+    final List<ReservationData> reservationDB = [];
+
+    for (int i = 0; i < _reservation.length; i++) {
+      Map<String, dynamic> reservationData =
+          _reservation[i].data() as Map<String, dynamic>;
+
+      DateTime startTime = reservationData['startTime'].toDate();
+      DateTime endTime = reservationData['endTime'].toDate();
+      int capacity = reservationData['capacity'];
+
+      if ((isDisableMenu &&
+              !isTimeSlotExpired(DateTime(now.year, now.month, now.day,
+                  endTime.hour, endTime.minute, endTime.second)) &&
+              isTheSameDay(startTime)) ||
+          (!isDisableMenu &&
+              !isTimeSlotExpired(DateTime(now.year, now.month, now.day,
+                  endTime.hour, endTime.minute, endTime.second)) &&
+              !isDisable(DateTime(
+                now.year,
+                now.month,
+                now.day,
+                startTime.hour,
+                startTime.minute,
+                startTime.second,
+              )) &&
+              countNumOfReservation(startTime) != 4 &&
+              isTheSameDay(startTime))) {
+        reservationDB.add(
           ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 9),
-            endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
-            capacity: 4,
+            startTime: startTime,
+            endTime: endTime,
+            capacity: capacity,
           ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 10, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 10),
-            endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 11, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 11),
-            endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 12, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 12),
-            endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 13, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 13),
-            endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 14, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 14),
-            endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 15, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 15),
-            endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 16, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 16),
-            endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 17, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 17),
-            endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 18, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 18),
-            endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 19, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 19),
-            endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 20, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 20),
-            endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 21, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 21),
-            endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 22, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 22),
-            endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-            DateTime(now.year, now.month, now.day, 23, 59, 59)))
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 23),
-            endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
-            capacity: 4,
-          ),
-      ] else ...[
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 9, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 9)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 9)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 9),
-            endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 10, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 10)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 10)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 10),
-            endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 11, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 11)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 11)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 11),
-            endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 12, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 12)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 12)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 12),
-            endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 13, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 13)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 13)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 13),
-            endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 14, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 14)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 14)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 14),
-            endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 15, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 15)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 15)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 15),
-            endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 16, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 16)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 16)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 16),
-            endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 17, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 17)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 17)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 17),
-            endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 18, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 18)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 18)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 18),
-            endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 19, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 19)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 19)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 19),
-            endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 20, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 20)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 20)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 20),
-            endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 21, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 21)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 21)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 21),
-            endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 22, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 22)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 22)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 22),
-            endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
-            capacity: 4,
-          ),
-        if (!isTimeSlotExpired(
-                DateTime(now.year, now.month, now.day, 23, 59, 59)) &&
-            !isDisable(DateTime(now.year, now.month, now.day, 23)) &&
-            countNumOfReservation(DateTime(now.year, now.month, now.day, 23)) !=
-                4)
-          ReservationData(
-            zoneId: '',
-            startTime: DateTime(now.year, now.month, now.day, 23),
-            endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
-            capacity: 4,
-          ),
-      ]
-    ];
+        );
+      }
+    }
+
+    reservationDB.sort((a, b) => a.startTime!.compareTo(b.startTime!));
 
     if (selectedTimeSlots.isEmpty) {
       selectedTimeSlots = List.generate(reservationDB.length, (index) => false);
@@ -575,7 +358,7 @@ class _ReservationViewState extends State<ReservationView> {
                         ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(bottom: 20),
+                  margin: const EdgeInsets.only(bottom: 25),
                   padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
                   child: Row(
                     children: [
@@ -650,31 +433,47 @@ class _ReservationViewState extends State<ReservationView> {
                           ),
                         ),
                         onPressed: () {
-                          isDisableMenu == true
-                              ? setState(() {
-                                  isDisableMenu = false;
-                                  _selectedDateIndex > 7
-                                      ? 0
-                                      : _selectedDateIndex;
-                                  _selectedTimeSlot = 0;
-                                  _isReserved = false;
-                                  selectedTimeSlots = [];
-                                  key = UniqueKey();
-                                })
-                              : setState(() {
-                                  isDisableMenu = true;
-                                  _selectedTimeSlot = 0;
-                                  _isReserved = false;
-                                  selectedTimeSlots = [];
-                                  key = UniqueKey();
-                                });
+                          if (isDisableMenu) {
+                            // If isDisableMenu is true, disable the menu and update the widget state
+                            _getReservationData().then((_) {
+                              setState(() {
+                                isDisableMenu = false;
+                                _selectedDateIndex = _selectedDateIndex > 6
+                                    ? 0
+                                    : _selectedDateIndex;
+                                _selectedTimeSlot = 0;
+                                _isReserved = false;
+                                selectedTimeSlots = [];
+                                timeHasLoaded = true;
+                                key = UniqueKey();
+                              });
+                            }).catchError((error) {
+                              // Handle any errors that occurred while fetching the reservation data
+                              log('Error fetching reservation data: $error');
+                            });
+                          } else {
+                            // If isDisableMenu is false, enable the menu and update the widget state
+                            _getReservationData().then((_) {
+                              setState(() {
+                                isDisableMenu = true;
+                                _selectedTimeSlot = 0;
+                                _isReserved = false;
+                                timeHasLoaded = true;
+                                selectedTimeSlots = [];
+                                key = UniqueKey();
+                              });
+                            }).catchError((error) {
+                              // Handle any errors that occurred while fetching the reservation data
+                              log('Error fetching reservation data: $error');
+                            });
+                          }
                         },
                       ),
                     ),
                   ),
                   Positioned(
                     right: 15,
-                    top: 60,
+                    top: 65,
                     child: Row(
                       children: [
                         Text(isDisableMenu ? 'Staff' : 'User',
@@ -705,12 +504,15 @@ class _ReservationViewState extends State<ReservationView> {
                     isDisableMenu: isDisableMenu,
                     selectedIndex: _selectedDateIndex,
                     onSelected: (index) => (index != _selectedDateIndex)
-                        ? setState(() {
-                            _selectedDateIndex = index;
-                            _selectedTimeSlot = 0;
-                            _isReserved = false;
-                            selectedTimeSlots = [];
-                            key = UniqueKey();
+                        ? _getReservationData().then((_) {
+                            setState(() {
+                              _selectedDateIndex = index;
+                              _selectedTimeSlot = 0;
+                              _isReserved = false;
+                              timeHasLoaded = true;
+                              selectedTimeSlots = [];
+                              key = UniqueKey();
+                            });
                           })
                         : null,
                     hasRole: hasRole,
@@ -724,37 +526,39 @@ class _ReservationViewState extends State<ReservationView> {
                   Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 20),
-                    child: isDisableMenu
-                        ? TimeSlotDisable(
-                            key: key,
-                            userReservation: userReservation,
-                            countNumOfReservation: countNumOfReservation,
-                            reservationDB: reservationDB,
-                            selectedTimeSlots: selectedTimeSlots,
-                            disabledReservation: disabledReservation,
-                            isDisable: isDisable,
-                            onChanged: (int index, bool? value) {
-                              setState(() {
-                                selectedTimeSlots[index] = value;
-                              });
-                            },
-                          )
-                        : TimeSlotReserve(
-                            key: key,
-                            countNumOfReservation: countNumOfReservation,
-                            reservationDB: reservationDB,
-                            disabledReservation: disabledReservation,
-                            userReservation: userReservation,
-                            selectedDateIndex: _selectedDateIndex,
-                            selectedTimeSlot: _selectedTimeSlot,
-                            isReserved: _isReserved,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedTimeSlot = value!;
-                                _isReserved = false;
-                              });
-                            },
-                          ),
+                    child: timeHasLoaded
+                        ? isDisableMenu
+                            ? TimeSlotDisable(
+                                key: key,
+                                userReservation: userReservation,
+                                countNumOfReservation: countNumOfReservation,
+                                reservationDB: reservationDB,
+                                selectedTimeSlots: selectedTimeSlots,
+                                disabledReservation: disabledReservation,
+                                isDisable: isDisable,
+                                onChanged: (int index, bool? value) {
+                                  setState(() {
+                                    selectedTimeSlots[index] = value;
+                                  });
+                                },
+                              )
+                            : TimeSlotReserve(
+                                key: key,
+                                countNumOfReservation: countNumOfReservation,
+                                reservationDB: reservationDB,
+                                disabledReservation: disabledReservation,
+                                userReservation: userReservation,
+                                selectedDateIndex: _selectedDateIndex,
+                                selectedTimeSlot: _selectedTimeSlot,
+                                isReserved: _isReserved,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedTimeSlot = value!;
+                                    _isReserved = false;
+                                  });
+                                },
+                              )
+                        : const TimeSlotLoading(),
                   ),
                   if (reservationDB.isEmpty) ...[
                     Row(

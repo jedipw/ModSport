@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/utilities/reservation/typeclass.dart';
 
-typedef CountNumOfReservationCallback = int Function(DateTime startTime);
+typedef CountNumOfReservationCallback = int Function(DateTime? startTime);
 typedef OnChangedCallback = void Function(int index, bool? value);
-typedef IsDisableCallback = bool Function(DateTime startTime);
+typedef IsDisableCallback = bool Function(DateTime? startTime);
 
 class TimeSlotDisable extends StatefulWidget {
   const TimeSlotDisable({
