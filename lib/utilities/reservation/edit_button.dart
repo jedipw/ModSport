@@ -31,16 +31,21 @@ class EditButton extends StatelessWidget {
           );
         },
 
-        child: const Text(
-          "EDIT", // Set the button text to "Disable"
-          style: TextStyle(
-            color: Color(0xFFE17325),
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-            fontFamily: 'Poppins',
-            fontStyle: FontStyle.normal,
-            height: 1.5,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text(
+              "EDIT ALL", // Set the button text to "Disable"
+              style: TextStyle(
+                color: Color(0xFFE17325),
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Poppins',
+                fontStyle: FontStyle.normal,
+                height: 1.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
