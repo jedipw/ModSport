@@ -7,17 +7,18 @@ class DateList extends StatelessWidget {
   final ValueChanged<int>
       onSelected; // A callback function that is called when a date is selected.
   final bool hasRole;
-
+  final bool isDisableMenu;
   const DateList({
     Key? key,
     required this.selectedIndex,
     required this.onSelected,
     required this.hasRole,
+    required this.isDisableMenu,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final int numOfDay = hasRole ? 30 : 7;
+    final int numOfDay = hasRole && isDisableMenu ? 30 : 7;
     final today = DateTime.now(); // Get the current date.
     final endDate = today
         .add(Duration(days: numOfDay)); // Calculate the end date of the list.
@@ -27,6 +28,7 @@ class DateList extends StatelessWidget {
           .inDays, // Generate a list of dates between the current date and the end date.
       (index) => today.add(Duration(days: index)),
     );
+
     return SingleChildScrollView(
       scrollDirection: Axis
           .horizontal, // Allows the user to scroll horizontally through the list.

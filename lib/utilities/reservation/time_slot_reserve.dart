@@ -7,19 +7,19 @@ typedef IsDisableCallback = bool Function(DateTime startTime);
 
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
 class TimeSlotReserve extends StatefulWidget {
-  const TimeSlotReserve(
-      {super.key,
-      required this.isDisable,
-      required this.countNumOfReservation,
-      required this.reservationDB,
-      required this.disabledReservation,
-      required this.userReservation,
-      required this.selectedDateIndex,
-      required this.selectedTimeSlot,
-      required this.isReserved,
-      required this.onChanged});
+  const TimeSlotReserve({
+    super.key,
 
-  final IsDisableCallback isDisable;
+    required this.countNumOfReservation,
+    required this.reservationDB,
+    required this.disabledReservation,
+    required this.userReservation,
+    required this.selectedDateIndex,
+    required this.selectedTimeSlot,
+    required this.isReserved,
+    required this.onChanged,
+  });
+
   final CountNumOfReservationCallback countNumOfReservation;
   final List<ReservationData> reservationDB;
   final List<DateTime> disabledReservation;
@@ -48,7 +48,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
       shrinkWrap: true,
-      itemCount: widget.reservationDB.length,
+      itemCount: widget.reservationDB.length, // increment by 1
       itemBuilder: (context, index) {
         // Builds a RadioListTile widget for each item in the list
         final int numOfReservation =
@@ -77,214 +77,77 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                 physics: const NeverScrollableScrollPhysics(),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 1,
-                  child: widget.isDisable(widget.reservationDB[index].startTime)
-                      ? RadioListTile(
-                          secondary: widget.selectedTimeSlot == index
-                              ? Container(
-                                  width: 24,
-                                  height: 24,
-                                  margin: const EdgeInsets.only(left: 15),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xFF808080),
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  width: 24,
-                                  height: 24,
-                                  margin: const EdgeInsets.only(left: 15),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color(0xFF808080),
-                                    border: Border.all(
-                                      width: 2,
-                                      color: const Color(0xFF808080),
-                                    ),
-                                  ),
-                                ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontStyle: FontStyle.normal,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 22,
-                                  height: 1.5,
-                                  color: Color(0xFF808080),
-                                ),
-                              ),
-                              Row(
-                                children: const [
-                                  Icon(Icons.block, color: Color(0xFF808080)),
-                                ],
-                              ),
-                            ],
-                          ),
-                          value: index,
-                          groupValue: widget.selectedTimeSlot,
-                          onChanged: null,
-                          activeColor: Colors.white,
-                          selectedTileColor: const Color(0xFFE17325),
-                          controlAffinity: ListTileControlAffinity.trailing,
-                        )
-                      : widget.countNumOfReservation(
-                                  widget.reservationDB[index].startTime) ==
-                              widget.reservationDB[index].capacity
-                          ? RadioListTile(
-                              secondary: widget.selectedTimeSlot == index
-                                  ? Container(
-                                      width: 24,
-                                      height: 24,
-                                      margin: const EdgeInsets.only(left: 15),
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xFF808080),
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.check,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      width: 24,
-                                      height: 24,
-                                      margin: const EdgeInsets.only(left: 15),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: const Color(0xFF808080),
-                                        border: Border.all(
-                                          width: 2,
-                                          color: const Color(0xFF808080),
-                                        ),
-                                      ),
-                                    ),
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
-                                    style: const TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 22,
-                                      height: 1.5,
-                                      color: Color(0xFF808080),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.people),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '$numOfReservation/${widget.reservationDB[index].capacity}',
-                                        style: const TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 22,
-                                          height: 1.5,
-                                          color: Color(0xFF808080),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              value: index,
-                              groupValue: widget.selectedTimeSlot,
-                              onChanged: null,
-                              activeColor: Colors.white,
-                              selectedTileColor: const Color(0xFFE17325),
-                              controlAffinity: ListTileControlAffinity.trailing,
-                            )
-                          : RadioListTile(
-                              secondary: widget.selectedTimeSlot == index
-                                  ? Container(
-                                      width: 24,
-                                      height: 24,
-                                      margin: const EdgeInsets.only(left: 15),
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xFFE17325),
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.check,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      width: 24,
-                                      height: 24,
-                                      margin: const EdgeInsets.only(left: 15),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.transparent,
-                                        border: Border.all(
-                                          width: 2,
-                                          color: const Color(0xFFE17325),
-                                        ),
-                                      ),
-                                    ),
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
-                                    style: const TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 22,
-                                      height: 1.5,
-                                      color: Color(0xFFE17325),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.people),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '$numOfReservation/${widget.reservationDB[index].capacity}',
-                                        style: const TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 22,
-                                          height: 1.5,
-                                          color: Color(0xFF808080),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              value: index,
-                              groupValue: widget.selectedTimeSlot,
-                              onChanged:
-                                  widget.isReserved ? null : widget.onChanged,
-                              activeColor: Colors.white,
-                              selectedTileColor: const Color(0xFFE17325),
-                              controlAffinity: ListTileControlAffinity.trailing,
+                  child: RadioListTile(
+                    secondary: widget.selectedTimeSlot == index
+                        ? Container(
+                            width: 24,
+                            height: 24,
+                            margin: const EdgeInsets.only(left: 15),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFFE17325),
                             ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            width: 24,
+                            height: 24,
+                            margin: const EdgeInsets.only(left: 15),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.transparent,
+                              border: Border.all(
+                                width: 2,
+                                color: const Color(0xFFE17325),
+                              ),
+                            ),
+                          ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 22,
+                            height: 1.5,
+                            color: Color(0xFFE17325),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.people),
+                            const SizedBox(width: 8),
+                            Text(
+                              '$numOfReservation/${widget.reservationDB[index].capacity}',
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                                height: 1.5,
+                                color: Color(0xFF808080),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    value: index,
+                    groupValue: widget.selectedTimeSlot,
+                    onChanged: widget.isReserved ? null : widget.onChanged,
+                    activeColor: Colors.white,
+                    selectedTileColor: const Color(0xFFE17325),
+                    controlAffinity: ListTileControlAffinity.trailing,
+                  ),
                 ),
               ),
             ),

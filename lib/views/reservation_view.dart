@@ -26,7 +26,7 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   int _selectedDateIndex = 0;
   bool _isReserved = false;
-  int selectedTimeSlot = -1;
+  int _selectedTimeSlot = 0;
   bool isDisableMenu = false;
   List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
@@ -46,118 +46,32 @@ class _ReservationViewState extends State<ReservationView> {
       return now.isAfter(endTime);
     }
 
-    final List<ReservationData> reservationDB = [
-      if (!isTimeSlotExpired(DateTime(now.year, now.month, now.day, 9, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 9),
-          endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 10, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 10),
-          endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 11, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 11),
-          endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 12, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 12),
-          endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 13, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 13),
-          endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 14, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 14),
-          endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 15, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 15),
-          endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 16, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 16),
-          endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 17, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 17),
-          endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 18, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 18),
-          endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 19, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 19),
-          endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 20, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 20),
-          endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 21, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 21),
-          endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 22, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 22),
-          endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
-          capacity: 4,
-        ),
-      if (!isTimeSlotExpired(
-          DateTime(now.year, now.month, now.day, 23, 59, 59)))
-        ReservationData(
-          startTime: DateTime(now.year, now.month, now.day, 23),
-          endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
-          capacity: 4,
-        ),
+    List<DateTime> disabledReservation = [
+      DateTime(2023, 4, 20, 9, 0, 0),
+      DateTime(2023, 4, 20, 10, 0, 0),
+      DateTime(2023, 4, 20, 11, 0, 0),
+      DateTime(2023, 4, 20, 12, 0, 0),
+      DateTime(2023, 4, 20, 13, 0, 0),
+      DateTime(2023, 4, 20, 14, 0, 0),
+      DateTime(2023, 4, 20, 15, 0, 0),
+      DateTime(2023, 4, 20, 16, 0, 0),
+      DateTime(2023, 4, 20, 17, 0, 0),
+      DateTime(2023, 4, 20, 18, 0, 0),
+      DateTime(2023, 4, 20, 19, 0, 0),
+      DateTime(2023, 4, 20, 20, 0, 0),
+      DateTime(2023, 4, 20, 21, 0, 0),
+      DateTime(2023, 4, 20, 22, 0, 0),
+      DateTime(2023, 4, 20, 23, 0, 0),
     ];
 
-    List<DateTime> disabledReservation = [
-      DateTime(2023, 4, 18, 15, 0, 0),
-      DateTime(2023, 4, 18, 16, 0, 0),
-      DateTime(2023, 4, 18, 18, 0, 0),
-    ];
+    bool isDisable(DateTime startTime) {
+      for (int i = 0; i < disabledReservation.length; i++) {
+        if (disabledReservation[i] == startTime) {
+          return true;
+        }
+      }
+      return false;
+    }
 
     List<UserReservationData> userReservation = [
       UserReservationData(
@@ -186,15 +100,6 @@ class _ReservationViewState extends State<ReservationView> {
           startTime: DateTime(2023, 4, 18, 17, 0, 0), userId: '12'),
     ];
 
-    bool isDisable(DateTime startTime) {
-      for (int i = 0; i < disabledReservation.length; i++) {
-        if (disabledReservation[i] == startTime) {
-          return true;
-        }
-      }
-      return false;
-    }
-
     int countNumOfReservation(DateTime startTime) {
       int num = 0;
       for (int i = 0; i < userReservation.length; i++) {
@@ -205,26 +110,266 @@ class _ReservationViewState extends State<ReservationView> {
       return num;
     }
 
-    int getFirstTimeSlot() {
-      for (int i = 0; i < reservationDB.length; i++) {
-        for (int j = 0; j < disabledReservation.length; j++) {
-          if (reservationDB[i]
-                  .startTime
-                  .isAtSameMomentAs(disabledReservation[j]) ||
-              countNumOfReservation(reservationDB[i].startTime) ==
-                  reservationDB[i].capacity) {
-            break;
-          } else if (j == disabledReservation.length - 1) {
-            return i;
-          }
-        }
-      }
-      return 0;
-    }
-
-    if (selectedTimeSlot == -1) {
-      selectedTimeSlot = getFirstTimeSlot();
-    }
+    final List<ReservationData> reservationDB = [
+      if (isDisableMenu) ...[
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 9, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 9),
+            endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 10, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 10),
+            endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 11, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 11),
+            endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 12, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 12),
+            endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 13, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 13),
+            endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 14, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 14),
+            endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 15, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 15),
+            endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 16, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 16),
+            endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 17, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 17),
+            endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 18, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 18),
+            endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 19, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 19),
+            endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 20, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 20),
+            endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 21, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 21),
+            endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 22, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 22),
+            endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+            DateTime(now.year, now.month, now.day, 23, 59, 59)))
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 23),
+            endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
+            capacity: 4,
+          ),
+      ] else ...[
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 9, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 9)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 9)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 9),
+            endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 10, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 10)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 10)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 10),
+            endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 11, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 11)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 11)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 11),
+            endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 12, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 12)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 12)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 12),
+            endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 13, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 13)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 13)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 13),
+            endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 14, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 14)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 14)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 14),
+            endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 15, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 15)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 15)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 15),
+            endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 16, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 16)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 16)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 16),
+            endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 17, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 17)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 17)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 17),
+            endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 18, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 18)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 18)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 18),
+            endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 19, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 19)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 19)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 19),
+            endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 20, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 20)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 20)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 20),
+            endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 21, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 21)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 21)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 21),
+            endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 22, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 22)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 22)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 22),
+            endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
+            capacity: 4,
+          ),
+        if (!isTimeSlotExpired(
+                DateTime(now.year, now.month, now.day, 23, 59, 59)) &&
+            !isDisable(DateTime(now.year, now.month, now.day, 23)) &&
+            countNumOfReservation(DateTime(now.year, now.month, now.day, 23)) !=
+                4)
+          ReservationData(
+            startTime: DateTime(now.year, now.month, now.day, 23),
+            endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
+            capacity: 4,
+          ),
+      ]
+    ];
 
     if (selectedTimeSlots.isEmpty) {
       selectedTimeSlots = List.generate(reservationDB.length, (index) => false);
@@ -282,152 +427,128 @@ class _ReservationViewState extends State<ReservationView> {
               ],
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            Stack(
               children: [
-                const SizedBox(
-                  width: 16,
-                ),
-                Column(
-                  children: [
-                    Text(
-                      zoneName,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 26,
-                        height: 1.5, // 39/26 = 1.5
-                        color: Color(0xFFE17325),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 5),
-            Row(
-              children: [
-                const SizedBox(
-                  width: 12,
-                ),
-                const Icon(
-                  Icons.location_on_outlined,
-                  color: Color(0x99000000),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        height: 1.5, // 21/14 = 1.5
-                        color: Color(0x99000000),
-                        letterSpacing: 0,
-                      ),
-                      children: [
-                        TextSpan(text: '${parts[0]} '),
-                        TextSpan(text: parts.sublist(1).join(' - ')),
-                      ],
+                Positioned(
+                  left: 25,
+                  child: Text(
+                    zoneName,
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26,
+                      height: 1.5, // 39/26 = 1.5
+                      color: Color(0xFFE17325),
                     ),
                   ),
                 ),
-                const SizedBox(width: 100),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on_outlined,
+                        color: Color(0x99000000),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              height: 1.5, // 21/14 = 1.5
+                              color: Color(0x99000000),
+                              letterSpacing: 0,
+                            ),
+                            children: [
+                              TextSpan(text: '${parts[0]} '),
+                              TextSpan(text: parts.sublist(1).join(' - ')),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 100),
+                    ],
+                  ),
+                ),
+                if (hasRole) ...[
+                  Positioned(
+                    right: 10,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 70.0,
+                          height: 70.0,
+                          child: IconButton(
+                            icon: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.25),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                backgroundColor: isDisableMenu
+                                    ? const Color(0xFFCC0019)
+                                    : const Color(0xFFE17325),
+                                radius: 35.0,
+                                child: const Icon(
+                                  Icons.swap_horiz_outlined,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              isDisableMenu == true
+                                  ? setState(() {
+                                      isDisableMenu = false;
+                                      _selectedDateIndex > 7
+                                          ? 0
+                                          : _selectedDateIndex;
+                                      _selectedTimeSlot = 0;
+                                      _isReserved = false;
+                                      selectedTimeSlots = [];
+                                      key = UniqueKey();
+                                    })
+                                  : setState(() {
+                                      isDisableMenu = true;
+                                      _selectedTimeSlot = 0;
+                                      _isReserved = false;
+                                      selectedTimeSlots = [];
+                                      key = UniqueKey();
+                                    });
+                            },
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(isDisableMenu ? 'Staff' : 'User',
+                                style: const TextStyle(
+                                  fontSize: 13, fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5, // 21/14 = 1.5
+                                  letterSpacing: 0,
+                                )),
+                            Icon(isDisableMenu
+                                ? Icons.admin_panel_settings_outlined
+                                : Icons.person_2_outlined)
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ]
               ],
             ),
-            if (hasRole) ...[
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          isDisableMenu == true
-                              ? setState(() {
-                                  isDisableMenu = false;
-                                  selectedTimeSlots = [];
-                                })
-                              : null;
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          backgroundColor: isDisableMenu
-                              ? Colors.white
-                              : const Color(0xFFE17325),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              bottomLeft: Radius.circular(10),
-                            ),
-                          ),
-                          side: const BorderSide(
-                            width: 1,
-                            color: Color(0xFFE17325),
-                          ),
-                        ),
-                        child: Text(
-                          'RESERVE',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: isDisableMenu
-                                ? const Color(0xFFE17325)
-                                : Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          isDisableMenu == false
-                              ? setState(() {
-                                  isDisableMenu = true;
-                                  _isReserved = false;
-                                })
-                              : null;
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          backgroundColor: !isDisableMenu
-                              ? Colors.white
-                              : const Color(0xFFE17325),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-                          side: const BorderSide(
-                            width: 1,
-                            color: Color(0xFFE17325),
-                          ),
-                        ),
-                        child: Text(
-                          'DISABLE',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: isDisableMenu
-                                ? Colors.white
-                                : const Color(0xFFE17325),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
 
             const SizedBox(height: 30),
             Row(
@@ -437,11 +558,12 @@ class _ReservationViewState extends State<ReservationView> {
                 ),
                 Expanded(
                   child: DateList(
+                    isDisableMenu: isDisableMenu,
                     selectedIndex: _selectedDateIndex,
                     onSelected: (index) => (index != _selectedDateIndex)
                         ? setState(() {
                             _selectedDateIndex = index;
-                            selectedTimeSlot = -1;
+                            _selectedTimeSlot = 0;
                             _isReserved = false;
                             selectedTimeSlots = [];
                             key = UniqueKey();
@@ -475,22 +597,61 @@ class _ReservationViewState extends State<ReservationView> {
                           )
                         : TimeSlotReserve(
                             key: key,
-                            isDisable: isDisable,
                             countNumOfReservation: countNumOfReservation,
                             reservationDB: reservationDB,
                             disabledReservation: disabledReservation,
                             userReservation: userReservation,
                             selectedDateIndex: _selectedDateIndex,
-                            selectedTimeSlot: selectedTimeSlot,
+                            selectedTimeSlot: _selectedTimeSlot,
                             isReserved: _isReserved,
                             onChanged: (value) {
                               setState(() {
-                                selectedTimeSlot = value!;
+                                _selectedTimeSlot = value!;
                                 _isReserved = false;
                               });
                             },
                           ),
                   ),
+                  if (reservationDB.isEmpty) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(bottom: 50),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.event_busy,
+                                  size: 100, color: Color(0x99000000)),
+                              SizedBox(height: 20),
+                              Text(
+                                'Sorry, we don\'t have any',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5, // 21/14 = 1.5
+                                  color: Color(0x99000000),
+                                  letterSpacing: 0,
+                                ),
+                              ),
+                              Text(
+                                'reservations available for this date.',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5, // 21/14 = 1.5
+                                  color: Color(0x99000000),
+                                  letterSpacing: 0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   Positioned(
                     bottom: 20,
                     left: 0,
@@ -498,158 +659,27 @@ class _ReservationViewState extends State<ReservationView> {
                     child: Container(
                       color: const Color.fromRGBO(255, 255, 255, 0.75),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          if (_selectedDateIndex < 7 &&
-                              countNumOfReservation(
-                                      reservationDB[selectedTimeSlot]
-                                          .startTime) !=
-                                  reservationDB[selectedTimeSlot].capacity &&
-                              !isDisable(
-                                  reservationDB[selectedTimeSlot].startTime) &&
-                              !isDisableMenu)
-                            ReserveButton(
-                              isReserved: _isReserved,
-                              onPressed: () {
-                                if (_isReserved) {
-                                  showDialog(
-                                    context: context,
-                                    barrierColor: Colors.white.withOpacity(0.5),
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        contentPadding: EdgeInsets.zero,
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Column(
-                                              children: const [
-                                                SizedBox(height: 40),
-                                                Text(
-                                                  'Are you sure\nyou want to\ncancel ?',
-                                                  style: TextStyle(
-                                                    fontSize: 25.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Poppins',
-                                                    color: Color(0xFFCC0019),
-                                                    height: 1.3,
-                                                    letterSpacing: 0.0,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                SizedBox(height: 30),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 84,
-                                                      height: 43,
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            _isReserved = false;
-                                                          });
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            const Color(
-                                                                0xFF009900),
-                                                          ),
-                                                          foregroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            Colors.white,
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Yes',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontStyle: FontStyle
-                                                                .normal,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 20.0,
-                                                            height: 1.2,
-                                                            letterSpacing: 0.0,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 34.0),
-                                                    SizedBox(
-                                                      width: 84,
-                                                      height: 43,
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            const Color(
-                                                                0xFFCC0019),
-                                                          ),
-                                                          foregroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            Colors.white,
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'No',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontStyle: FontStyle
-                                                                .normal,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 20.0,
-                                                            height: 1.2,
-                                                            letterSpacing: 0.0,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 30),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  setState(() {
-                                    _isReserved = true;
-                                  });
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    barrierColor: Colors.white.withOpacity(0.5),
-                                    builder: (BuildContext context) {
-                                      return Center(
-                                        child: AlertDialog(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (_selectedDateIndex < 7 &&
+                                reservationDB.isNotEmpty &&
+                                countNumOfReservation(
+                                        reservationDB[_selectedTimeSlot]
+                                            .startTime) !=
+                                    reservationDB[_selectedTimeSlot].capacity &&
+                                !isDisable(reservationDB[_selectedTimeSlot]
+                                    .startTime) &&
+                                !isDisableMenu)
+                              ReserveButton(
+                                isReserved: _isReserved,
+                                onPressed: () {
+                                  if (_isReserved) {
+                                    showDialog(
+                                      context: context,
+                                      barrierColor:
+                                          Colors.white.withOpacity(0.5),
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
@@ -658,48 +688,197 @@ class _ReservationViewState extends State<ReservationView> {
                                           content: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              const SizedBox(height: 60),
-                                              Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.green,
-                                                ),
-                                                child: const Icon(Icons.check,
-                                                    color: Colors.white,
-                                                    size: 80),
+                                              Column(
+                                                children: const [
+                                                  SizedBox(height: 40),
+                                                  Text(
+                                                    'Are you sure\nyou want to\ncancel ?',
+                                                    style: TextStyle(
+                                                      fontSize: 25.0,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontFamily: 'Poppins',
+                                                      color: Color(0xFFCC0019),
+                                                      height: 1.3,
+                                                      letterSpacing: 0.0,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  SizedBox(height: 30),
+                                                ],
                                               ),
-                                              const SizedBox(height: 10),
-                                              const Text(
-                                                'Success!',
-                                                style: TextStyle(
-                                                  fontSize: 20.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'Poppins',
-                                                  color: Colors.black,
-                                                  height: 1.3,
-                                                  letterSpacing: 0.0,
-                                                ),
-                                                textAlign: TextAlign.center,
+                                              Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 84,
+                                                        height: 43,
+                                                        child: TextButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isReserved =
+                                                                  false;
+                                                            });
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                              const Color(
+                                                                  0xFF009900),
+                                                            ),
+                                                            foregroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                              Colors.white,
+                                                            ),
+                                                          ),
+                                                          child: const Text(
+                                                            'Yes',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .normal,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 20.0,
+                                                              height: 1.2,
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                          width: 34.0),
+                                                      SizedBox(
+                                                        width: 84,
+                                                        height: 43,
+                                                        child: TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                              const Color(
+                                                                  0xFFCC0019),
+                                                            ),
+                                                            foregroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                              Colors.white,
+                                                            ),
+                                                          ),
+                                                          child: const Text(
+                                                            'No',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .normal,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 20.0,
+                                                              height: 1.2,
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
-                                              const SizedBox(height: 60),
+                                              const SizedBox(height: 30),
                                             ],
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                  Future.delayed(const Duration(seconds: 1),
-                                      () {
-                                    Navigator.of(context).pop();
-                                  });
-                                }
-                              },
-                            ),
-                          if (hasRole) ...[
-                            if (isDisable(reservationDB[selectedTimeSlot]
-                                    .startTime) ||
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    setState(() {
+                                      _isReserved = true;
+                                    });
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      barrierColor:
+                                          Colors.white.withOpacity(0.5),
+                                      builder: (BuildContext context) {
+                                        return Center(
+                                          child: AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                            contentPadding: EdgeInsets.zero,
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const SizedBox(height: 60),
+                                                Container(
+                                                  width: 100,
+                                                  height: 100,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.green,
+                                                  ),
+                                                  child: const Icon(Icons.check,
+                                                      color: Colors.white,
+                                                      size: 80),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                const Text(
+                                                  'Success!',
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Poppins',
+                                                    color: Colors.black,
+                                                    height: 1.3,
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                const SizedBox(height: 60),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                    Future.delayed(const Duration(seconds: 1),
+                                        () {
+                                      Navigator.of(context).pop();
+                                    });
+                                  }
+                                },
+                              ),
+                            if (reservationDB.isNotEmpty &&
+                                    isDisable(reservationDB[_selectedTimeSlot]
+                                        .startTime) ||
                                 (isDisableMenu == true &&
                                     selectedTimeSlots
                                         .every((element) => element == false) &&
@@ -707,8 +886,8 @@ class _ReservationViewState extends State<ReservationView> {
                                       return disabledReservation
                                           .contains(reservation.startTime);
                                     }))) ...[
-                              EditButton(isDisableMenu: isDisableMenu),
-                              EnableButton(isDisableMenu: isDisableMenu),
+                              const EditButton(),
+                              const EnableButton(),
                             ] else if (!selectedTimeSlots
                                     .every((element) => element == false) &&
                                 isDisableMenu == true) ...[
@@ -716,9 +895,7 @@ class _ReservationViewState extends State<ReservationView> {
                                   isDisableMenu: isDisableMenu,
                                   selectedTimeSlots: selectedTimeSlots),
                             ]
-                          ]
-                        ],
-                      ),
+                          ]),
                     ),
                   ),
                 ],

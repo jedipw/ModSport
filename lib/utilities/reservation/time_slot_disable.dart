@@ -120,17 +120,24 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                           children: [
                             const Icon(Icons.people, color: Color(0xFF808080)),
                             const SizedBox(width: 8),
-                            Text(
-                              '$numOfReservation/${widget.reservationDB[index].capacity}',
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 22,
-                                height: 1.5,
-                                color: Color(0xFF808080),
-                              ),
-                            ),
+                            widget.isDisable(
+                                    widget.reservationDB[index].startTime)
+                                ? const Icon(
+                                    Icons.block,
+                                    color: Color(0xFF808080),
+                                    size: 35,
+                                  )
+                                : Text(
+                                    '$numOfReservation/${widget.reservationDB[index].capacity}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 22,
+                                      height: 1.5,
+                                      color: Color(0xFF808080),
+                                    ),
+                                  ),
                             const SizedBox(width: 13),
                           ],
                         )
