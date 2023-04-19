@@ -1,5 +1,7 @@
 // Importing necessary packages and files
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:modsport/utilities/reservation/date_list.dart';
 import 'package:modsport/utilities/reservation/edit_button.dart';
 import 'package:modsport/utilities/reservation/enable_button.dart';
@@ -30,6 +32,35 @@ class _ReservationViewState extends State<ReservationView> {
   bool isDisableMenu = false;
   List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
+  String _imgUrl = 'https://i.imgur.com/AoYPnKY.png';
+
+  @override
+  void initState() {
+    super.initState();
+    _getLocationData();
+  }
+
+  Future<void> _getLocationData() async {
+    try {
+      // Get the location document snapshot
+      DocumentSnapshot locationSnapshot =
+          await FirebaseCloudStorage().getLocation('MkWiWwppZx5OvoM730js');
+
+      // Extract the img_url from the location snapshot
+      String imgUrl = locationSnapshot.data() != null &&
+              (locationSnapshot.data() as Map<String, dynamic>)
+                  .containsKey('img_url')
+          ? (locationSnapshot.data() as Map<String, dynamic>)['img_url']
+          : '';
+
+      // Update the state with the imgUrl
+      setState(() {
+        _imgUrl = imgUrl;
+      });
+    } catch (e) {
+      print('Error fetching location data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -383,11 +414,27 @@ class _ReservationViewState extends State<ReservationView> {
             // Use a Stack widget to position the arrow button on top of the image
             Stack(
               children: [
-                Image.asset(
-                  'assets/images/badmintoncourt1.jpg',
-                  height: 240,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+                Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 240,
+                      color: Color(0xFF808080),
+                    ),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child:
+                            CircularProgressIndicator(color: Color(0xFFE17325)),
+                      ),
+                    ),
+                    Image.network(
+                      _imgUrl,
+                      height: 240,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ],
                 ),
                 Column(
                   children: [
