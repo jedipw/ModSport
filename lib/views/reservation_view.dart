@@ -1,4 +1,6 @@
 // Importing necessary packages and files
+import 'dart:developer' show log;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
@@ -10,6 +12,7 @@ import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
 import 'package:modsport/utilities/reservation/typeclass.dart';
+import 'package:shimmer/shimmer.dart';
 
 bool hasRole = true;
 
@@ -33,18 +36,52 @@ class _ReservationViewState extends State<ReservationView> {
   List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
   String _imgUrl = 'https://i.imgur.com/AoYPnKY.png';
+  String _locationName = '';
+  String _locationId = '';
+  String _zoneName = '';
+  List<ReservationData> _reservation = [];
 
   @override
   void initState() {
     super.initState();
     _getLocationData();
+    _getZoneData();
+  }
+
+  Future<void> _getZoneData() async {
+    try {
+      // Get the zone document snapshot
+      DocumentSnapshot zoneSnapshot =
+          await FirebaseCloudStorage().getZone('TEHMJQbzdGplLBfcrZq0');
+
+      String locationId = zoneSnapshot.data() != null &&
+              (zoneSnapshot.data() as Map<String, dynamic>)
+                  .containsKey('location_id')
+          ? (zoneSnapshot.data() as Map<String, dynamic>)['location_id']
+          : '';
+
+      String zoneName = zoneSnapshot.data() != null &&
+              (zoneSnapshot.data() as Map<String, dynamic>)
+                  .containsKey('zone_name')
+          ? (zoneSnapshot.data() as Map<String, dynamic>)['zone_name']
+          : '';
+
+      // Update the state
+      setState(() {
+        _locationId = locationId;
+        _zoneName = zoneName;
+      });
+    } catch (e) {
+      log('Error fetching location data: $e');
+    }
   }
 
   Future<void> _getLocationData() async {
     try {
+      await _getZoneData();
       // Get the location document snapshot
       DocumentSnapshot locationSnapshot =
-          await FirebaseCloudStorage().getLocation('MkWiWwppZx5OvoM730js');
+          await FirebaseCloudStorage().getLocation(_locationId);
 
       // Extract the img_url from the location snapshot
       String imgUrl = locationSnapshot.data() != null &&
@@ -53,22 +90,25 @@ class _ReservationViewState extends State<ReservationView> {
           ? (locationSnapshot.data() as Map<String, dynamic>)['img_url']
           : '';
 
+      String locationName = locationSnapshot.data() != null &&
+              (locationSnapshot.data() as Map<String, dynamic>)
+                  .containsKey('location_name')
+          ? (locationSnapshot.data() as Map<String, dynamic>)['location_name']
+          : '';
+
       // Update the state with the imgUrl
       setState(() {
         _imgUrl = imgUrl;
+        _locationName = locationName;
       });
     } catch (e) {
-      print('Error fetching location data: $e');
+      log('Error fetching location data: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String zoneName =
-        widget.zoneId == '123456' ? 'Badminton Court 1' : 'Unknown Court';
-    String facilityName =
-        'King Mongkut\'s 190th Anniversary Memorial Building - 3rd Floor';
-    List<String> parts = facilityName.split(RegExp(r'\s+(?=-\s)'));
+    List<String> parts = _locationName.split(RegExp(r'\s+(?=-\s)'));
 
     final DateTime now = DateTime.now().add(Duration(days: _selectedDateIndex));
     // A list of time slots as TimeSlotData objects
@@ -141,11 +181,17 @@ class _ReservationViewState extends State<ReservationView> {
       return num;
     }
 
+    bool isTheSameDay(DateTime day) {
+      if (day.day == now.day) return true;
+      return false;
+    }
+
     final List<ReservationData> reservationDB = [
       if (isDisableMenu) ...[
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 9, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 9),
             endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
             capacity: 4,
@@ -153,6 +199,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 10, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 10),
             endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
             capacity: 4,
@@ -160,6 +207,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 11, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 11),
             endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
             capacity: 4,
@@ -167,6 +215,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 12, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 12),
             endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
             capacity: 4,
@@ -174,6 +223,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 13, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 13),
             endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
             capacity: 4,
@@ -181,6 +231,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 14, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 14),
             endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
             capacity: 4,
@@ -188,6 +239,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 15, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 15),
             endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
             capacity: 4,
@@ -195,6 +247,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 16, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 16),
             endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
             capacity: 4,
@@ -202,6 +255,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 17, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 17),
             endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
             capacity: 4,
@@ -209,6 +263,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 18, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 18),
             endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
             capacity: 4,
@@ -216,6 +271,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 19, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 19),
             endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
             capacity: 4,
@@ -223,6 +279,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 20, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 20),
             endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
             capacity: 4,
@@ -230,6 +287,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 21, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 21),
             endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
             capacity: 4,
@@ -237,6 +295,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 22, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 22),
             endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
             capacity: 4,
@@ -244,6 +303,7 @@ class _ReservationViewState extends State<ReservationView> {
         if (!isTimeSlotExpired(
             DateTime(now.year, now.month, now.day, 23, 59, 59)))
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 23),
             endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
             capacity: 4,
@@ -255,6 +315,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 9)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 9),
             endTime: DateTime(now.year, now.month, now.day, 9, 59, 59),
             capacity: 4,
@@ -265,6 +326,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 10)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 10),
             endTime: DateTime(now.year, now.month, now.day, 10, 59, 59),
             capacity: 4,
@@ -275,6 +337,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 11)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 11),
             endTime: DateTime(now.year, now.month, now.day, 11, 59, 59),
             capacity: 4,
@@ -285,6 +348,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 12)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 12),
             endTime: DateTime(now.year, now.month, now.day, 12, 59, 59),
             capacity: 4,
@@ -295,6 +359,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 13)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 13),
             endTime: DateTime(now.year, now.month, now.day, 13, 59, 59),
             capacity: 4,
@@ -305,6 +370,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 14)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 14),
             endTime: DateTime(now.year, now.month, now.day, 14, 59, 59),
             capacity: 4,
@@ -315,6 +381,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 15)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 15),
             endTime: DateTime(now.year, now.month, now.day, 15, 59, 59),
             capacity: 4,
@@ -325,6 +392,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 16)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 16),
             endTime: DateTime(now.year, now.month, now.day, 16, 59, 59),
             capacity: 4,
@@ -335,6 +403,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 17)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 17),
             endTime: DateTime(now.year, now.month, now.day, 17, 59, 59),
             capacity: 4,
@@ -345,6 +414,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 18)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 18),
             endTime: DateTime(now.year, now.month, now.day, 18, 59, 59),
             capacity: 4,
@@ -355,6 +425,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 19)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 19),
             endTime: DateTime(now.year, now.month, now.day, 19, 59, 59),
             capacity: 4,
@@ -365,6 +436,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 20)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 20),
             endTime: DateTime(now.year, now.month, now.day, 20, 59, 59),
             capacity: 4,
@@ -375,6 +447,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 21)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 21),
             endTime: DateTime(now.year, now.month, now.day, 21, 59, 59),
             capacity: 4,
@@ -385,6 +458,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 22)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 22),
             endTime: DateTime(now.year, now.month, now.day, 22, 59, 59),
             capacity: 4,
@@ -395,6 +469,7 @@ class _ReservationViewState extends State<ReservationView> {
             countNumOfReservation(DateTime(now.year, now.month, now.day, 23)) !=
                 4)
           ReservationData(
+            zoneId: '',
             startTime: DateTime(now.year, now.month, now.day, 23),
             endTime: DateTime(now.year, now.month, now.day, 23, 59, 59),
             capacity: 4,
@@ -419,9 +494,9 @@ class _ReservationViewState extends State<ReservationView> {
                     Container(
                       width: double.infinity,
                       height: 240,
-                      color: Color(0xFF808080),
+                      color: const Color(0xFF808080),
                     ),
-                    Positioned.fill(
+                    const Positioned.fill(
                       child: Align(
                         alignment: Alignment.center,
                         child:
@@ -478,19 +553,29 @@ class _ReservationViewState extends State<ReservationView> {
               children: [
                 Positioned(
                   left: 25,
-                  child: Text(
-                    zoneName,
-                    style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26,
-                      height: 1.5, // 39/26 = 1.5
-                      color: Color(0xFFE17325),
-                    ),
-                  ),
+                  child: _zoneName.isEmpty
+                      ? Shimmer.fromColors(
+                          baseColor: const Color.fromARGB(255, 216, 216, 216),
+                          highlightColor:
+                              const Color.fromRGBO(173, 173, 173, 0.824),
+                          child: Container(
+                            width: 150,
+                            height: 30.0,
+                            color: Colors.white,
+                          ))
+                      : Text(
+                          _zoneName,
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 26,
+                            height: 1.5, // 39/26 = 1.5
+                            color: Color(0xFFE17325),
+                          ),
+                        ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(bottom: 10),
+                  margin: const EdgeInsets.only(bottom: 20),
                   padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
                   child: Row(
                     children: [
@@ -502,22 +587,34 @@ class _ReservationViewState extends State<ReservationView> {
                         width: 5,
                       ),
                       Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              height: 1.5, // 21/14 = 1.5
-                              color: Color(0x99000000),
-                              letterSpacing: 0,
-                            ),
-                            children: [
-                              TextSpan(text: '${parts[0]} '),
-                              TextSpan(text: parts.sublist(1).join(' - ')),
-                            ],
-                          ),
-                        ),
+                        child: _locationName.isEmpty
+                            ? Shimmer.fromColors(
+                                baseColor:
+                                    const Color.fromARGB(255, 216, 216, 216),
+                                highlightColor:
+                                    const Color.fromRGBO(173, 173, 173, 0.824),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 10.0,
+                                  color: Colors.white,
+                                ))
+                            : RichText(
+                                text: TextSpan(
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.5, // 21/14 = 1.5
+                                    color: Color(0x99000000),
+                                    letterSpacing: 0,
+                                  ),
+                                  children: [
+                                    TextSpan(text: '${parts[0]} '),
+                                    TextSpan(
+                                        text: parts.sublist(1).join(' - ')),
+                                  ],
+                                ),
+                              ),
                       ),
                       const SizedBox(width: 100),
                     ],
@@ -526,70 +623,70 @@ class _ReservationViewState extends State<ReservationView> {
                 if (hasRole) ...[
                   Positioned(
                     right: 10,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: 70.0,
-                          height: 70.0,
-                          child: IconButton(
-                            icon: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.25),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
+                    child: SizedBox(
+                      width: 70.0,
+                      height: 70.0,
+                      child: IconButton(
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.25),
+                                blurRadius: 4,
+                                offset: const Offset(0, 4),
                               ),
-                              child: CircleAvatar(
-                                backgroundColor: isDisableMenu
-                                    ? const Color(0xFFCC0019)
-                                    : const Color(0xFFE17325),
-                                radius: 35.0,
-                                child: const Icon(
-                                  Icons.swap_horiz_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: isDisableMenu
+                                ? const Color(0xFFCC0019)
+                                : const Color(0xFFE17325),
+                            radius: 35.0,
+                            child: const Icon(
+                              Icons.swap_horiz_outlined,
+                              color: Colors.white,
                             ),
-                            onPressed: () {
-                              isDisableMenu == true
-                                  ? setState(() {
-                                      isDisableMenu = false;
-                                      _selectedDateIndex > 7
-                                          ? 0
-                                          : _selectedDateIndex;
-                                      _selectedTimeSlot = 0;
-                                      _isReserved = false;
-                                      selectedTimeSlots = [];
-                                      key = UniqueKey();
-                                    })
-                                  : setState(() {
-                                      isDisableMenu = true;
-                                      _selectedTimeSlot = 0;
-                                      _isReserved = false;
-                                      selectedTimeSlots = [];
-                                      key = UniqueKey();
-                                    });
-                            },
                           ),
                         ),
-                        Row(
-                          children: [
-                            Text(isDisableMenu ? 'Staff' : 'User',
-                                style: const TextStyle(
-                                  fontSize: 13, fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.5, // 21/14 = 1.5
-                                  letterSpacing: 0,
-                                )),
-                            Icon(isDisableMenu
-                                ? Icons.admin_panel_settings_outlined
-                                : Icons.person_2_outlined)
-                          ],
-                        ),
+                        onPressed: () {
+                          isDisableMenu == true
+                              ? setState(() {
+                                  isDisableMenu = false;
+                                  _selectedDateIndex > 7
+                                      ? 0
+                                      : _selectedDateIndex;
+                                  _selectedTimeSlot = 0;
+                                  _isReserved = false;
+                                  selectedTimeSlots = [];
+                                  key = UniqueKey();
+                                })
+                              : setState(() {
+                                  isDisableMenu = true;
+                                  _selectedTimeSlot = 0;
+                                  _isReserved = false;
+                                  selectedTimeSlots = [];
+                                  key = UniqueKey();
+                                });
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 15,
+                    top: 60,
+                    child: Row(
+                      children: [
+                        Text(isDisableMenu ? 'Staff' : 'User',
+                            style: const TextStyle(
+                              fontSize: 13, fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              height: 1.5, // 21/14 = 1.5
+                              letterSpacing: 0,
+                            )),
+                        Icon(isDisableMenu
+                            ? Icons.admin_panel_settings_outlined
+                            : Icons.person_2_outlined)
                       ],
                     ),
                   )
