@@ -1,7 +1,8 @@
 class ReservationData {
-  final DateTime startTime;
-  final DateTime endTime;
-  final int capacity;
+
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final int? capacity;
 
   ReservationData({
     required this.startTime,
@@ -9,6 +10,7 @@ class ReservationData {
     required this.capacity,
   });
 }
+
 
 class UserReservationData {
   final DateTime startTime;

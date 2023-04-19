@@ -18,6 +18,7 @@ dependencies:
   path: ^1.8.2
   path_provider: ^2.0.14
   sqflite: ^2.2.6
+  shimmer: ^2.0.0
 
 dev_dependencies:
   flutter_test:

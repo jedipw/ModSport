@@ -31,7 +31,7 @@ class _HomeViewState extends State<HomeView> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ReservationView(zoneId: '123456'),
+                builder: (context) => const ReservationView(zoneId: 'TEHMJQbzdGplLBfcrZq0'),
               ),
             );
           },
