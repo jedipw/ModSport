@@ -560,7 +560,7 @@ class _ReservationViewState extends State<ReservationView> {
                               )
                         : const TimeSlotLoading(),
                   ),
-                  if (reservationDB.isEmpty) ...[
+                  if (reservationDB.isEmpty && timeHasLoaded) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
