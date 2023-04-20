@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/utilities/reservation/typeclass.dart';
 import 'package:shimmer/shimmer.dart';
 
 typedef OnChangedCallback = void Function(int? value);

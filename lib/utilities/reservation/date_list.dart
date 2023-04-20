@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+const int numOfStaffDay = 30;
 class DateList extends StatelessWidget {
+  final int numOfUserDay;
   final int
       selectedIndex; // The index of the currently selected date in the list.
   final ValueChanged<int>
@@ -10,6 +12,7 @@ class DateList extends StatelessWidget {
   final bool isDisableMenu;
   const DateList({
     Key? key,
+    required this.numOfUserDay,
     required this.selectedIndex,
     required this.onSelected,
     required this.hasRole,
@@ -18,7 +21,7 @@ class DateList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int numOfDay = hasRole && isDisableMenu ? 30 : 7;
+    final int numOfDay = hasRole && isDisableMenu ? numOfStaffDay : numOfUserDay;
     final today = DateTime.now(); // Get the current date.
     final endDate = today
         .add(Duration(days: numOfDay)); // Calculate the end date of the list.
