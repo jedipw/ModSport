@@ -1,7 +1,5 @@
 // Importing necessary packages and files
 import 'dart:developer' show log;
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
@@ -13,10 +11,11 @@ import 'package:modsport/utilities/reservation/time_slot_loading.dart';
 import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
-import 'package:modsport/utilities/reservation/typeclass.dart';
+import 'package:modsport/utilities/types.dart';
 import 'package:shimmer/shimmer.dart';
 
-bool hasRole = true;
+const bool hasRole = true;
+const int numOfUserDay = 7;
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
@@ -35,14 +34,17 @@ class _ReservationViewState extends State<ReservationView> {
   bool _isReserved = false;
   int _selectedTimeSlot = 0;
   bool isDisableMenu = false;
-  bool timeHasLoaded = false;
+  bool _isTimeFirstLoaded = true;
+  bool _isTimeLoaded = false;
+  bool _isZoneLoaded = false;
+  bool _isLocationLoaded = false;
   List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
   String _imgUrl = 'https://i.imgur.com/AoYPnKY.png';
   String _locationName = '';
   String _locationId = '';
   String _zoneName = '';
-  List<DocumentSnapshot> _reservation = [];
+  List<ReservationData> _reservations = [];
 
   @override
   void initState() {
@@ -51,7 +53,7 @@ class _ReservationViewState extends State<ReservationView> {
     _getZoneData();
     _getReservationData().then((value) {
       setState(() {
-        timeHasLoaded = true;
+        _isTimeLoaded = true;
       });
     });
   }
@@ -61,79 +63,58 @@ class _ReservationViewState extends State<ReservationView> {
     super.didChangeDependencies();
     _getLocationData();
     _getZoneData();
-    _getReservationData().then((value) {
-      setState(() {
-        timeHasLoaded = true;
-      });
-    });
+    _getReservationData();
   }
 
   Future<void> _getReservationData() async {
     try {
-      timeHasLoaded = false;
-      List<DocumentSnapshot> reservation =
-          await FirebaseCloudStorage().getReservation(widget.zoneId);
+      List<ReservationData> reservations = await FirebaseCloudStorage()
+          .getReservation(widget.zoneId, isDisableMenu, _selectedDateIndex);
 
       setState(() {
-        _reservation = reservation;
+        _reservations = reservations;
+        _isTimeLoaded = true;
+        _isTimeFirstLoaded = false;
       });
     } catch (e) {
-      log('Error fetching location data: $e');
+      log('Error fetching reservation data: $e');
     }
   }
 
   Future<void> _getZoneData() async {
     try {
-      // Get the zone document snapshot
-      DocumentSnapshot zoneSnapshot =
-          await FirebaseCloudStorage().getZone(widget.zoneId);
-
-      String locationId = zoneSnapshot.data() != null &&
-              (zoneSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('locationId')
-          ? (zoneSnapshot.data() as Map<String, dynamic>)['locationId']
-          : '';
-
-      String zoneName = zoneSnapshot.data() != null &&
-              (zoneSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('zoneName')
-          ? (zoneSnapshot.data() as Map<String, dynamic>)['zoneName']
-          : '';
+      // Get the zone data
+      ZoneData zoneData = await FirebaseCloudStorage().getZone(widget.zoneId);
+      String locationId = zoneData.locationId;
+      String zoneName = zoneData.zoneName;
 
       // Update the state
       setState(() {
         _locationId = locationId;
         _zoneName = zoneName;
+        _isZoneLoaded = true;
       });
     } catch (e) {
-      log('Error fetching location data: $e');
+      log('Error fetching zone data: $e');
     }
   }
 
   Future<void> _getLocationData() async {
     try {
       await _getZoneData();
-      // Get the location document snapshot
-      DocumentSnapshot locationSnapshot =
+      // Get the location data
+      LocationData locationData =
           await FirebaseCloudStorage().getLocation(_locationId);
 
-      // Extract the img_url from the location snapshot
-      String imgUrl = locationSnapshot.data() != null &&
-              (locationSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('imgUrl')
-          ? (locationSnapshot.data() as Map<String, dynamic>)['imgUrl']
-          : '';
-
-      String locationName = locationSnapshot.data() != null &&
-              (locationSnapshot.data() as Map<String, dynamic>)
-                  .containsKey('locationName')
-          ? (locationSnapshot.data() as Map<String, dynamic>)['locationName']
-          : '';
+      // Extract the imgUrl and locationName from the location data
+      String imgUrl = locationData.imgUrl;
+      String locationName = locationData.locationName;
 
       // Update the state with the imgUrl
       setState(() {
         _imgUrl = imgUrl;
         _locationName = locationName;
+        _isLocationLoaded = true;
       });
     } catch (e) {
       log('Error fetching location data: $e');
@@ -145,28 +126,22 @@ class _ReservationViewState extends State<ReservationView> {
     List<String> parts = _locationName.split(RegExp(r'\s+(?=-\s)'));
 
     final DateTime now = DateTime.now().add(Duration(days: _selectedDateIndex));
-    // A list of time slots as TimeSlotData objects
-    bool isTimeSlotExpired(DateTime endTime) {
-      final DateTime now = DateTime.now();
-      return now.isAfter(endTime);
-    }
-
     List<DateTime> disabledReservation = [
-      DateTime(2023, 4, 20, 9, 0, 0),
-      DateTime(2023, 4, 20, 10, 0, 0),
-      DateTime(2023, 4, 20, 11, 0, 0),
-      DateTime(2023, 4, 20, 12, 0, 0),
-      DateTime(2023, 4, 20, 13, 0, 0),
-      DateTime(2023, 4, 20, 14, 0, 0),
-      DateTime(2023, 4, 20, 15, 0, 0),
-      DateTime(2023, 4, 20, 16, 0, 0),
-      DateTime(2023, 4, 20, 17, 0, 0),
-      DateTime(2023, 4, 20, 18, 0, 0),
-      DateTime(2023, 4, 20, 19, 0, 0),
-      DateTime(2023, 4, 20, 20, 0, 0),
-      DateTime(2023, 4, 20, 21, 0, 0),
-      DateTime(2023, 4, 20, 22, 0, 0),
-      DateTime(2023, 4, 20, 23, 0, 0),
+      // DateTime(2023, 4, 20, 9, 0, 0),
+      // DateTime(2023, 4, 20, 10, 0, 0),
+      // DateTime(2023, 4, 20, 11, 0, 0),
+      // DateTime(2023, 4, 20, 12, 0, 0),
+      // DateTime(2023, 4, 20, 13, 0, 0),
+      // DateTime(2023, 4, 20, 14, 0, 0),
+      // DateTime(2023, 4, 20, 15, 0, 0),
+      // DateTime(2023, 4, 20, 16, 0, 0),
+      // DateTime(2023, 4, 20, 17, 0, 0),
+      // DateTime(2023, 4, 20, 18, 0, 0),
+      // DateTime(2023, 4, 20, 19, 0, 0),
+      // DateTime(2023, 4, 20, 20, 0, 0),
+      // DateTime(2023, 4, 20, 21, 0, 0),
+      // DateTime(2023, 4, 20, 22, 0, 0),
+      // DateTime(2023, 4, 20, 23, 0, 0),
     ];
 
     bool isDisable(DateTime? startTime) {
@@ -223,26 +198,20 @@ class _ReservationViewState extends State<ReservationView> {
 
     final List<ReservationData> reservationDB = [];
 
-    for (int i = 0; i < _reservation.length; i++) {
-      Map<String, dynamic> reservationData =
-          _reservation[i].data() as Map<String, dynamic>;
+    for (int i = 0; i < _reservations.length; i++) {
+      ReservationData reservationData = _reservations[i];
 
-      DateTime startTime = reservationData['startTime'].toDate();
-      DateTime endTime = reservationData['endTime'].toDate();
-      int capacity = reservationData['capacity'];
+      DateTime? startTime = reservationData.startTime;
+      DateTime? endTime = reservationData.endTime;
+      int? capacity = reservationData.capacity;
 
-      if ((isDisableMenu &&
-              !isTimeSlotExpired(DateTime(now.year, now.month, now.day,
-                  endTime.hour, endTime.minute, endTime.second)) &&
-              isTheSameDay(startTime)) ||
+      if ((isDisableMenu && isTheSameDay(startTime!)) ||
           (!isDisableMenu &&
-              !isTimeSlotExpired(DateTime(now.year, now.month, now.day,
-                  endTime.hour, endTime.minute, endTime.second)) &&
               !isDisable(DateTime(
                 now.year,
                 now.month,
                 now.day,
-                startTime.hour,
+                startTime!.hour,
                 startTime.minute,
                 startTime.second,
               )) &&
@@ -250,8 +219,22 @@ class _ReservationViewState extends State<ReservationView> {
               isTheSameDay(startTime))) {
         reservationDB.add(
           ReservationData(
-            startTime: startTime,
-            endTime: endTime,
+            startTime: DateTime(
+              now.year,
+              now.month,
+              now.day,
+              startTime.hour,
+              startTime.minute,
+              startTime.second,
+            ),
+            endTime: DateTime(
+              now.year,
+              now.month,
+              now.day,
+              endTime!.hour,
+              endTime.minute,
+              endTime.second,
+            ),
             capacity: capacity,
           ),
         );
@@ -336,7 +319,7 @@ class _ReservationViewState extends State<ReservationView> {
               children: [
                 Positioned(
                   left: 25,
-                  child: _zoneName.isEmpty
+                  child: !_isZoneLoaded
                       ? Shimmer.fromColors(
                           baseColor: const Color.fromARGB(255, 216, 216, 216),
                           highlightColor:
@@ -370,7 +353,7 @@ class _ReservationViewState extends State<ReservationView> {
                         width: 5,
                       ),
                       Expanded(
-                        child: _locationName.isEmpty
+                        child: !_isLocationLoaded
                             ? Shimmer.fromColors(
                                 baseColor:
                                     const Color.fromARGB(255, 216, 216, 216),
@@ -434,17 +417,20 @@ class _ReservationViewState extends State<ReservationView> {
                         ),
                         onPressed: () {
                           if (isDisableMenu) {
+                            setState(() {
+                              _isTimeLoaded = false;
+                            });
                             // If isDisableMenu is true, disable the menu and update the widget state
                             _getReservationData().then((_) {
                               setState(() {
                                 isDisableMenu = false;
-                                _selectedDateIndex = _selectedDateIndex > 6
-                                    ? 0
-                                    : _selectedDateIndex;
+                                _selectedDateIndex =
+                                    _selectedDateIndex > numOfUserDay - 1
+                                        ? numOfUserDay - 1
+                                        : _selectedDateIndex;
                                 _selectedTimeSlot = 0;
                                 _isReserved = false;
                                 selectedTimeSlots = [];
-                                timeHasLoaded = true;
                                 key = UniqueKey();
                               });
                             }).catchError((error) {
@@ -452,13 +438,15 @@ class _ReservationViewState extends State<ReservationView> {
                               log('Error fetching reservation data: $error');
                             });
                           } else {
+                            setState(() {
+                              _isTimeLoaded = false;
+                            });
                             // If isDisableMenu is false, enable the menu and update the widget state
                             _getReservationData().then((_) {
                               setState(() {
                                 isDisableMenu = true;
                                 _selectedTimeSlot = 0;
                                 _isReserved = false;
-                                timeHasLoaded = true;
                                 selectedTimeSlots = [];
                                 key = UniqueKey();
                               });
@@ -493,7 +481,7 @@ class _ReservationViewState extends State<ReservationView> {
               ],
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
             Row(
               children: [
                 const SizedBox(
@@ -501,20 +489,25 @@ class _ReservationViewState extends State<ReservationView> {
                 ),
                 Expanded(
                   child: DateList(
+                    numOfUserDay: numOfUserDay,
                     isDisableMenu: isDisableMenu,
                     selectedIndex: _selectedDateIndex,
-                    onSelected: (index) => (index != _selectedDateIndex)
-                        ? _getReservationData().then((_) {
-                            setState(() {
-                              _selectedDateIndex = index;
-                              _selectedTimeSlot = 0;
-                              _isReserved = false;
-                              timeHasLoaded = true;
-                              selectedTimeSlots = [];
-                              key = UniqueKey();
-                            });
-                          })
-                        : null,
+                    onSelected: (index) {
+                      if (index != _selectedDateIndex) {
+                        setState(() {
+                          _selectedDateIndex = index;
+                          _isTimeLoaded = false;
+                        });
+                        _getReservationData().then((_) {
+                          setState(() {
+                            _selectedTimeSlot = 0;
+                            _isReserved = false;
+                            selectedTimeSlots = [];
+                            key = UniqueKey();
+                          });
+                        });
+                      }
+                    },
                     hasRole: hasRole,
                   ),
                 ),
@@ -526,7 +519,7 @@ class _ReservationViewState extends State<ReservationView> {
                   Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 20),
-                    child: timeHasLoaded
+                    child: _isTimeLoaded
                         ? isDisableMenu
                             ? TimeSlotDisable(
                                 key: key,
@@ -558,9 +551,18 @@ class _ReservationViewState extends State<ReservationView> {
                                   });
                                 },
                               )
-                        : const TimeSlotLoading(),
+                        : _isTimeFirstLoaded
+                            ? const TimeSlotLoading()
+                            : Container(
+                                padding: const EdgeInsets.only(bottom: 50),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFFE17325),
+                                  ),
+                                ),
+                              ),
                   ),
-                  if (reservationDB.isEmpty && timeHasLoaded) ...[
+                  if (reservationDB.isEmpty && _isTimeLoaded) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -674,6 +676,96 @@ class _ReservationViewState extends State<ReservationView> {
                                                             Navigator.of(
                                                                     context)
                                                                 .pop();
+                                                            showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              barrierColor: Colors
+                                                                  .white
+                                                                  .withOpacity(
+                                                                      0.5),
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                Future.delayed(
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            1),
+                                                                    () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                });
+                                                                return Center(
+                                                                  child:
+                                                                      AlertDialog(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                    ),
+                                                                    contentPadding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    content:
+                                                                        Column(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                60),
+                                                                        Container(
+                                                                          width:
+                                                                              100,
+                                                                          height:
+                                                                              100,
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            shape:
+                                                                                BoxShape.circle,
+                                                                            color:
+                                                                                Colors.green,
+                                                                          ),
+                                                                          child: const Icon(
+                                                                              Icons.check,
+                                                                              color: Colors.white,
+                                                                              size: 80),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                10),
+                                                                        const Text(
+                                                                          'Success!',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                20.0,
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontFamily:
+                                                                                'Poppins',
+                                                                            color:
+                                                                                Colors.black,
+                                                                            height:
+                                                                                1.3,
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                          ),
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                60),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
                                                           },
                                                           style: ButtonStyle(
                                                             backgroundColor:

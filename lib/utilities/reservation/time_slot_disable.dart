@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/utilities/reservation/typeclass.dart';
+import 'package:modsport/utilities/types.dart';
 
 typedef CountNumOfReservationCallback = int Function(DateTime? startTime);
 typedef OnChangedCallback = void Function(int index, bool? value);
