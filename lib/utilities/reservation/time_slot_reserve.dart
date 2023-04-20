@@ -10,7 +10,7 @@ class TimeSlotReserve extends StatefulWidget {
   const TimeSlotReserve({
     super.key,
     required this.countNumOfReservation,
-    required this.reservationDB,
+    required this.reservation,
     required this.disabledReservation,
     required this.userReservation,
     required this.selectedDateIndex,
@@ -20,8 +20,8 @@ class TimeSlotReserve extends StatefulWidget {
   });
 
   final CountNumOfReservationCallback countNumOfReservation;
-  final List<ReservationData> reservationDB;
-  final List<DateTime> disabledReservation;
+  final List<ReservationData> reservation;
+  final List<DisableData> disabledReservation;
   final List<UserReservationData> userReservation;
   final int selectedDateIndex;
   final int selectedTimeSlot;
@@ -47,11 +47,11 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
       shrinkWrap: true,
-      itemCount: widget.reservationDB.length, // increment by 1
+      itemCount: widget.reservation.length, // increment by 1
       itemBuilder: (context, index) {
         // Builds a RadioListTile widget for each item in the list
         final int numOfReservation =
-            widget.countNumOfReservation(widget.reservationDB[index].startTime);
+            widget.countNumOfReservation(widget.reservation[index].startTime);
         return Theme(
           data: theme,
           child: Container(
@@ -103,7 +103,9 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                               color: Colors.transparent,
                               border: Border.all(
                                 width: 2,
-                                color: const Color(0xFFE17325),
+                                color: widget.isReserved
+                                    ? const Color(0xFF808080)
+                                    : const Color(0xFFE17325),
                               ),
                             ),
                           ),
@@ -111,14 +113,18 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${widget.reservationDB[index].startTime.toString().substring(11, 16)} - ${widget.reservationDB[index].endTime.toString().substring(11, 16)}',
-                          style: const TextStyle(
+                          '${widget.reservation[index].startTime.toString().substring(11, 16)} - ${widget.reservation[index].endTime.toString().substring(11, 16)}',
+                          style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w500,
                             fontSize: 22,
                             height: 1.5,
-                            color: Color(0xFFE17325),
+                            color: !widget.isReserved ||
+                                    (widget.isReserved &&
+                                        index == widget.selectedTimeSlot)
+                                ? const Color(0xFFE17325)
+                                : const Color(0xFF808080),
                           ),
                         ),
                         Row(
@@ -126,7 +132,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                             const Icon(Icons.people),
                             const SizedBox(width: 8),
                             Text(
-                              '$numOfReservation/${widget.reservationDB[index].capacity}',
+                              '$numOfReservation/${widget.reservation[index].capacity}',
                               style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontStyle: FontStyle.normal,

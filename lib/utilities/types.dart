@@ -11,11 +11,11 @@ class ReservationData {
 }
 
 class UserReservationData {
-  final DateTime startTime;
+  final DateTime startDateTime;
   final String userId;
 
   UserReservationData({
-    required this.startTime,
+    required this.startDateTime,
     required this.userId,
   });
 }
@@ -37,5 +37,15 @@ class LocationData {
   LocationData({
     required this.imgUrl,
     required this.locationName,
+  });
+}
+
+class DisableData {
+  final DateTime startDateTime;
+  final String disableReason;
+
+  DisableData({
+    required this.startDateTime,
+    required this.disableReason,
   });
 }
