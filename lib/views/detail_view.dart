@@ -12,14 +12,64 @@ class DetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // This widget is the app bar at the top of the screen
-      appBar: AppBar(
-        title: const Text('Detailed Status'),
-        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
-      ),
       // This widget is the body of the screen, which displays the text 'Detail Page' at the center of the screen
-      body:
-          Center(child: Text('Zone ID: $zoneId \n Start time: $startDateTime')),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 150),
+                // Start writing your code here
+                Center(
+                    child:
+                        Text('Zone ID: $zoneId \n Start time: $startDateTime'))
+              ],
+            ),
+          ),
+          Stack(
+            children: [
+              Container(
+                height: 125,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE17325),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20.0),
+                    bottomRight: Radius.circular(20.0),
+                  ),
+                ),
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: const [
+                    Text(
+                      'STATUS',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 24.0,
+                        height: 1.5,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 15,
+                top: 65,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
