@@ -6,7 +6,6 @@ import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/page_route.dart';
 
 // Importing the views/screens used in the app
-import 'package:modsport/views/disable_view.dart';
 import 'package:modsport/views/help_center_view.dart';
 import 'package:modsport/views/home_view.dart';
 import 'package:modsport/views/login_view.dart';
@@ -43,11 +42,6 @@ class MainApp extends StatelessWidget {
           case loginRoute:
             return ModSportPageRoute(
                 builder: (_) => const LoginView(), settings: settings);
-
-          // Routing for the DisableView screen
-          case disableRoute:
-            return ModSportPageRoute(
-                builder: (_) => const DisableView(), settings: settings);
 
           // Routing for the HomeView screen
           case homeRoute:

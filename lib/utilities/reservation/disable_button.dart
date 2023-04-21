@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/constants/routes.dart';
+import 'package:modsport/utilities/types.dart';
+import 'package:modsport/views/disable_view.dart';
 
 class DisableButton extends StatelessWidget {
   const DisableButton(
-      {Key? key, required this.isDisableMenu, required this.selectedTimeSlots})
+      {Key? key,
+      required this.isDisableMenu,
+      required this.selectedTimeSlots,
+      required this.zoneId,
+      required this.reservations,
+      required this.selectedDateIndex})
       : super(key: key);
   final bool isDisableMenu;
   final List<bool?> selectedTimeSlots;
+  final String zoneId;
+  final List<ReservationData> reservations;
+  final int selectedDateIndex;
 
   @override
   Widget build(BuildContext context) {
     int numOfSelectedTimeSlots =
         selectedTimeSlots.where((element) => element == true).length;
+    List<String> reservationIds = [];
+
     return SizedBox(
       height: 55,
       width: 140,
@@ -30,10 +41,25 @@ class DisableButton extends StatelessWidget {
             ),
           ),
         ), // Set the button background color to grey
-
         onPressed: () {
-          Navigator.of(context).pushNamed(
-            disableRoute, // Navigate to the disableRoute when the button is pressed
+          reservationIds = [];
+          selectedTimeSlots.asMap().forEach((index, isSelected) {
+            if (isSelected!) {
+              reservationIds.add(reservations[index].reservationId);
+            }
+          });
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              fullscreenDialog: true,
+              builder: (context) => DisableView(
+                zoneId: zoneId,
+                reservationIds: reservationIds,
+                reason: '',
+                selectedDateIndex: selectedDateIndex,
+              ),
+            ),
           );
         },
 

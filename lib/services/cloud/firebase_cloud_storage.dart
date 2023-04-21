@@ -106,6 +106,7 @@ class FirebaseCloudStorage {
                       )) !=
                       capacity))) {
         reservations.add(ReservationData(
+            reservationId: doc.id,
             capacity: capacity,
             startTime: DateTime(
               now.year,
@@ -163,5 +164,30 @@ class FirebaseCloudStorage {
     }
 
     return userReservations;
+  }
+
+  Future<List<Map<String, dynamic>>> getReservationTime(
+      List<String> reservationIds, int selectedDateIndex) async {
+    final List<Map<String, dynamic>> reservationDetails = [];
+
+    final DateTime now = DateTime.now().add(Duration(days: selectedDateIndex));
+
+    for (final reservationId in reservationIds) {
+      final DocumentSnapshot reservationSnapshot =
+          await _firestore.collection('reservation').doc(reservationId).get();
+      final DateTime startTime =
+          (reservationSnapshot['startTime'] as Timestamp).toDate();
+      final DateTime endTime =
+          (reservationSnapshot['endTime'] as Timestamp).toDate();
+
+      reservationDetails.add({
+        'startTime': DateTime(now.year, now.month, now.day, startTime.hour,
+            startTime.minute, startTime.second),
+        'endTime': DateTime(now.year, now.month, now.day, endTime.hour,
+            endTime.minute, endTime.second),
+      });
+    }
+
+    return reservationDetails;
   }
 }

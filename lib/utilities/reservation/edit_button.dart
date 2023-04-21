@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/constants/routes.dart';
+import 'package:modsport/views/disable_view.dart';
 
 class EditButton extends StatelessWidget {
-  const EditButton({Key? key}) : super(key: key);
+  const EditButton({Key? key, required this.selectedDateIndex})
+      : super(key: key);
+  final int selectedDateIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +28,14 @@ class EditButton extends StatelessWidget {
         ), // Set the button background color to grey
 
         onPressed: () {
-          Navigator.of(context).pushNamed(
-            disableRoute, // Navigate to the disableRoute when the button is pressed
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     fullscreenDialog: true,
+          //     builder: (context) =>
+          //         DisableView(zoneId: '', reservationIds: [], reason: '', selectedDateIndex: selectedDateIndex,),
+          //   ),
+          // );
         },
 
         child: Row(

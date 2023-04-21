@@ -103,7 +103,8 @@ class EnableButton extends StatelessWidget {
                                                   fontSize: 20.0,
                                                   fontWeight: FontWeight.bold,
                                                   fontFamily: 'Poppins',
-                                                  color: Colors.black,
+                                                  color: Color.fromRGBO(
+                                                      0, 0, 0, 0.8),
                                                   height: 1.3,
                                                   letterSpacing: 0.0,
                                                 ),

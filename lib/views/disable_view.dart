@@ -1,16 +1,43 @@
-import 'package:flutter/material.dart';
+import 'dart:developer' show log;
 
-TextStyle textStyle = const TextStyle(
+import 'package:flutter/material.dart';
+import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
+import 'package:modsport/utilities/types.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
+
+TextStyle topTextStyle = const TextStyle(
   fontFamily: 'Poppins',
   fontStyle: FontStyle.normal,
-  fontWeight: FontWeight.w600,
-  fontSize: 26.0,
-  height: 1.5,
+  fontWeight: FontWeight.w500,
+  fontSize: 22,
+  height:
+      1.5, // or line-height: 33px, which is equivalent to 1.5 times the font size
+  color: Color.fromRGBO(0, 0, 0, 0.6),
+);
+
+TextStyle bottomTextStyle = const TextStyle(
+  fontFamily: 'Poppins',
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w500,
+  fontSize: 14,
+  height:
+      1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
+  color: Color(0xFFDB611D),
 );
 
 // A stateless widget for the disable view
 class DisableView extends StatefulWidget {
-  const DisableView({super.key});
+  const DisableView(
+      {super.key,
+      required this.zoneId,
+      required this.reservationIds,
+      required this.reason,
+      required this.selectedDateIndex});
+  final String zoneId;
+  final List<String> reservationIds;
+  final String reason;
+  final int selectedDateIndex;
 
   @override
   State<DisableView> createState() => _DisableViewState();
@@ -19,6 +46,67 @@ class DisableView extends StatefulWidget {
 class _DisableViewState extends State<DisableView> {
   int numOfCharacter = 0;
   final reasonController = TextEditingController();
+  String _zoneName = '';
+  List<Map<String, dynamic>> reservationTimes = [];
+  bool _isZoneNameLoaded = false;
+  bool _isReservationTimeLoaded = false;
+  String _getDayOrdinal(int day) {
+    if (day >= 11 && day <= 13) {
+      return '${day}th';
+    }
+    switch (day % 10) {
+      case 1:
+        return '${day}st';
+      case 2:
+        return '${day}nd';
+      case 3:
+        return '${day}rd';
+      default:
+        return '${day}th';
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getZoneName();
+    _getReservationTime();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getZoneName();
+    _getReservationTime();
+  }
+
+  Future<void> _getZoneName() async {
+    try {
+      // Get the zone data
+      ZoneData zoneData = await FirebaseCloudStorage().getZone(widget.zoneId);
+      String zoneName = zoneData.zoneName;
+      // Update the state
+      setState(() {
+        _zoneName = zoneName;
+        _isZoneNameLoaded = true;
+      });
+    } catch (e) {
+      log('Error fetching zone name: $e');
+    }
+  }
+
+  Future<void> _getReservationTime() async {
+    try {
+      List<Map<String, dynamic>> reservation = await FirebaseCloudStorage()
+          .getReservationTime(widget.reservationIds, widget.selectedDateIndex);
+      setState(() {
+        reservationTimes = reservation;
+        _isReservationTimeLoaded = true;
+      });
+    } catch (e) {
+      log('Error fetching zone name: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -41,16 +129,83 @@ class _DisableViewState extends State<DisableView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.fromLTRB(35, 20, 35, 5),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Facility:', style: textStyle),
-                        Text('Date:', style: textStyle),
-                        Text('Time:', style: textStyle),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Facility: ', style: topTextStyle),
+                            _isZoneNameLoaded
+                                ? Expanded(
+                                    child: Text(_zoneName, style: topTextStyle),
+                                  )
+                                : Shimmer.fromColors(
+                                    baseColor: const Color.fromARGB(
+                                        255, 216, 216, 216),
+                                    highlightColor: const Color.fromRGBO(
+                                        173, 173, 173, 0.824),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(top: 5),
+                                      width: 150,
+                                      height: 25.0,
+                                      color: Colors.white,
+                                    )),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                Text('Date: ', style: topTextStyle),
+                                _isReservationTimeLoaded
+                                    ? Text(
+                                        '${_getDayOrdinal(reservationTimes.first['startTime'].day)} ${DateFormat('MMMM').format(reservationTimes.first['startTime'])} ${reservationTimes[0]['startTime'].year}',
+                                        style: topTextStyle)
+                                    : Shimmer.fromColors(
+                                        baseColor: const Color.fromARGB(
+                                            255, 216, 216, 216),
+                                        highlightColor: const Color.fromRGBO(
+                                            173, 173, 173, 0.824),
+                                        child: Container(
+                                          margin: const EdgeInsets.only(top: 5),
+                                          width: 150,
+                                          height: 25.0,
+                                          color: Colors.white,
+                                        )),
+                              ],
+                            )
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Time: ', style: topTextStyle),
+                            _isReservationTimeLoaded
+                                ? Column(
+                                    children: reservationTimes
+                                        .map((text) => Text(
+                                            '${text['startTime'].toString().substring(11, 16)} - ${text['endTime'].toString().substring(11, 16)}',
+                                            style: topTextStyle))
+                                        .toList(),
+                                    // Text(widget.reservationIds[index]);
+                                  )
+                                : Shimmer.fromColors(
+                                    baseColor: const Color.fromARGB(
+                                        255, 216, 216, 216),
+                                    highlightColor: const Color.fromRGBO(
+                                        173, 173, 173, 0.824),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(top: 5),
+                                      width: 150,
+                                      height: 25.0,
+                                      color: Colors.white,
+                                    )),
+                          ],
+                        ),
                         const SizedBox(height: 50),
-                        Text('Reason:',
-                            style: textStyle, textAlign: TextAlign.left),
+                        Text('Reason:', style: topTextStyle),
                         TextFormField(
                           controller: reasonController,
                           autofocus: true,
@@ -70,26 +225,33 @@ class _DisableViewState extends State<DisableView> {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
+                padding: const EdgeInsets.symmetric(horizontal: 35),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       '$numOfCharacter/250',
                       style: TextStyle(
-                          color: numOfCharacter > 250 || numOfCharacter < 10
-                              ? Colors.red
-                              : Colors.black),
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        height:
+                            1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
+                        color: numOfCharacter < 10 || numOfCharacter > 250
+                            ? const Color(0xFFDB611D)
+                            : const Color(0xFF808080),
+                      ),
                     ),
                     if (numOfCharacter < 10)
-                      const Text(
+                      Text(
                         'Type at least 10 characters!',
-                        style: TextStyle(color: Colors.red),
+                        style: bottomTextStyle,
                       ),
                     if (numOfCharacter > 250)
-                      const Text(
+                      Text(
                         'Delete some characters!',
-                        style: TextStyle(color: Colors.red),
+                        style: bottomTextStyle,
                       ),
                   ],
                 ),
@@ -104,7 +266,7 @@ class _DisableViewState extends State<DisableView> {
                       BorderSide(
                         color: numOfCharacter > 250 || numOfCharacter < 10
                             ? const Color(0xFF808080)
-                            : const Color(0xFF009900),
+                            : const Color(0xFFE17325),
                         width: 3,
                       ),
                     ),
@@ -221,8 +383,12 @@ class _DisableViewState extends State<DisableView> {
                                                                           .bold,
                                                                   fontFamily:
                                                                       'Poppins',
-                                                                  color: Colors
-                                                                      .black,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          0,
+                                                                          0,
+                                                                          0,
+                                                                          0.8),
                                                                   height: 1.3,
                                                                   letterSpacing:
                                                                       0.0,
@@ -316,7 +482,7 @@ class _DisableViewState extends State<DisableView> {
                     style: TextStyle(
                       color: numOfCharacter > 250 || numOfCharacter < 10
                           ? const Color(0xFF808080)
-                          : const Color(0xFF009900),
+                          : const Color(0xFFE17325),
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Poppins',
