@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/utilities/navbar.dart';
+import 'package:modsport/utilities/drawer.dart';
 import 'package:modsport/views/detail_view.dart';
 
 class StatusView extends StatefulWidget {
@@ -10,13 +10,12 @@ class StatusView extends StatefulWidget {
 }
 
 class _StatusViewState extends State<StatusView> {
-  final int _currentNavbarIndex = 1;
+  final int _currentDrawerIndex = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: modSportNavBar(
-          _currentNavbarIndex, context), // add the custom bottom navigation bar
+      drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
       appBar: AppBar(
         title: const Text('Status'),
         backgroundColor: const Color.fromARGB(255, 225, 115, 37),

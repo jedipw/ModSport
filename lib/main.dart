@@ -4,13 +4,15 @@ import 'package:firebase_core/firebase_core.dart';
 // Importing route constants and custom page route transitions
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/page_route.dart';
+import 'package:modsport/views/forget_password_view.dart';
 
 // Importing the views/screens used in the app
 import 'package:modsport/views/help_center_view.dart';
 import 'package:modsport/views/home_view.dart';
 import 'package:modsport/views/login_view.dart';
-import 'package:modsport/views/menu_view.dart';
+import 'package:modsport/views/register_view.dart';
 import 'package:modsport/views/status_view.dart';
+import 'package:modsport/views/verify_email_view.dart';
 
 // Importing Firebase options
 import 'firebase_options.dart';
@@ -58,10 +60,20 @@ class MainApp extends StatelessWidget {
             return ModSportPageRoute(
                 builder: (_) => const HelpCenterView(), settings: settings);
 
-          // Routing for the MenuView screen
-          case menuRoute:
+          // Routing for the RegisterView screen
+          case registerRoute:
             return ModSportPageRoute(
-                builder: (_) => const MenuView(), settings: settings);
+                builder: (_) => const RegisterView(), settings: settings);
+
+          // Routing for the ForgetPasswordView screen
+          case forgetPasswordRoute:
+            return ModSportPageRoute(
+                builder: (_) => const ForgetPasswordView(), settings: settings);
+
+          // Routing for the VerifyEmailView screen
+          case verifyEmailRoute:
+            return ModSportPageRoute(
+                builder: (_) => const VerifyEmailView(), settings: settings);
 
           // Return null for any unknown routes
           default:

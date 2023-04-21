@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/utilities/types.dart';
@@ -189,5 +191,23 @@ class FirebaseCloudStorage {
     }
 
     return reservationDetails;
+  }
+
+  Future<void> createDisableReservation(
+    String zoneId,
+    String disableReason,
+    List<Timestamp> startDateTimeList,
+  ) async {
+    try {
+      for (var startDateTime in startDateTimeList) {
+        await _firestore.collection('disable').add({
+          'zoneId': zoneId,
+          'disableReason': disableReason,
+          'startDateTime': startDateTime,
+        });
+      }
+    } catch (e) {
+      log('Error creating disabled reservation: $e');
+    }
   }
 }

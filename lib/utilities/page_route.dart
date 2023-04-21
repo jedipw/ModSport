@@ -5,7 +5,7 @@ class ModSportPageRoute<T> extends MaterialPageRoute<T> {
   final List<String> noAnimationRoutes = [
     homeRoute,
     statusRoute,
-    menuRoute,
+    helpCenterRoute,
   ];
 
   // Constructor to initialize the class with builder and settings
