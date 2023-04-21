@@ -11,6 +11,7 @@ import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
 import 'package:modsport/utilities/types.dart';
+import 'package:modsport/views/disable_view.dart';
 import 'package:shimmer/shimmer.dart';
 
 const bool hasRole = true;
@@ -48,6 +49,7 @@ class _ReservationViewState extends State<ReservationView> {
   List<ReservationData> _reservations = [];
   List<DisableData> disabledReservation = [];
   List<UserReservationData> userReservation = [];
+  List<String> reservationIds = [];
 
   @override
   void initState() {
@@ -925,9 +927,44 @@ class _ReservationViewState extends State<ReservationView> {
                               DisableButton(
                                 isDisableMenu: isDisableMenu,
                                 selectedTimeSlots: selectedTimeSlots,
-                                zoneId: widget.zoneId,
-                                reservations: _reservations,
-                                selectedDateIndex: _selectedDateIndex,
+                                onPressed: () {
+                                  reservationIds = [];
+                                  selectedTimeSlots
+                                      .asMap()
+                                      .forEach((index, isSelected) {
+                                    if (isSelected!) {
+                                      reservationIds.add(
+                                          _reservations[index].reservationId);
+                                    }
+                                  });
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      fullscreenDialog: true,
+                                      builder: (context) => DisableView(
+                                        zoneId: widget.zoneId,
+                                        reservationIds: reservationIds,
+                                        reason: '',
+                                        selectedDateIndex: _selectedDateIndex,
+                                      ),
+                                    ),
+                                  )
+                                      .then((_) => setState(
+                                            () {
+                                              selectedTimeSlots = [];
+                                              _isTimeLoaded = false;
+                                              _isDisableReservationLoaded =
+                                                  false;
+                                              _isUserReservationLoaded = false;
+                                            },
+                                          ))
+                                      .then((_) => _getReservationData()
+                                          .then((_) =>
+                                              _getDisableReservationData())
+                                          .then((_) =>
+                                              _getUserReservationData()));
+                                },
                               ),
                             ]
                           ]
