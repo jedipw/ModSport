@@ -1,9 +1,11 @@
 class ReservationData {
+  final String reservationId;
   final DateTime? startTime;
   final DateTime? endTime;
   final int? capacity;
 
   ReservationData({
+    required this.reservationId,
     required this.startTime,
     required this.endTime,
     required this.capacity,
