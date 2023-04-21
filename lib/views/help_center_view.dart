@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/utilities/drawer.dart';
 
 class HelpCenterView extends StatelessWidget {
   const HelpCenterView({super.key});
+  final int _currentDrawerIndex = 2;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
       appBar: AppBar(
         title: const Text('Help Center'),
         backgroundColor: const Color.fromARGB(255, 225, 115, 37),

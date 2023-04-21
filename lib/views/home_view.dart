@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:modsport/utilities/navbar.dart';
+import 'package:modsport/utilities/drawer.dart';
 import 'package:modsport/views/reservation_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -10,14 +10,13 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final int _currentNavbarIndex =
-      0; // Define current selected index of the navbar
+  final int _currentDrawerIndex =
+      0; // Define current selected index of the drawer
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: modSportNavBar(_currentNavbarIndex,
-            context), // Display the navbar with the current index
+        drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
         appBar: AppBar(
           title: const Text('Home'),
           backgroundColor: const Color.fromARGB(255, 225, 115, 37),
@@ -31,7 +30,8 @@ class _HomeViewState extends State<HomeView> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ReservationView(zoneId: 'TEHMJQbzdGplLBfcrZq0'),
+                builder: (context) =>
+                    const ReservationView(zoneId: 'TEHMJQbzdGplLBfcrZq0'),
               ),
             );
           },

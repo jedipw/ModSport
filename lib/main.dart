@@ -9,7 +9,6 @@ import 'package:modsport/utilities/page_route.dart';
 import 'package:modsport/views/help_center_view.dart';
 import 'package:modsport/views/home_view.dart';
 import 'package:modsport/views/login_view.dart';
-import 'package:modsport/views/menu_view.dart';
 import 'package:modsport/views/status_view.dart';
 
 // Importing Firebase options
@@ -58,10 +57,6 @@ class MainApp extends StatelessWidget {
             return ModSportPageRoute(
                 builder: (_) => const HelpCenterView(), settings: settings);
 
-          // Routing for the MenuView screen
-          case menuRoute:
-            return ModSportPageRoute(
-                builder: (_) => const MenuView(), settings: settings);
 
           // Return null for any unknown routes
           default:
