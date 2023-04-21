@@ -43,10 +43,12 @@ class LocationData {
 }
 
 class DisableData {
+  final String disableId;
   final DateTime startDateTime;
   final String disableReason;
 
   DisableData({
+    required this.disableId,
     required this.startDateTime,
     required this.disableReason,
   });
