@@ -142,8 +142,10 @@ class FirebaseCloudStorage {
     for (var doc in querySnapshot.docs) {
       DateTime startDateTime = (doc['startDateTime'])?.toDate();
       String reason = doc['disableReason'];
-      disabledReservations.add(
-          DisableData(startDateTime: startDateTime, disableReason: reason));
+      disabledReservations.add(DisableData(
+          disableId: doc.id,
+          startDateTime: startDateTime,
+          disableReason: reason));
     }
 
     return disabledReservations;
@@ -208,6 +210,16 @@ class FirebaseCloudStorage {
       }
     } catch (e) {
       log('Error creating disabled reservation: $e');
+    }
+  }
+
+  Future<void> deleteDisableReservation(List<String> reservationIds) async {
+    final disableReservationRef =
+        FirebaseFirestore.instance.collection('disable');
+
+    for (final id in reservationIds) {
+      final reservationRef = disableReservationRef.doc(id);
+      await reservationRef.delete();
     }
   }
 }

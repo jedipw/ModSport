@@ -57,7 +57,7 @@ class _HomeViewState extends State<HomeView> {
           Stack(
             children: [
               Container(
-                height: 200,
+                height: 190,
                 decoration: const BoxDecoration(
                   color: Color(0xFFE17325),
                   borderRadius: BorderRadius.only(
@@ -86,7 +86,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 35),
+                    const SizedBox(height: 25),
                     Container(
                         padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
                         height: 40,
