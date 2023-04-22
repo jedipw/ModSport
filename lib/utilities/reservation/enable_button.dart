@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 
 typedef OnPressedCallBack = Function();
 
@@ -15,7 +16,7 @@ class EnableButton extends StatelessWidget {
         style: ButtonStyle(
           side: MaterialStateProperty.all(
             const BorderSide(
-              color: Color(0xFF009900),
+              color: primaryGreen,
               width: 3,
             ),
           ),
@@ -33,7 +34,7 @@ class EnableButton extends StatelessWidget {
             Text(
               "ENABLE ALL", // Set the button text to "Disable"
               style: TextStyle(
-                color: Color(0xFF009900),
+                color: primaryGreen,
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 fontFamily: 'Poppins',

@@ -30,7 +30,7 @@ dynamic showSuccessModal(BuildContext context, bool needToClose) {
                 height: 100,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.green,
+                  color: primaryGreen,
                 ),
                 child: const Icon(Icons.check, color: Colors.white, size: 80),
               ),
@@ -120,7 +120,7 @@ dynamic showConfirmationModal(BuildContext context, OnPressedCallBack onPressed,
                         onPressed: onPressed,
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xFF009900),
+                            primaryGreen,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
