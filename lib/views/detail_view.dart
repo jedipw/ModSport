@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 
 // This class represents the Detail view of the app
 class DetailView extends StatelessWidget {
@@ -31,7 +32,7 @@ class DetailView extends StatelessWidget {
               Container(
                 height: 125,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFE17325),
+                  color: primaryOrange,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20.0),
                     bottomRight: Radius.circular(20.0),
@@ -64,7 +65,7 @@ class DetailView extends StatelessWidget {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE17325),
+                    backgroundColor: primaryOrange,
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
                     fixedSize: const Size.fromRadius(25),

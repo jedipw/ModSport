@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 
 class ReserveButton extends StatelessWidget {
   final bool
@@ -23,7 +24,7 @@ class ReserveButton extends StatelessWidget {
             BorderSide(
               color: isReserved
                   ? const Color(0xFFCC0019)
-                  : const Color(0xFFE17325),
+                  : primaryOrange,
               width: 3,
             ),
           ),
@@ -41,7 +42,7 @@ class ReserveButton extends StatelessWidget {
               : "RESERVE", // Set the button text based on the isReserved value
           style: TextStyle(
             color:
-                isReserved ? const Color(0xFFCC0019) : const Color(0xFFE17325),
+                isReserved ? const Color(0xFFCC0019) : primaryOrange,
             fontSize: 20,
             fontWeight: FontWeight.w500,
             fontFamily: 'Poppins',

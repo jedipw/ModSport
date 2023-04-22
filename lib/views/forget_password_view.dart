@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
 
 class ForgetPasswordView extends StatelessWidget {
@@ -12,7 +13,7 @@ class ForgetPasswordView extends StatelessWidget {
       // scaffold widget provides a basic app bar, drawer and body
       appBar: AppBar(
         title: const Text('Forget Password'),
-        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+        backgroundColor: primaryOrange,
       ), // app bar with a title
       body: Center(
         // centers child widget in the screen

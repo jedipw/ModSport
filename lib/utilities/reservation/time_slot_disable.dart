@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/types.dart';
 
 typedef CountNumOfReservationCallback = int Function(DateTime? startTime);
@@ -61,7 +62,7 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
             child: Row(
               children: [
                 Checkbox(
-                  activeColor: const Color(0xFFE17325),
+                  activeColor: primaryOrange,
                   value: widget.isDisable(widget.reservation[index].startTime)
                       ? !widget.selectedTimeSlots[index]!
                       : widget.selectedTimeSlots[index],
@@ -75,12 +76,12 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                   fillColor: MaterialStateProperty.resolveWith<Color?>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.disabled)) {
-                        return const Color(0xFFE17325);
+                        return primaryOrange;
                       }
                       return widget
                               .isDisable(widget.reservation[index].startTime)
                           ? const Color(0xFF808080)
-                          : const Color(0xFFE17325);
+                          : primaryOrange;
                     },
                   ),
                   shape: RoundedRectangleBorder(
@@ -89,8 +90,8 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   visualDensity:
                       const VisualDensity(horizontal: 1, vertical: 1),
-                  hoverColor: const Color(0xFFE17325).withOpacity(0.04),
-                  focusColor: const Color(0xFFE17325).withOpacity(0.12),
+                  hoverColor: primaryOrange.withOpacity(0.04),
+                  focusColor: primaryOrange.withOpacity(0.12),
                 ),
                 const SizedBox(
                   width: 9,
@@ -113,7 +114,7 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                             color: widget.isDisable(
                                     widget.reservation[index].startTime)
                                 ? const Color(0xFF808080)
-                                : const Color(0xFFE17325),
+                                : primaryOrange,
                           ),
                         ),
                         Row(

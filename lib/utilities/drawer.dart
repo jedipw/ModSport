@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/modal.dart';
@@ -20,7 +21,7 @@ class ModSportDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const CircleAvatar(
-                    backgroundColor: Color.fromARGB(255, 225, 115, 37),
+                    backgroundColor: primaryOrange,
                     child: Text(
                       'FL',
                       style: TextStyle(color: Colors.white),
@@ -42,14 +43,13 @@ class ModSportDrawer extends StatelessWidget {
             title: Row(
               children: [
                 Icon(Icons.home,
-                    color: currentDrawerIndex == 0
-                        ? const Color.fromARGB(255, 225, 115, 37)
-                        : Colors.black),
+                    color:
+                        currentDrawerIndex == 0 ? primaryOrange : Colors.black),
                 const SizedBox(width: 8),
                 const Text('Home'),
               ],
             ),
-            selectedColor: const Color.fromARGB(255, 225, 115, 37),
+            selectedColor: primaryOrange,
             selected: currentDrawerIndex == 0,
             onTap: () {
               Navigator.of(context)
@@ -57,14 +57,13 @@ class ModSportDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            selectedColor: const Color.fromARGB(255, 225, 115, 37),
+            selectedColor: primaryOrange,
             selected: currentDrawerIndex == 1,
             title: Row(
               children: [
                 Icon(Icons.rule,
-                    color: currentDrawerIndex == 1
-                        ? const Color.fromARGB(255, 225, 115, 37)
-                        : Colors.black),
+                    color:
+                        currentDrawerIndex == 1 ? primaryOrange : Colors.black),
                 const SizedBox(width: 8),
                 const Text('Status'),
               ],
@@ -75,14 +74,13 @@ class ModSportDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            selectedColor: const Color.fromARGB(255, 225, 115, 37),
+            selectedColor: primaryOrange,
             selected: currentDrawerIndex == 2,
             title: Row(
               children: [
                 Icon(currentDrawerIndex == 2 ? Icons.help : Icons.help_outline,
-                    color: currentDrawerIndex == 2
-                        ? const Color.fromARGB(255, 225, 115, 37)
-                        : Colors.black),
+                    color:
+                        currentDrawerIndex == 2 ? primaryOrange : Colors.black),
                 const SizedBox(width: 8),
                 const Text('Help Center'),
               ],

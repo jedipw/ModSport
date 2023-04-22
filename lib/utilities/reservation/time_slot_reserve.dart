@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/types.dart';
 
 typedef OnChangedCallback = void Function(int? value);
@@ -70,7 +71,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
             child: ListTileTheme(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
-              selectedColor: const Color(0xFFE17325),
+              selectedColor: primaryOrange,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: const NeverScrollableScrollPhysics(),
@@ -84,7 +85,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                             margin: const EdgeInsets.only(left: 15),
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color(0xFFE17325),
+                              color: primaryOrange,
                             ),
                             child: const Center(
                               child: Icon(
@@ -105,7 +106,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                                 width: 2,
                                 color: widget.isReserved
                                     ? const Color(0xFF808080)
-                                    : const Color(0xFFE17325),
+                                    : primaryOrange,
                               ),
                             ),
                           ),
@@ -123,7 +124,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                             color: !widget.isReserved ||
                                     (widget.isReserved &&
                                         index == widget.selectedTimeSlot)
-                                ? const Color(0xFFE17325)
+                                ? primaryOrange
                                 : const Color(0xFF808080),
                           ),
                         ),
@@ -150,7 +151,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                     groupValue: widget.selectedTimeSlot,
                     onChanged: widget.isReserved ? null : widget.onChanged,
                     activeColor: Colors.white,
-                    selectedTileColor: const Color(0xFFE17325),
+                    selectedTileColor: primaryOrange,
                     controlAffinity: ListTileControlAffinity.trailing,
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'dart:developer' show log;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:modsport/utilities/modal.dart';
@@ -26,7 +27,7 @@ TextStyle bottomTextStyle = const TextStyle(
   fontSize: 14,
   height:
       1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
-  color: Color(0xFFDB611D),
+  color: primaryOrange,
 );
 
 // A stateless widget for the disable view
@@ -255,7 +256,7 @@ class _DisableViewState extends State<DisableView> {
                         height:
                             1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
                         color: numOfCharacter < 10 || numOfCharacter > 250
-                            ? const Color(0xFFDB611D)
+                            ? primaryOrange
                             : const Color(0xFF808080),
                       ),
                     ),
@@ -282,7 +283,7 @@ class _DisableViewState extends State<DisableView> {
                       BorderSide(
                         color: numOfCharacter > 250 || numOfCharacter < 10
                             ? const Color(0xFF808080)
-                            : const Color(0xFFE17325),
+                            : primaryOrange,
                         width: 3,
                       ),
                     ),
@@ -336,7 +337,7 @@ class _DisableViewState extends State<DisableView> {
                     style: TextStyle(
                       color: numOfCharacter > 250 || numOfCharacter < 10
                           ? const Color(0xFF808080)
-                          : const Color(0xFFE17325),
+                          : primaryOrange,
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Poppins',
@@ -354,7 +355,7 @@ class _DisableViewState extends State<DisableView> {
           Container(
             height: 125,
             decoration: const BoxDecoration(
-              color: Color(0xFFE17325),
+              color: primaryOrange,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
                 bottomRight: Radius.circular(20.0),
@@ -387,7 +388,7 @@ class _DisableViewState extends State<DisableView> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE17325),
+                backgroundColor: primaryOrange,
                 padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
                 shape: const CircleBorder(),
                 fixedSize: const Size.fromRadius(25),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
 
 class LoginView extends StatelessWidget {
@@ -12,7 +13,7 @@ class LoginView extends StatelessWidget {
       // scaffold widget provides a basic app bar, drawer and body
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: const Color.fromARGB(255, 225, 115, 37),
+        backgroundColor: primaryOrange,
       ), // app bar with a title
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -25,7 +26,7 @@ class LoginView extends StatelessWidget {
                 style: ButtonStyle(
                     // style the button
                     backgroundColor: MaterialStateProperty.all(
-                        Colors.orange)), // set button background color
+                        primaryOrange)), // set button background color
                 onPressed: () {
                   // method called when button is pressed
                   Navigator.of(context).pushNamed(
@@ -45,7 +46,7 @@ class LoginView extends StatelessWidget {
                 style: ButtonStyle(
                     // style the button
                     backgroundColor: MaterialStateProperty.all(
-                        Colors.orange)), // set button background color
+                        primaryOrange)), // set button background color
                 onPressed: () {
                   // method called when button is pressed
                   Navigator.of(context).pushNamed(
@@ -65,7 +66,7 @@ class LoginView extends StatelessWidget {
                 style: ButtonStyle(
                     // style the button
                     backgroundColor: MaterialStateProperty.all(
-                        Colors.orange)), // set button background color
+                        primaryOrange)), // set button background color
                 onPressed: () {
                   // method called when button is pressed
                   Navigator.of(context).pushNamed(
@@ -85,7 +86,7 @@ class LoginView extends StatelessWidget {
                 style: ButtonStyle(
                     // style the button
                     backgroundColor: MaterialStateProperty.all(
-                        Colors.orange)), // set button background color
+                        primaryOrange)), // set button background color
                 onPressed: () {
                   // method called when button is pressed
                   Navigator.of(context).pushNamedAndRemoveUntil(

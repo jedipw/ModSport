@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
 typedef OnChangedCallback = void Function(int? value);
@@ -51,7 +52,7 @@ class _TimeSlotLoadingState extends State<TimeSlotLoading> {
             child: ListTileTheme(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
-              selectedColor: const Color(0xFFE17325),
+              selectedColor: primaryOrange,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: const NeverScrollableScrollPhysics(),
@@ -105,7 +106,7 @@ class _TimeSlotLoadingState extends State<TimeSlotLoading> {
                     groupValue: const [1, 2, 3, 4, 5],
                     onChanged: null,
                     activeColor: Colors.white,
-                    selectedTileColor: const Color(0xFFE17325),
+                    selectedTileColor: primaryOrange,
                     controlAffinity: ListTileControlAffinity.trailing,
                   ),
                 ),

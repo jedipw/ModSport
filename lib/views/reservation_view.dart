@@ -1,6 +1,7 @@
 // Importing necessary packages and files
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:modsport/utilities/reservation/date_list.dart';
@@ -301,7 +302,7 @@ class _ReservationViewState extends State<ReservationView> {
                       child: Align(
                         alignment: Alignment.center,
                         child:
-                            CircularProgressIndicator(color: Color(0xFFE17325)),
+                            CircularProgressIndicator(color: primaryOrange),
                       ),
                     ),
                     Image.network(
@@ -323,7 +324,7 @@ class _ReservationViewState extends State<ReservationView> {
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE17325),
+                            backgroundColor: primaryOrange,
                             shape: const CircleBorder(),
                             padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
                             fixedSize: const Size.fromRadius(25),
@@ -371,7 +372,7 @@ class _ReservationViewState extends State<ReservationView> {
                             fontWeight: FontWeight.bold,
                             fontSize: 26,
                             height: 1.5, // 39/26 = 1.5
-                            color: Color(0xFFE17325),
+                            color: primaryOrange,
                           ),
                         ),
                 ),
@@ -434,7 +435,7 @@ class _ReservationViewState extends State<ReservationView> {
                           elevation: 5,
                           backgroundColor: isDisableMenu
                               ? const Color(0xFFCC0019)
-                              : const Color(0xFFE17325),
+                              : primaryOrange,
                         ),
                         onPressed: () {
                           if (isDisableMenu &&
@@ -619,7 +620,7 @@ class _ReservationViewState extends State<ReservationView> {
                                 padding: const EdgeInsets.only(bottom: 50),
                                 child: const Center(
                                   child: CircularProgressIndicator(
-                                    color: Color(0xFFE17325),
+                                    color: primaryOrange,
                                   ),
                                 ),
                               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:modsport/constants/color.dart';
 
 const int numOfStaffDay = 30;
 class DateList extends StatelessWidget {
@@ -49,12 +50,12 @@ class DateList extends StatelessWidget {
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
                       selectedIndex == index
-                          ? const Color(0xFFE17325)
+                          ? primaryOrange
                           : Colors.white, // Highlight the selected date.
                     ),
                     side: MaterialStateProperty.all(
                       const BorderSide(
-                        color: Color(0xFFE17325), // Set the border color here.
+                        color: primaryOrange, // Set the border color here.
                         width: 1, // Set the border width here.
                       ),
                     ),
@@ -81,7 +82,7 @@ class DateList extends StatelessWidget {
                           fontSize: 17,
                           color: selectedIndex == index
                               ? Colors.white
-                              : const Color(0xFFE17325),
+                              : primaryOrange,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -95,7 +96,7 @@ class DateList extends StatelessWidget {
                           fontSize: 20,
                           color: selectedIndex == index
                               ? Colors.white
-                              : const Color(0xFFE17325),
+                              : primaryOrange,
                         ),
                       ),
                     ],
