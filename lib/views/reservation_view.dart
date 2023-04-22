@@ -1,6 +1,7 @@
 // Importing necessary packages and files
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/mode.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:modsport/utilities/reservation/date_list.dart';
 import 'package:modsport/utilities/reservation/edit_button.dart';
@@ -1023,7 +1024,7 @@ class _ReservationViewState extends State<ReservationView> {
                                           reservationIds: reservationIds,
                                           reason: firstDisableReason,
                                           selectedDateIndex: _selectedDateIndex,
-                                          mode: 'edit',
+                                          mode: editMode,
                                         ),
                                       ),
                                     )
@@ -1298,7 +1299,7 @@ class _ReservationViewState extends State<ReservationView> {
                                         zoneId: widget.zoneId,
                                         reservationIds: reservationIds,
                                         selectedDateIndex: _selectedDateIndex,
-                                        mode: 'disable',
+                                        mode: disableMode,
                                       ),
                                     ),
                                   )
