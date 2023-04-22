@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
-import 'package:modsport/utilities/success_modal.dart';
+import 'package:modsport/utilities/modal.dart';
 import 'package:modsport/utilities/types.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
@@ -296,223 +296,40 @@ class _DisableViewState extends State<DisableView> {
                   onPressed: numOfCharacter > 250 || numOfCharacter < 10
                       ? null
                       : () {
-                          showDialog(
-                            context: context,
-                            barrierColor: Colors.white.withOpacity(0.5),
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        const SizedBox(height: 40),
-                                        Text(
-                                          'Are you sure\nyou want to\n${widget.mode == disableMode ? 'disable' : 'edit'} ?',
-                                          style: const TextStyle(
-                                            fontSize: 25.0,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Poppins',
-                                            color: Color(0xFFCC0019),
-                                            height: 1.3,
-                                            letterSpacing: 0.0,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(height: 30),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(
-                                              width: 84,
-                                              height: 43,
-                                              child: TextButton(
-                                                onPressed: () async {
-                                                  try {
-                                                    // Call createDisableReservation to disable the selected time slots
-                                                    widget.mode == disableMode
-                                                        ? await FirebaseCloudStorage()
-                                                            .createDisableReservation(
-                                                              widget.zoneId,
-                                                              reasonController
-                                                                  .text,
-                                                              startTimes,
-                                                            )
-                                                            .then((_) =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop())
-                                                            .then((_) =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop())
-                                                            .then(
-                                                              (_) =>
-                                                                  showSuccessModal(
-                                                                      context,
-                                                                      true),
-                                                            )
-                                                        : await FirebaseCloudStorage()
-                                                            .updateDisableReason(
-                                                              widget.disableIds,
-                                                              reasonController
-                                                                  .text,
-                                                            )
-                                                            .then((_) =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop())
-                                                            .then((_) =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop())
-                                                            .then(
-                                                                (_) =>
-                                                                    showDialog(
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      context:
-                                                                          context,
-                                                                      barrierColor: Colors
-                                                                          .white
-                                                                          .withOpacity(
-                                                                              0.5),
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        Future.delayed(
-                                                                            const Duration(seconds: 1),
-                                                                            () {
-                                                                          Navigator.of(context)
-                                                                              .pop();
-                                                                        });
-                                                                        return Center(
-                                                                          child:
-                                                                              AlertDialog(
-                                                                            shape:
-                                                                                RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(10.0),
-                                                                            ),
-                                                                            contentPadding:
-                                                                                EdgeInsets.zero,
-                                                                            content:
-                                                                                Column(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              children: [
-                                                                                const SizedBox(height: 60),
-                                                                                Container(
-                                                                                  width: 100,
-                                                                                  height: 100,
-                                                                                  decoration: const BoxDecoration(
-                                                                                    shape: BoxShape.circle,
-                                                                                    color: Colors.green,
-                                                                                  ),
-                                                                                  child: const Icon(Icons.check, color: Colors.white, size: 80),
-                                                                                ),
-                                                                                const SizedBox(height: 10),
-                                                                                const Text(
-                                                                                  'Success!',
-                                                                                  style: TextStyle(
-                                                                                    fontSize: 20.0,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    fontFamily: 'Poppins',
-                                                                                    color: Color.fromRGBO(0, 0, 0, 0.8),
-                                                                                    height: 1.3,
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
-                                                                                  textAlign: TextAlign.center,
-                                                                                ),
-                                                                                const SizedBox(height: 60),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ));
-                                                  } catch (e) {
-                                                    // Handle error
-                                                    log('Error disabling reservation: $e');
-                                                  }
-                                                },
-                                                style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<
-                                                          Color>(
-                                                    const Color(0xFF009900),
-                                                  ),
-                                                  foregroundColor:
-                                                      MaterialStateProperty.all<
-                                                          Color>(
-                                                    Colors.white,
-                                                  ),
-                                                ),
-                                                child: const Text(
-                                                  'Yes',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontStyle: FontStyle.normal,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 20.0,
-                                                    height: 1.2,
-                                                    letterSpacing: 0.0,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 34.0),
-                                            SizedBox(
-                                              width: 84,
-                                              height: 43,
-                                              child: TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<
-                                                          Color>(
-                                                    const Color(0xFFCC0019),
-                                                  ),
-                                                  foregroundColor:
-                                                      MaterialStateProperty.all<
-                                                          Color>(
-                                                    Colors.white,
-                                                  ),
-                                                ),
-                                                child: const Text(
-                                                  'No',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontStyle: FontStyle.normal,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 20.0,
-                                                    height: 1.2,
-                                                    letterSpacing: 0.0,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 30),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
+                          showConfirmationModal(context, () async {
+                            try {
+                              // Call createDisableReservation to disable the selected time slots
+                              widget.mode == disableMode
+                                  ? await FirebaseCloudStorage()
+                                      .createDisableReservation(
+                                        widget.zoneId,
+                                        reasonController.text,
+                                        startTimes,
+                                      )
+                                      .then((_) => Navigator.of(context).pop())
+                                      .then((_) => Navigator.of(context).pop())
+                                      .then(
+                                        (_) => showSuccessModal(context, true),
+                                      )
+                                  : await FirebaseCloudStorage()
+                                      .updateDisableReason(
+                                        widget.disableIds,
+                                        reasonController.text,
+                                      )
+                                      .then((_) => Navigator.of(context).pop())
+                                      .then((_) => Navigator.of(context).pop())
+                                      .then(
+                                        (_) => showSuccessModal(context, true),
+                                      );
+                            } catch (e) {
+                              // Handle error
+                              log('Error disabling reservation: $e');
+                            }
+                          },
+                              false,
+                              widget.mode == disableMode
+                                  ? disableMode
+                                  : editMode);
                         },
                   child: Text(
                     "DONE", // Set the button text to "Disable"

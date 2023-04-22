@@ -11,7 +11,7 @@ import 'package:modsport/utilities/reservation/time_slot_loading.dart';
 import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
-import 'package:modsport/utilities/success_modal.dart';
+import 'package:modsport/utilities/modal.dart';
 import 'package:modsport/utilities/types.dart';
 import 'package:modsport/views/disable_view.dart';
 import 'package:shimmer/shimmer.dart';
@@ -690,149 +690,17 @@ class _ReservationViewState extends State<ReservationView> {
                                 isReserved: _isReserved,
                                 onPressed: () {
                                   if (_isReserved) {
-                                    showDialog(
-                                      context: context,
-                                      barrierColor:
-                                          Colors.white.withOpacity(0.5),
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          contentPadding: EdgeInsets.zero,
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Column(
-                                                children: const [
-                                                  SizedBox(height: 40),
-                                                  Text(
-                                                    'Are you sure\nyou want to\ncancel ?',
-                                                    style: TextStyle(
-                                                      fontSize: 25.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontFamily: 'Poppins',
-                                                      color: Color(0xFFCC0019),
-                                                      height: 1.3,
-                                                      letterSpacing: 0.0,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  SizedBox(height: 30),
-                                                ],
-                                              ),
-                                              Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 84,
-                                                        height: 43,
-                                                        child: TextButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              _isReserved =
-                                                                  false;
-                                                            });
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            showSuccessModal(
-                                                                context, true);
-                                                          },
-                                                          style: ButtonStyle(
-                                                            backgroundColor:
-                                                                MaterialStateProperty
-                                                                    .all<Color>(
-                                                              const Color(
-                                                                  0xFF009900),
-                                                            ),
-                                                            foregroundColor:
-                                                                MaterialStateProperty
-                                                                    .all<Color>(
-                                                              Colors.white,
-                                                            ),
-                                                          ),
-                                                          child: const Text(
-                                                            'Yes',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Poppins',
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .normal,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 20.0,
-                                                              height: 1.2,
-                                                              letterSpacing:
-                                                                  0.0,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          width: 34.0),
-                                                      SizedBox(
-                                                        width: 84,
-                                                        height: 43,
-                                                        child: TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          style: ButtonStyle(
-                                                            backgroundColor:
-                                                                MaterialStateProperty
-                                                                    .all<Color>(
-                                                              const Color(
-                                                                  0xFFCC0019),
-                                                            ),
-                                                            foregroundColor:
-                                                                MaterialStateProperty
-                                                                    .all<Color>(
-                                                              Colors.white,
-                                                            ),
-                                                          ),
-                                                          child: const Text(
-                                                            'No',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Poppins',
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .normal,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 20.0,
-                                                              height: 1.2,
-                                                              letterSpacing:
-                                                                  0.0,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 30),
-                                            ],
-                                          ),
-                                        );
+                                    showConfirmationModal(
+                                      context,
+                                      () {
+                                        setState(() {
+                                          _isReserved = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                        showSuccessModal(context, true);
                                       },
+                                      true,
+                                      cancelMode,
                                     );
                                   } else {
                                     setState(() {
@@ -912,168 +780,39 @@ class _ReservationViewState extends State<ReservationView> {
                               ],
                               EnableButton(
                                 onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    barrierColor: Colors.white.withOpacity(0.5),
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        contentPadding: EdgeInsets.zero,
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Column(
-                                              children: const [
-                                                SizedBox(height: 40),
-                                                Text(
-                                                  'Are you sure\nyou want to\nenable ?',
-                                                  style: TextStyle(
-                                                    fontSize: 25.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Poppins',
-                                                    color: Color(0xFFCC0019),
-                                                    height: 1.3,
-                                                    letterSpacing: 0.0,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                SizedBox(height: 30),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 84,
-                                                      height: 43,
-                                                      child: TextButton(
-                                                        onPressed: () async {
-                                                          try {
-                                                            // Call createDisableReservation to disable the selected time slots
-                                                            await FirebaseCloudStorage()
-                                                                .deleteDisableReservation(
-                                                                    disableIds)
-                                                                .then((_) =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop())
-                                                                .then((_) =>
-                                                                    showSuccessModal(
-                                                                        context,
-                                                                        true))
-                                                                .then((_) =>
-                                                                    setState(
-                                                                      () {
-                                                                        selectedTimeSlots =
-                                                                            [];
-                                                                        _isTimeLoaded =
-                                                                            false;
-                                                                        _isDisableReservationLoaded =
-                                                                            false;
-                                                                        _isUserReservationLoaded =
-                                                                            false;
-                                                                        _isReservationidLoaded =
-                                                                            false;
-                                                                      },
-                                                                    ))
-                                                                .then((_) =>
-                                                                    _getReservationData())
-                                                                .then((_) =>
-                                                                    _getDisableReservationData())
-                                                                .then((_) =>
-                                                                    _getReservationIdsfromDisableIdsData())
-                                                                .then((_) =>
-                                                                    _getUserReservationData());
-                                                          } catch (e) {
-                                                            // Handle error
-                                                            log('Error enable reservation: $e');
-                                                          }
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            const Color(
-                                                                0xFF009900),
-                                                          ),
-                                                          foregroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            Colors.white,
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Yes',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontStyle: FontStyle
-                                                                .normal,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 20.0,
-                                                            height: 1.2,
-                                                            letterSpacing: 0.0,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 34.0),
-                                                    SizedBox(
-                                                      width: 84,
-                                                      height: 43,
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            const Color(
-                                                                0xFFCC0019),
-                                                          ),
-                                                          foregroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                            Colors.white,
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'No',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontStyle: FontStyle
-                                                                .normal,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 20.0,
-                                                            height: 1.2,
-                                                            letterSpacing: 0.0,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 30),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
+                                  showConfirmationModal(context, () async {
+                                    try {
+                                      // Call createDisableReservation to disable the selected time slots
+                                      await FirebaseCloudStorage()
+                                          .deleteDisableReservation(disableIds)
+                                          .then((_) =>
+                                              Navigator.of(context).pop())
+                                          .then((_) =>
+                                              showSuccessModal(context, true))
+                                          .then((_) => setState(
+                                                () {
+                                                  selectedTimeSlots = [];
+                                                  _isTimeLoaded = false;
+                                                  _isDisableReservationLoaded =
+                                                      false;
+                                                  _isUserReservationLoaded =
+                                                      false;
+                                                  _isReservationidLoaded =
+                                                      false;
+                                                },
+                                              ))
+                                          .then((_) => _getReservationData())
+                                          .then((_) =>
+                                              _getDisableReservationData())
+                                          .then((_) =>
+                                              _getReservationIdsfromDisableIdsData())
+                                          .then(
+                                              (_) => _getUserReservationData());
+                                    } catch (e) {
+                                      // Handle error
+                                      log('Error enable reservation: $e');
+                                    }
+                                  }, true, enableMode);
                                 },
                               ),
                             ] else if (!selectedTimeSlots

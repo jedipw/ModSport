@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/mode.dart';
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/utilities/modal.dart';
 
 class ModSportDrawer extends StatelessWidget {
   const ModSportDrawer({super.key, required this.currentDrawerIndex});
@@ -99,118 +101,11 @@ class ModSportDrawer extends StatelessWidget {
               ],
             ),
             onTap: () {
-              showDialog(
-                  context: context,
-                  barrierColor: Colors.white.withOpacity(0.5),
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      contentPadding: EdgeInsets.zero,
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Column(
-                            children: const [
-                              SizedBox(height: 40),
-                              Text(
-                                'Are you sure\nyou want to\nlog out ?',
-                                style: TextStyle(
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Poppins',
-                                  color: Color(0xFFCC0019),
-                                  height: 1.3,
-                                  letterSpacing: 0.0,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 30),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 84,
-                                    height: 43,
-                                    child: TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context)
-                                            .pushNamedAndRemoveUntil(
-                                                loginRoute, (route) => false);
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                          const Color(0xFF009900),
-                                        ),
-                                        foregroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                          Colors.white,
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Yes',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20.0,
-                                          height: 1.2,
-                                          letterSpacing: 0.0,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 34.0),
-                                  SizedBox(
-                                    width: 84,
-                                    height: 43,
-                                    child: TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                          const Color(0xFFCC0019),
-                                        ),
-                                        foregroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                          Colors.white,
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'No',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20.0,
-                                          height: 1.2,
-                                          letterSpacing: 0.0,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  });
+              showConfirmationModal(context, () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+              }, false, logOutMode);
             },
           ),
         ],
