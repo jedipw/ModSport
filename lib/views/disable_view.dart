@@ -317,10 +317,7 @@ class _DisableViewState extends State<DisableView> {
                                         reasonController.text,
                                       )
                                       .then((_) => Navigator.of(context).pop())
-                                      .then((_) => Navigator.of(context).pop())
-                                      .then(
-                                        (_) => showSuccessModal(context, true),
-                                      );
+                                      .then((_) => Navigator.of(context).pop());
                             } catch (e) {
                               // Handle error
                               log('Error disabling reservation: $e');

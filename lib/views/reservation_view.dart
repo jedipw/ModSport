@@ -19,6 +19,7 @@ import 'package:shimmer/shimmer.dart';
 
 const bool hasRole = true;
 const int numOfUserDay = 7;
+const String userId = 'Dgi6rfj8wyDMuZ8WagFT';
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
@@ -37,13 +38,14 @@ class _ReservationViewState extends State<ReservationView> {
   bool _isReserved = false;
   int _selectedTimeSlot = 0;
   bool isDisableMenu = false;
-  bool _isTimeFirstLoaded = true;
   bool _isTimeLoaded = false;
   bool _isZoneLoaded = false;
   bool _isLocationLoaded = false;
   bool _isDisableReservationLoaded = false;
   bool _isUserReservationLoaded = false;
-  bool _isReservationidLoaded = false;
+  bool _isReservationIdLoaded = false;
+  bool _isReservedLoaded = false;
+  bool _isReservationIndexLoaded = false;
   List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
   String _imgUrl = '';
@@ -62,7 +64,9 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   void initState() {
     super.initState();
-    _getReservationIdsfromDisableIdsData();
+    _getReservationIndexData();
+    _getIsReservedData();
+    _getReservationIds();
     _getUserReservationData();
     _getDisableReservationData();
     _getLocationData();
@@ -73,12 +77,100 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _getReservationIdsfromDisableIdsData();
+    _getReservationIndexData();
+    _getIsReservedData();
+    _getReservationIds();
     _getUserReservationData();
     _getDisableReservationData();
     _getLocationData();
     _getZoneData();
     _getReservationData();
+  }
+
+  Future<void> _getReservationIndexData() async {
+    try {
+      await _getReservationData();
+      await _getUserReservationData();
+
+      int countNumOfReservation(DateTime? startTime) {
+        int num = 0;
+        for (int i = 0; i < userReservation.length; i++) {
+          if (startTime!.year == userReservation[i].startDateTime.year &&
+              startTime.month == userReservation[i].startDateTime.month &&
+              startTime.day == userReservation[i].startDateTime.day &&
+              startTime.hour == userReservation[i].startDateTime.hour &&
+              startTime.minute == userReservation[i].startDateTime.minute &&
+              startTime.second == userReservation[i].startDateTime.second) {
+            num++;
+          }
+        }
+        return num;
+      }
+
+      if (_reservations.isNotEmpty) {
+        int reservationIndex = await FirebaseCloudStorage()
+            .getUserReservationIndex(_reservations, userId, widget.zoneId);
+
+        setState(() {
+          _selectedTimeSlot = reservationIndex;
+          _isReservationIndexLoaded = true;
+        });
+
+        List<ReservationData> invalidReservations = [];
+        for (int i = 0; i < _reservations.length; i++) {
+          int numReservations =
+              countNumOfReservation(_reservations[i].startTime);
+          if (numReservations >= _reservations[i].capacity! &&
+              i != _selectedTimeSlot &&
+              !isDisableMenu) {
+            invalidReservations.add(_reservations[i]);
+          }
+        }
+
+        // Remove invalid reservations
+        for (int i = 0; i < invalidReservations.length; i++) {
+          setState(() {
+            _reservations.remove(invalidReservations[i]);
+          });
+        }
+      } else {
+        setState(() {
+          _isReservationIndexLoaded = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
+    }
+  }
+
+  Future<void> _getIsReservedData() async {
+    try {
+      await _getReservationData();
+
+      if (_reservations.isNotEmpty) {
+        bool isUserReserved = await FirebaseCloudStorage().isUserReserved(
+            userId,
+            widget.zoneId,
+            DateTime.now().add(Duration(days: _selectedDateIndex)));
+        setState(() {
+          log(isUserReserved.toString());
+          _isReserved = isUserReserved;
+          _isReservedLoaded = true;
+        });
+      } else {
+        _isReservedLoaded = true;
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
+    }
   }
 
   Future<void> _getUserReservationData() async {
@@ -100,7 +192,7 @@ class _ReservationViewState extends State<ReservationView> {
     }
   }
 
-  Future<void> _getReservationIdsfromDisableIdsData() async {
+  Future<void> _getReservationIds() async {
     try {
       await _getDisableReservationData();
 
@@ -129,7 +221,7 @@ class _ReservationViewState extends State<ReservationView> {
       if (mounted) {
         setState(() {
           reservationIds = reservations;
-          _isReservationidLoaded = true;
+          _isReservationIdLoaded = true;
         });
       }
     } catch (e) {
@@ -171,6 +263,8 @@ class _ReservationViewState extends State<ReservationView> {
 
   Future<void> _getReservationData() async {
     try {
+      await _getUserReservationData();
+
       List<ReservationData> reservations = await FirebaseCloudStorage()
           .getReservation(widget.zoneId, isDisableMenu, _selectedDateIndex);
 
@@ -178,7 +272,6 @@ class _ReservationViewState extends State<ReservationView> {
         setState(() {
           _reservations = reservations;
           _isTimeLoaded = true;
-          _isTimeFirstLoaded = false;
           if (selectedTimeSlots.isEmpty) {
             selectedTimeSlots =
                 List.generate(reservations.length, (index) => false);
@@ -249,6 +342,17 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   Widget build(BuildContext context) {
     List<String> parts = _locationName.split(RegExp(r'\s+(?=-\s)'));
+
+    bool isEverythingLoaded() {
+      return _isTimeLoaded &&
+          _isZoneLoaded &&
+          _isLocationLoaded &&
+          _isDisableReservationLoaded &&
+          _isUserReservationLoaded &&
+          _isReservationIdLoaded &&
+          _isReservedLoaded &&
+          _isReservationIndexLoaded;
+    }
 
     bool checkSameDisableReasonAndDate(
         List<DisableData> disableDatas, DateTime date) {
@@ -500,7 +604,7 @@ class _ReservationViewState extends State<ReservationView> {
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.all(0),
                           elevation: 5,
-                          backgroundColor: isError
+                          backgroundColor: isError || !isEverythingLoaded()
                               ? primaryGray
                               : isDisableMenu
                                   ? primaryRed
@@ -508,16 +612,15 @@ class _ReservationViewState extends State<ReservationView> {
                         ),
                         onPressed: () {
                           if (isDisableMenu &&
-                              _isTimeLoaded &&
-                              _isDisableReservationLoaded &&
-                              _isUserReservationLoaded &&
-                              _isReservationidLoaded &&
+                              isEverythingLoaded() &&
                               !isError) {
                             setState(() {
                               _isTimeLoaded = false;
                               _isDisableReservationLoaded = false;
                               isDisableMenu = false;
-                              _isReservationidLoaded = false;
+                              _isReservationIdLoaded = false;
+                              _isReservedLoaded = false;
+                              _isReservationIndexLoaded = false;
                               selectedTimeSlots = [];
                               _selectedDateIndex =
                                   _selectedDateIndex > numOfUserDay - 1
@@ -528,9 +631,10 @@ class _ReservationViewState extends State<ReservationView> {
                             });
                             // If isDisableMenu is true, disable the menu and update the widget state
                             _getReservationData()
+                                .then((_) => _getIsReservedData())
+                                .then((_) => _getReservationIndexData())
                                 .then((_) => _getDisableReservationData())
-                                .then((_) =>
-                                    _getReservationIdsfromDisableIdsData())
+                                .then((_) => _getReservationIds())
                                 .then((_) => _getUserReservationData())
                                 .then((_) {
                               setState(() {
@@ -541,25 +645,25 @@ class _ReservationViewState extends State<ReservationView> {
                               log('Error fetching reservation data: $error');
                             });
                           } else if (!isDisableMenu &&
-                              _isTimeLoaded &&
-                              _isDisableReservationLoaded &&
-                              _isUserReservationLoaded &&
-                              _isReservationidLoaded &&
+                              isEverythingLoaded() &&
                               !isError) {
                             setState(() {
                               _isTimeLoaded = false;
                               _isDisableReservationLoaded = false;
                               selectedTimeSlots = [];
-                              _isReservationidLoaded = false;
+                              _isReservationIdLoaded = false;
+                              _isReservedLoaded = false;
+                              _isReservationIndexLoaded = false;
                               isDisableMenu = true;
                               _selectedTimeSlot = 0;
                               _isReserved = false;
                             });
                             // If isDisableMenu is false, enable the menu and update the widget state
                             _getReservationData()
+                                .then((_) => _getIsReservedData())
+                                .then((_) => _getReservationIndexData())
                                 .then((_) => _getDisableReservationData())
-                                .then((_) =>
-                                    _getReservationIdsfromDisableIdsData())
+                                .then((_) => _getReservationIds())
                                 .then((_) => _getUserReservationData())
                                 .then((_) {
                               setState(() {
@@ -611,24 +715,31 @@ class _ReservationViewState extends State<ReservationView> {
               children: [
                 Expanded(
                   child: DateList(
+                    isEverythingLoaded: isEverythingLoaded(),
                     isError: isError,
                     numOfUserDay: numOfUserDay,
                     isDisableMenu: isDisableMenu,
                     selectedIndex: _selectedDateIndex,
                     onSelected: (index) {
-                      if (index != _selectedDateIndex && !isError) {
+                      if (index != _selectedDateIndex &&
+                          !isError &&
+                          isEverythingLoaded()) {
                         setState(() {
                           _selectedDateIndex = index;
                           _isTimeLoaded = false;
                           selectedTimeSlots = [];
                           _isDisableReservationLoaded = false;
-                          _isReservationidLoaded = false;
+                          _isReservationIdLoaded = false;
+                          _isReservedLoaded = false;
+                          _isReservationIndexLoaded = false;
                           _selectedTimeSlot = 0;
                           _isReserved = false;
                         });
                         _getReservationData()
+                            .then((_) => _getIsReservedData())
+                            .then((_) => _getReservationIndexData())
                             .then((_) => _getDisableReservationData())
-                            .then((_) => _getReservationIdsfromDisableIdsData())
+                            .then((_) => _getReservationIds())
                             .then((_) => _getUserReservationData())
                             .then((_) {
                           setState(() {
@@ -648,10 +759,7 @@ class _ReservationViewState extends State<ReservationView> {
                   Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 20),
-                    child: _isTimeLoaded &&
-                            _isDisableReservationLoaded &&
-                            _isUserReservationLoaded &&
-                            _isReservationidLoaded
+                    child: isEverythingLoaded()
                         ? isError
                             ? Container()
                             : isDisableMenu
@@ -687,16 +795,7 @@ class _ReservationViewState extends State<ReservationView> {
                                       });
                                     },
                                   )
-                        : _isTimeFirstLoaded
-                            ? const TimeSlotLoading()
-                            : Container(
-                                padding: const EdgeInsets.only(bottom: 50),
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: primaryOrange,
-                                  ),
-                                ),
-                              ),
+                        : const TimeSlotLoading(),
                   ),
                   if (isError) ...[
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -739,10 +838,7 @@ class _ReservationViewState extends State<ReservationView> {
                     ])
                   ] else if (!isError &&
                       _reservations.isEmpty &&
-                      _isTimeLoaded &&
-                      _isDisableReservationLoaded &&
-                      _isUserReservationLoaded &&
-                      _isReservationidLoaded) ...[
+                      isEverythingLoaded()) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -791,11 +887,7 @@ class _ReservationViewState extends State<ReservationView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (_isTimeLoaded &&
-                              _isDisableReservationLoaded &&
-                              _isUserReservationLoaded &&
-                              _isReservationidLoaded &&
-                              !isError) ...[
+                          if (isEverythingLoaded() && !isError) ...[
                             if (_selectedDateIndex < 7 &&
                                 _reservations.isNotEmpty &&
                                 !isDisable(_reservations[_selectedTimeSlot]
@@ -803,31 +895,94 @@ class _ReservationViewState extends State<ReservationView> {
                                 !isDisableMenu)
                               ReserveButton(
                                 isReserved: _isReserved,
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_isReserved) {
                                     showConfirmationModal(
                                       context,
-                                      () {
+                                      () async {
                                         Navigator.of(context).pop();
                                         showLoadModal(context);
-                                        setState(() {
-                                          _isReserved = false;
-                                        });
-                                        Navigator.of(context).pop();
-                                        showSuccessModal(context, true);
+                                        await FirebaseCloudStorage()
+                                            .deleteUserReservation(
+                                                userId,
+                                                widget.zoneId,
+                                                _reservations[_selectedTimeSlot]
+                                                    .startTime!)
+                                            .then((_) =>
+                                                Navigator.of(context).pop())
+                                            .then(
+                                              (_) => showSuccessModal(
+                                                  context, false),
+                                            )
+                                            .then(
+                                              (_) => Future.delayed(
+                                                const Duration(seconds: 1),
+                                                () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            )
+                                            .then((_) => setState(() {
+                                                  _isReserved = false;
+                                                  _isTimeLoaded = false;
+                                                  _isDisableReservationLoaded =
+                                                      false;
+                                                  _isUserReservationLoaded =
+                                                      false;
+                                                  _isReservationIdLoaded =
+                                                      false;
+                                                  _isReservationIndexLoaded =
+                                                      false;
+                                                  _isReservedLoaded = false;
+                                                }))
+                                            .then((_) => _getIsReservedData())
+                                            .then((_) =>
+                                                _getReservationIndexData())
+                                            .then((_) =>
+                                                _getDisableReservationData())
+                                            .then((_) => _getReservationIds())
+                                            .then((_) =>
+                                                _getUserReservationData());
                                       },
                                       true,
                                       cancelMode,
                                     );
                                   } else {
-                                    setState(() {
-                                      _isReserved = true;
-                                    });
-                                    showSuccessModal(context, false);
-                                    Future.delayed(const Duration(seconds: 1),
-                                        () {
-                                      Navigator.of(context).pop();
-                                    });
+                                    showLoadModal(context);
+                                    await FirebaseCloudStorage()
+                                        .createUserReservation(
+                                            _reservations[_selectedTimeSlot]
+                                                .startTime!,
+                                            userId,
+                                            widget.zoneId)
+                                        .then(
+                                            (_) => Navigator.of(context).pop())
+                                        .then((_) =>
+                                            showSuccessModal(context, false))
+                                        .then(
+                                          (_) => Future.delayed(
+                                            const Duration(seconds: 1),
+                                            () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        )
+                                        .then((_) => setState(() {
+                                              _isReserved = true;
+                                              _isTimeLoaded = false;
+                                              _isDisableReservationLoaded =
+                                                  false;
+                                              _isUserReservationLoaded = false;
+                                              _isReservationIdLoaded = false;
+                                              _isReservationIndexLoaded = false;
+                                              _isReservedLoaded = false;
+                                            }))
+                                        .then((_) => _getIsReservedData())
+                                        .then((_) => _getReservationIndexData())
+                                        .then(
+                                            (_) => _getDisableReservationData())
+                                        .then((_) => _getReservationIds())
+                                        .then((_) => _getUserReservationData());
                                   }
                                 },
                               ),
@@ -882,14 +1037,13 @@ class _ReservationViewState extends State<ReservationView> {
                                                     false;
                                                 _isUserReservationLoaded =
                                                     false;
-                                                _isReservationidLoaded = false;
+                                                _isReservationIdLoaded = false;
                                               },
                                             ))
                                         .then((_) => _getReservationData()
                                             .then((_) =>
                                                 _getDisableReservationData())
-                                            .then((_) =>
-                                                _getReservationIdsfromDisableIdsData())
+                                            .then((_) => _getReservationIds())
                                             .then((_) =>
                                                 _getUserReservationData()));
                                   },
@@ -907,7 +1061,15 @@ class _ReservationViewState extends State<ReservationView> {
                                           .then((_) =>
                                               Navigator.of(context).pop())
                                           .then((_) =>
-                                              showSuccessModal(context, true))
+                                              showSuccessModal(context, false))
+                                          .then(
+                                            (_) => Future.delayed(
+                                              const Duration(seconds: 1),
+                                              () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          )
                                           .then((_) => setState(
                                                 () {
                                                   selectedTimeSlots = [];
@@ -916,15 +1078,14 @@ class _ReservationViewState extends State<ReservationView> {
                                                       false;
                                                   _isUserReservationLoaded =
                                                       false;
-                                                  _isReservationidLoaded =
+                                                  _isReservationIdLoaded =
                                                       false;
                                                 },
                                               ))
                                           .then((_) => _getReservationData())
                                           .then((_) =>
                                               _getDisableReservationData())
-                                          .then((_) =>
-                                              _getReservationIdsfromDisableIdsData())
+                                          .then((_) => _getReservationIds())
                                           .then(
                                               (_) => _getUserReservationData());
                                     } catch (e) {
@@ -976,8 +1137,7 @@ class _ReservationViewState extends State<ReservationView> {
                                       .then((_) => _getReservationData()
                                           .then((_) =>
                                               _getDisableReservationData())
-                                          .then((_) =>
-                                              _getReservationIdsfromDisableIdsData())
+                                          .then((_) => _getReservationIds())
                                           .then((_) =>
                                               _getUserReservationData()));
                                 },

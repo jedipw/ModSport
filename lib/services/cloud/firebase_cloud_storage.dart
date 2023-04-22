@@ -56,9 +56,6 @@ class FirebaseCloudStorage {
       final List<DisableData> disabledReservation =
           await getDisableReservation(zoneId);
 
-      final List<UserReservationData> userReservation =
-          await getAllUserReservation(zoneId);
-
       bool isDisable(DateTime? startTime) {
         for (int i = 0; i < disabledReservation.length; i++) {
           if (disabledReservation[i].startDateTime.year == startTime!.year &&
@@ -71,21 +68,6 @@ class FirebaseCloudStorage {
           }
         }
         return false;
-      }
-
-      int countNumOfReservation(DateTime? startTime) {
-        int num = 0;
-        for (int i = 0; i < userReservation.length; i++) {
-          if (startTime!.year == userReservation[i].startDateTime.year &&
-              startTime.month == userReservation[i].startDateTime.month &&
-              startTime.day == userReservation[i].startDateTime.day &&
-              startTime.hour == userReservation[i].startDateTime.hour &&
-              startTime.minute == userReservation[i].startDateTime.minute &&
-              startTime.second == userReservation[i].startDateTime.second) {
-            num++;
-          }
-        }
-        return num;
       }
 
       List<ReservationData> reservations = [];
@@ -106,16 +88,7 @@ class FirebaseCloudStorage {
                       startTime.hour,
                       startTime.minute,
                       startTime.second,
-                    )) &&
-                    countNumOfReservation(DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          startTime.hour,
-                          startTime.minute,
-                          startTime.second,
-                        )) !=
-                        capacity))) {
+                    ))))) {
           reservations.add(ReservationData(
               reservationId: doc.id,
               capacity: capacity,
@@ -299,6 +272,133 @@ class FirebaseCloudStorage {
       }
 
       return reservationIds;
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<String> createUserReservation(
+      DateTime startDateTime, String userId, String zoneId) async {
+    try {
+      // 1. Check if the zone exists
+      final zoneSnapshot = await zone.doc(zoneId).get();
+      if (!zoneSnapshot.exists) {
+        return 'Zone does not exist';
+      }
+
+      // 2. Check if the user has an existing reservation for the same day
+      final querySnapshot = await userRes
+          .where(userIdField, isEqualTo: userId)
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return 'User already has an existing reservation for the same day';
+      }
+
+      // 3. Check if the requested start time is disabled
+      final disabledQuerySnapshot = await disable
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .get();
+
+      if (disabledQuerySnapshot.docs.isNotEmpty) {
+        return 'The requested start time is disabled';
+      }
+
+      // 4. Create a new reservation document
+      await userRes.add({
+        'startDateTime': startDateTime,
+        'userId': userId,
+        'zoneId': zoneId,
+        // Add any other fields you want to store in the document
+      });
+
+      return 'Reservation created successfully';
+    } catch (e) {
+      throw CouldNotCreateException();
+    }
+  }
+
+  Future<bool> isUserReserved(
+      String userId, String zoneId, DateTime startDateTime) async {
+    try {
+      final querySnapshot = await userRes
+          .where(userIdField, isEqualTo: userId)
+          .where(zoneIdField, isEqualTo: zoneId)
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        DateTime docStartDateTime = doc[startDateTimeField].toDate();
+        if (docStartDateTime.year == startDateTime.year &&
+            docStartDateTime.month == startDateTime.month &&
+            docStartDateTime.day == startDateTime.day) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<void> deleteUserReservation(
+      String userId, String zoneId, DateTime startDateTime) async {
+    try {
+      final querySnapshot = await userRes
+          .where(userIdField, isEqualTo: userId)
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .get();
+
+      for (final document in querySnapshot.docs) {
+        await document.reference.delete();
+      }
+    } catch (e) {
+      throw CouldNotDeleteException();
+    }
+  }
+
+  Future<List<UserReservationData>> getUserReservationDataList(
+      String userId, String zoneId) async {
+    try {
+      final querySnapshot = await userRes
+          .where(userIdField, isEqualTo: userId)
+          .where(zoneIdField, isEqualTo: zoneId)
+          .get();
+
+      final userReservationDataList = querySnapshot.docs
+          .map((doc) => UserReservationData(
+                startDateTime: doc[startDateTimeField].toDate(),
+                userId: doc[userIdField],
+              ))
+          .toList();
+
+      return userReservationDataList;
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<int> getUserReservationIndex(List<ReservationData> reservationDataList,
+      String userId, String zoneId) async {
+    try {
+      List<UserReservationData> userReservationDataList =
+          await getUserReservationDataList(userId, zoneId);
+
+      for (int i = 0; i < reservationDataList.length; i++) {
+        ReservationData reservationData = reservationDataList[i];
+
+        for (int j = 0; j < userReservationDataList.length; j++) {
+          UserReservationData userReservationData = userReservationDataList[j];
+
+          if (reservationData.startTime == userReservationData.startDateTime) {
+            return i;
+          }
+        }
+      }
+
+      return 0;
     } catch (e) {
       throw CouldNotGetException();
     }
