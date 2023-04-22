@@ -162,7 +162,9 @@ class FirebaseCloudStorage {
   }
 
   Future<List<Map<String, dynamic>>> getReservationTime(
-      List<String> reservationIds, int selectedDateIndex) async {
+    List<String> reservationIds,
+    int selectedDateIndex,
+  ) async {
     try {
       final List<Map<String, dynamic>> reservationDetails = [];
 
@@ -277,50 +279,94 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<String> createUserReservation(
-      DateTime startDateTime, String userId, String zoneId) async {
+  Future<void> createUserReservation(DateTime startDateTime, String userId,
+      String zoneId, int capacity) async {
     try {
+      List<UserReservationData> userReservation =
+          await getAllUserReservation(zoneId);
+
+      bool canCreate = true;
+
+      int countNumOfReservation(DateTime? startTime) {
+        int num = 0;
+        for (int i = 0; i < userReservation.length; i++) {
+          if (startTime!.year == userReservation[i].startDateTime.year &&
+              startTime.month == userReservation[i].startDateTime.month &&
+              startTime.day == userReservation[i].startDateTime.day &&
+              startTime.hour == userReservation[i].startDateTime.hour &&
+              startTime.minute == userReservation[i].startDateTime.minute &&
+              startTime.second == userReservation[i].startDateTime.second) {
+            num++;
+          }
+        }
+        return num;
+      }
+
       // 1. Check if the zone exists
       final zoneSnapshot = await zone.doc(zoneId).get();
       if (!zoneSnapshot.exists) {
-        return 'Zone does not exist';
+        canCreate = false;
+        throw CouldNotCreateException();
       }
 
       // 2. Check if the user has an existing reservation for the same day
       final querySnapshot = await userRes
           .where(userIdField, isEqualTo: userId)
           .where(zoneIdField, isEqualTo: zoneId)
-          .where(startDateTimeField, isEqualTo: startDateTime)
           .get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        return 'User already has an existing reservation for the same day';
+      for (var doc in querySnapshot.docs) {
+        DateTime docStartDateTime = doc[startDateTimeField].toDate();
+        if (docStartDateTime.year == startDateTime.year &&
+            docStartDateTime.month == startDateTime.month &&
+            docStartDateTime.day == startDateTime.day &&
+            docStartDateTime.hour == startDateTime.hour &&
+            docStartDateTime.minute == startDateTime.minute &&
+            docStartDateTime.second == startDateTime.second) {
+          canCreate = false;
+          throw CouldNotCreateException();
+        }
       }
 
       // 3. Check if the requested start time is disabled
-      final disabledQuerySnapshot = await disable
-          .where(startDateTimeField, isEqualTo: startDateTime)
-          .get();
+      final disabledQuerySnapshot =
+          await disable.where(zoneIdField, isEqualTo: zoneId).get();
 
-      if (disabledQuerySnapshot.docs.isNotEmpty) {
-        return 'The requested start time is disabled';
+      for (var doc in disabledQuerySnapshot.docs) {
+        DateTime docStartDateTime = doc[startDateTimeField].toDate();
+        if (docStartDateTime.year == startDateTime.year &&
+            docStartDateTime.month == startDateTime.month &&
+            docStartDateTime.day == startDateTime.day &&
+            docStartDateTime.hour == startDateTime.hour &&
+            docStartDateTime.minute == startDateTime.minute &&
+            docStartDateTime.second == startDateTime.second) {
+          canCreate = false;
+          throw CouldNotCreateException();
+        }
       }
 
-      // 4. Create a new reservation document
-      await userRes.add({
-        'startDateTime': startDateTime,
-        'userId': userId,
-        'zoneId': zoneId,
-        // Add any other fields you want to store in the document
-      });
+      // 4. Check if the number of reservations for the requested startDateTime has not exceeded the capacity
+      final numReservations = countNumOfReservation(startDateTime);
+      if (numReservations >= capacity) {
+        canCreate = false;
+        throw CouldNotCreateException();
+      }
 
-      return 'Reservation created successfully';
+      // 5. Create a new reservation document
+      if (canCreate) {
+        await userRes.add({
+          'startDateTime': startDateTime,
+          'userId': userId,
+          'zoneId': zoneId,
+          // Add any other fields you want to store in the document
+        });
+      }
     } catch (e) {
       throw CouldNotCreateException();
     }
   }
 
-  Future<bool> isUserReserved(
+  Future<bool> getIsUserReserved(
       String userId, String zoneId, DateTime startDateTime) async {
     try {
       final querySnapshot = await userRes
@@ -333,7 +379,11 @@ class FirebaseCloudStorage {
         if (docStartDateTime.year == startDateTime.year &&
             docStartDateTime.month == startDateTime.month &&
             docStartDateTime.day == startDateTime.day) {
-          return true;
+          if (docStartDateTime.isBefore(DateTime.now())) {
+            return false;
+          } else {
+            return true;
+          }
         }
       }
       return false;

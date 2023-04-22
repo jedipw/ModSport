@@ -91,6 +91,7 @@ class _ReservationViewState extends State<ReservationView> {
     try {
       await _getReservationData();
       await _getUserReservationData();
+      await _getIsReservedData();
 
       int countNumOfReservation(DateTime? startTime) {
         int num = 0;
@@ -108,8 +109,13 @@ class _ReservationViewState extends State<ReservationView> {
       }
 
       if (_reservations.isNotEmpty) {
-        int reservationIndex = await FirebaseCloudStorage()
-            .getUserReservationIndex(_reservations, userId, widget.zoneId);
+        int reservationIndex;
+        if (_isReserved) {
+          reservationIndex = await FirebaseCloudStorage()
+              .getUserReservationIndex(_reservations, userId, widget.zoneId);
+        } else {
+          reservationIndex = 0;
+        }
 
         setState(() {
           _selectedTimeSlot = reservationIndex;
@@ -152,12 +158,11 @@ class _ReservationViewState extends State<ReservationView> {
       await _getReservationData();
 
       if (_reservations.isNotEmpty) {
-        bool isUserReserved = await FirebaseCloudStorage().isUserReserved(
+        bool isUserReserved = await FirebaseCloudStorage().getIsUserReserved(
             userId,
             widget.zoneId,
             DateTime.now().add(Duration(days: _selectedDateIndex)));
         setState(() {
-          log(isUserReserved.toString());
           _isReserved = isUserReserved;
           _isReservedLoaded = true;
         });
@@ -954,7 +959,9 @@ class _ReservationViewState extends State<ReservationView> {
                                             _reservations[_selectedTimeSlot]
                                                 .startTime!,
                                             userId,
-                                            widget.zoneId)
+                                            widget.zoneId,
+                                            _reservations[_selectedTimeSlot]
+                                                .capacity!)
                                         .then(
                                             (_) => Navigator.of(context).pop())
                                         .then((_) =>
