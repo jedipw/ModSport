@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
 
 const int numOfStaffDay = 30;
+
 class DateList extends StatelessWidget {
   final int numOfUserDay;
   final int
@@ -11,8 +12,13 @@ class DateList extends StatelessWidget {
       onSelected; // A callback function that is called when a date is selected.
   final bool hasRole;
   final bool isDisableMenu;
+  final bool isError;
+  final bool isEverythingLoaded;
+
   const DateList({
     Key? key,
+    required this.isEverythingLoaded,
+    required this.isError,
     required this.numOfUserDay,
     required this.selectedIndex,
     required this.onSelected,
@@ -22,7 +28,8 @@ class DateList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int numOfDay = hasRole && isDisableMenu ? numOfStaffDay : numOfUserDay;
+    final int numOfDay =
+        hasRole && isDisableMenu ? numOfStaffDay : numOfUserDay;
     final today = DateTime.now(); // Get the current date.
     final endDate = today
         .add(Duration(days: numOfDay)); // Calculate the end date of the list.
@@ -34,6 +41,7 @@ class DateList extends StatelessWidget {
     );
 
     return SingleChildScrollView(
+      padding: const EdgeInsets.only(left: 12),
       scrollDirection: Axis
           .horizontal, // Allows the user to scroll horizontally through the list.
       child: Row(
@@ -50,12 +58,16 @@ class DateList extends StatelessWidget {
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
                       selectedIndex == index
-                          ? primaryOrange
+                          ? isError || !isEverythingLoaded
+                              ? primaryGray
+                              : primaryOrange
                           : Colors.white, // Highlight the selected date.
                     ),
                     side: MaterialStateProperty.all(
-                      const BorderSide(
-                        color: primaryOrange, // Set the border color here.
+                      BorderSide(
+                        color: isError || !isEverythingLoaded
+                            ? primaryGray
+                            : primaryOrange, // Set the border color here.
                         width: 1, // Set the border width here.
                       ),
                     ),
@@ -82,7 +94,9 @@ class DateList extends StatelessWidget {
                           fontSize: 17,
                           color: selectedIndex == index
                               ? Colors.white
-                              : primaryOrange,
+                              : isError || !isEverythingLoaded
+                                  ? primaryGray
+                                  : primaryOrange,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -96,7 +110,9 @@ class DateList extends StatelessWidget {
                           fontSize: 20,
                           color: selectedIndex == index
                               ? Colors.white
-                              : primaryOrange,
+                              : isError || !isEverythingLoaded
+                                  ? primaryGray
+                                  : primaryOrange,
                         ),
                       ),
                     ],

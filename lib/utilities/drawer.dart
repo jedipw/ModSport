@@ -101,6 +101,8 @@ class ModSportDrawer extends StatelessWidget {
             onTap: () {
               showConfirmationModal(context, () {
                 Navigator.of(context).pop();
+                showLoadModal(context);
+                Navigator.of(context).pop();
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil(loginRoute, (route) => false);
               }, false, logOutMode);
