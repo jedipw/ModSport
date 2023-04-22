@@ -298,6 +298,8 @@ class _DisableViewState extends State<DisableView> {
                       ? null
                       : () {
                           showConfirmationModal(context, () async {
+                            Navigator.of(context).pop();
+                            showLoadModal(context);
                             try {
                               // Call createDisableReservation to disable the selected time slots
                               widget.mode == disableMode
@@ -309,9 +311,6 @@ class _DisableViewState extends State<DisableView> {
                                       )
                                       .then((_) => Navigator.of(context).pop())
                                       .then((_) => Navigator.of(context).pop())
-                                      .then(
-                                        (_) => showSuccessModal(context, true),
-                                      )
                                   : await FirebaseCloudStorage()
                                       .updateDisableReason(
                                         widget.disableIds,

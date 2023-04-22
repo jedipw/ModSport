@@ -46,7 +46,7 @@ class _ReservationViewState extends State<ReservationView> {
   bool _isReservationidLoaded = false;
   List<bool?> selectedTimeSlots = [];
   Key key = UniqueKey();
-  String _imgUrl = 'https://i.imgur.com/AoYPnKY.png';
+  String _imgUrl = '';
   String _locationName = '';
   String _locationId = '';
   String _zoneName = '';
@@ -56,6 +56,8 @@ class _ReservationViewState extends State<ReservationView> {
   List<String> reservationIds = [];
   List<String> disableIds = [];
   String firstDisableReason = '';
+  bool isError = false;
+  bool hasErrorModal = false;
 
   @override
   void initState() {
@@ -90,39 +92,12 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      log('Error fetching user reservation data: $e');
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
     }
-  }
-
-  bool checkSameDisableReasonAndDate(
-      List<DisableData> disableDatas, DateTime date) {
-    if (disableDatas.isEmpty) {
-      // If the list is empty, there's no disableReason to compare against.
-      return true;
-    }
-
-    final Map<String, List<DisableData>> groupedData = {};
-
-    // Group the data by year, month, and day
-    for (var data in disableDatas) {
-      final dateKey =
-          '${data.startDateTime.year}-${data.startDateTime.month}-${data.startDateTime.day}';
-      groupedData.putIfAbsent(dateKey, () => []).add(data);
-    }
-
-    // Check if every group for the given date has the same disableReason
-    final dateKey = '${date.year}-${date.month}-${date.day}';
-    if (!groupedData.containsKey(dateKey)) {
-      // If there's no group for the given date, there's no disableReason to compare against.
-      return true;
-    }
-
-    final group = groupedData[dateKey];
-    final disableReason = group!.first.disableReason;
-    setState(() {
-      firstDisableReason = disableReason;
-    });
-    return group.every((data) => data.disableReason == disableReason);
   }
 
   Future<void> _getReservationIdsfromDisableIdsData() async {
@@ -158,7 +133,11 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      log('Error fetching reservation data: $e');
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
     }
   }
 
@@ -182,7 +161,11 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      log('Error fetching disable data: $e');
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
     }
   }
 
@@ -190,6 +173,7 @@ class _ReservationViewState extends State<ReservationView> {
     try {
       List<ReservationData> reservations = await FirebaseCloudStorage()
           .getReservation(widget.zoneId, isDisableMenu, _selectedDateIndex);
+
       if (mounted) {
         setState(() {
           _reservations = reservations;
@@ -202,13 +186,17 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      log('Error fetching reservation data: $e');
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
     }
   }
 
   Future<void> _getZoneData() async {
     try {
-      // Get the zone data
+// Get the zone data
       ZoneData zoneData = await FirebaseCloudStorage().getZone(widget.zoneId);
       String locationId = zoneData.locationId;
       String zoneName = zoneData.zoneName;
@@ -224,7 +212,11 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      log('Error fetching zone data: $e');
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
     }
   }
 
@@ -246,13 +238,51 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      log('Error fetching location data: $e');
+      if (mounted) {
+        setState(() {
+          isError = true;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     List<String> parts = _locationName.split(RegExp(r'\s+(?=-\s)'));
+
+    bool checkSameDisableReasonAndDate(
+        List<DisableData> disableDatas, DateTime date) {
+      if (disableDatas.isEmpty) {
+        // If the list is empty, there's no disableReason to compare against.
+        return true;
+      }
+
+      final Map<String, List<DisableData>> groupedData = {};
+
+      // Group the data by year, month, and day
+      for (var data in disableDatas) {
+        final dateKey =
+            '${data.startDateTime.year}-${data.startDateTime.month}-${data.startDateTime.day}';
+        groupedData.putIfAbsent(dateKey, () => []).add(data);
+      }
+
+      // Check if every group for the given date has the same disableReason
+      final dateKey = '${date.year}-${date.month}-${date.day}';
+      if (!groupedData.containsKey(dateKey)) {
+        // If there's no group for the given date, there's no disableReason to compare against.
+        return true;
+      }
+
+      final group = groupedData[dateKey];
+      final disableReason = group!.first.disableReason;
+      if (mounted) {
+        setState(() {
+          firstDisableReason = disableReason;
+        });
+      }
+
+      return group.every((data) => data.disableReason == disableReason);
+    }
 
     bool isDisable(DateTime? startTime) {
       for (int i = 0; i < disabledReservation.length; i++) {
@@ -293,23 +323,38 @@ class _ReservationViewState extends State<ReservationView> {
               children: [
                 Stack(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 240,
-                      color: primaryGray,
-                    ),
-                    const Positioned.fill(
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(color: primaryOrange),
+                    Shimmer.fromColors(
+                      baseColor: const Color.fromARGB(255, 216, 216, 216),
+                      highlightColor:
+                          const Color.fromRGBO(173, 173, 173, 0.824),
+                      child: Container(
+                        width: double.infinity,
+                        height: 240,
+                        color: primaryGray,
                       ),
                     ),
-                    Image.network(
-                      _imgUrl,
-                      height: 240,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
+                    isError && _imgUrl.isNotEmpty
+                        ? Container(
+                            width: double.infinity,
+                            height: 240,
+                            color: primaryGray,
+                          )
+                        : FutureBuilder(
+                            future: Future(() {}),
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              return Image.network(
+                                _imgUrl,
+                                height: 240,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
+                                  return Container();
+                                },
+                              );
+                            },
+                          ),
                   ],
                 ),
                 Column(
@@ -354,26 +399,38 @@ class _ReservationViewState extends State<ReservationView> {
               children: [
                 Positioned(
                   left: 25,
-                  child: !_isZoneLoaded
-                      ? Shimmer.fromColors(
-                          baseColor: const Color.fromARGB(255, 216, 216, 216),
-                          highlightColor:
-                              const Color.fromRGBO(173, 173, 173, 0.824),
-                          child: Container(
-                            width: 150,
-                            height: 30.0,
-                            color: Colors.white,
-                          ))
-                      : Text(
-                          _zoneName,
-                          style: const TextStyle(
+                  child: isError && _zoneName.isEmpty
+                      ? const Text(
+                          '---',
+                          style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold,
                             fontSize: 26,
                             height: 1.5, // 39/26 = 1.5
                             color: primaryOrange,
                           ),
-                        ),
+                        )
+                      : !_isZoneLoaded
+                          ? Shimmer.fromColors(
+                              baseColor:
+                                  const Color.fromARGB(255, 216, 216, 216),
+                              highlightColor:
+                                  const Color.fromRGBO(173, 173, 173, 0.824),
+                              child: Container(
+                                width: 150,
+                                height: 30.0,
+                                color: Colors.white,
+                              ))
+                          : Text(
+                              _zoneName,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 26,
+                                height: 1.5, // 39/26 = 1.5
+                                color: primaryOrange,
+                              ),
+                            ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 25),
@@ -388,34 +445,45 @@ class _ReservationViewState extends State<ReservationView> {
                         width: 5,
                       ),
                       Expanded(
-                        child: !_isLocationLoaded
-                            ? Shimmer.fromColors(
-                                baseColor:
-                                    const Color.fromARGB(255, 216, 216, 216),
-                                highlightColor:
-                                    const Color.fromRGBO(173, 173, 173, 0.824),
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 10.0,
-                                  color: Colors.white,
-                                ))
-                            : RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.5, // 21/14 = 1.5
-                                    color: primaryGray,
-                                    letterSpacing: 0,
-                                  ),
-                                  children: [
-                                    TextSpan(text: '${parts[0]} '),
-                                    TextSpan(
-                                        text: parts.sublist(1).join(' - ')),
-                                  ],
+                        child: isError && _locationName.isEmpty
+                            ? const Text(
+                                '---',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  height: 1.5, // 39/26 = 1.5
+                                  color: primaryGray,
                                 ),
-                              ),
+                              )
+                            : !_isLocationLoaded
+                                ? Shimmer.fromColors(
+                                    baseColor: const Color.fromARGB(
+                                        255, 216, 216, 216),
+                                    highlightColor: const Color.fromRGBO(
+                                        173, 173, 173, 0.824),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 10.0,
+                                      color: Colors.white,
+                                    ))
+                                : RichText(
+                                    text: TextSpan(
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.5, // 21/14 = 1.5
+                                        color: primaryGray,
+                                        letterSpacing: 0,
+                                      ),
+                                      children: [
+                                        TextSpan(text: '${parts[0]} '),
+                                        TextSpan(
+                                            text: parts.sublist(1).join(' - ')),
+                                      ],
+                                    ),
+                                  ),
                       ),
                       const SizedBox(width: 100),
                     ],
@@ -432,16 +500,19 @@ class _ReservationViewState extends State<ReservationView> {
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.all(0),
                           elevation: 5,
-                          backgroundColor: isDisableMenu
-                              ? primaryRed
-                              : primaryOrange,
+                          backgroundColor: isError
+                              ? primaryGray
+                              : isDisableMenu
+                                  ? primaryRed
+                                  : primaryOrange,
                         ),
                         onPressed: () {
                           if (isDisableMenu &&
                               _isTimeLoaded &&
                               _isDisableReservationLoaded &&
                               _isUserReservationLoaded &&
-                              _isReservationidLoaded) {
+                              _isReservationidLoaded &&
+                              !isError) {
                             setState(() {
                               _isTimeLoaded = false;
                               _isDisableReservationLoaded = false;
@@ -473,7 +544,8 @@ class _ReservationViewState extends State<ReservationView> {
                               _isTimeLoaded &&
                               _isDisableReservationLoaded &&
                               _isUserReservationLoaded &&
-                              _isReservationidLoaded) {
+                              _isReservationidLoaded &&
+                              !isError) {
                             setState(() {
                               _isTimeLoaded = false;
                               _isDisableReservationLoaded = false;
@@ -537,16 +609,14 @@ class _ReservationViewState extends State<ReservationView> {
             const SizedBox(height: 15),
             Row(
               children: [
-                const SizedBox(
-                  width: 12,
-                ),
                 Expanded(
                   child: DateList(
+                    isError: isError,
                     numOfUserDay: numOfUserDay,
                     isDisableMenu: isDisableMenu,
                     selectedIndex: _selectedDateIndex,
                     onSelected: (index) {
-                      if (index != _selectedDateIndex) {
+                      if (index != _selectedDateIndex && !isError) {
                         setState(() {
                           _selectedDateIndex = index;
                           _isTimeLoaded = false;
@@ -582,37 +652,41 @@ class _ReservationViewState extends State<ReservationView> {
                             _isDisableReservationLoaded &&
                             _isUserReservationLoaded &&
                             _isReservationidLoaded
-                        ? isDisableMenu
-                            ? TimeSlotDisable(
-                                key: key,
-                                userReservation: userReservation,
-                                countNumOfReservation: countNumOfReservation,
-                                reservation: _reservations,
-                                selectedTimeSlots: selectedTimeSlots,
-                                disabledReservation: disabledReservation,
-                                isDisable: isDisable,
-                                onChanged: (int index, bool? value) {
-                                  setState(() {
-                                    selectedTimeSlots[index] = value;
-                                  });
-                                },
-                              )
-                            : TimeSlotReserve(
-                                key: key,
-                                countNumOfReservation: countNumOfReservation,
-                                reservation: _reservations,
-                                disabledReservation: disabledReservation,
-                                userReservation: userReservation,
-                                selectedDateIndex: _selectedDateIndex,
-                                selectedTimeSlot: _selectedTimeSlot,
-                                isReserved: _isReserved,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedTimeSlot = value!;
-                                    _isReserved = false;
-                                  });
-                                },
-                              )
+                        ? isError
+                            ? Container()
+                            : isDisableMenu
+                                ? TimeSlotDisable(
+                                    key: key,
+                                    userReservation: userReservation,
+                                    countNumOfReservation:
+                                        countNumOfReservation,
+                                    reservation: _reservations,
+                                    selectedTimeSlots: selectedTimeSlots,
+                                    disabledReservation: disabledReservation,
+                                    isDisable: isDisable,
+                                    onChanged: (int index, bool? value) {
+                                      setState(() {
+                                        selectedTimeSlots[index] = value;
+                                      });
+                                    },
+                                  )
+                                : TimeSlotReserve(
+                                    key: key,
+                                    countNumOfReservation:
+                                        countNumOfReservation,
+                                    reservation: _reservations,
+                                    disabledReservation: disabledReservation,
+                                    userReservation: userReservation,
+                                    selectedDateIndex: _selectedDateIndex,
+                                    selectedTimeSlot: _selectedTimeSlot,
+                                    isReserved: _isReserved,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedTimeSlot = value!;
+                                        _isReserved = false;
+                                      });
+                                    },
+                                  )
                         : _isTimeFirstLoaded
                             ? const TimeSlotLoading()
                             : Container(
@@ -624,7 +698,47 @@ class _ReservationViewState extends State<ReservationView> {
                                 ),
                               ),
                   ),
-                  if (_reservations.isEmpty &&
+                  if (isError) ...[
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Container(
+                          padding: const EdgeInsets.only(bottom: 50),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.error,
+                                        size: 100, color: primaryGray),
+                                    SizedBox(height: 20),
+                                    Text(
+                                      'Something went wrong!',
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.5, // 21/14 = 1.5
+                                        color: primaryGray,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Please come back again later.',
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.5, // 21/14 = 1.5
+                                        color: primaryGray,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ]))
+                    ])
+                  ] else if (!isError &&
+                      _reservations.isEmpty &&
                       _isTimeLoaded &&
                       _isDisableReservationLoaded &&
                       _isUserReservationLoaded &&
@@ -680,7 +794,8 @@ class _ReservationViewState extends State<ReservationView> {
                           if (_isTimeLoaded &&
                               _isDisableReservationLoaded &&
                               _isUserReservationLoaded &&
-                              _isReservationidLoaded) ...[
+                              _isReservationidLoaded &&
+                              !isError) ...[
                             if (_selectedDateIndex < 7 &&
                                 _reservations.isNotEmpty &&
                                 !isDisable(_reservations[_selectedTimeSlot]
@@ -693,6 +808,8 @@ class _ReservationViewState extends State<ReservationView> {
                                     showConfirmationModal(
                                       context,
                                       () {
+                                        Navigator.of(context).pop();
+                                        showLoadModal(context);
                                         setState(() {
                                           _isReserved = false;
                                         });
@@ -782,6 +899,8 @@ class _ReservationViewState extends State<ReservationView> {
                                 onPressed: () {
                                   showConfirmationModal(context, () async {
                                     try {
+                                      Navigator.of(context).pop();
+                                      showLoadModal(context);
                                       // Call createDisableReservation to disable the selected time slots
                                       await FirebaseCloudStorage()
                                           .deleteDisableReservation(disableIds)

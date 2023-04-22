@@ -56,6 +56,36 @@ dynamic showSuccessModal(BuildContext context, bool needToClose) {
   );
 }
 
+dynamic showLoadModal(BuildContext context) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    barrierColor: Colors.white.withOpacity(0.5),
+    builder: (BuildContext context) {
+      return Center(
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          contentPadding: EdgeInsets.zero,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              SizedBox(height: 60),
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: CircularProgressIndicator(color: primaryOrange),
+              ),
+              SizedBox(height: 60),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 dynamic showConfirmationModal(BuildContext context, OnPressedCallBack onPressed,
     bool showSuccess, String mode) {
   String modeWord = '';
@@ -176,6 +206,80 @@ dynamic showConfirmationModal(BuildContext context, OnPressedCallBack onPressed,
             ),
             const SizedBox(height: 30),
           ],
+        ),
+      );
+    },
+  );
+}
+
+dynamic showErrorModal(BuildContext context) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    barrierColor: Colors.white.withOpacity(0.5),
+    builder: (BuildContext context) {
+      return Center(
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          contentPadding: EdgeInsets.zero,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 60),
+              Container(
+                width: 100,
+                height: 100,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: primaryRed,
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 80),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Something went wrong!',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                  color: Color.fromRGBO(0, 0, 0, 0.8),
+                  height: 1.3,
+                  letterSpacing: 0.0,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 50),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    primaryOrange,
+                  ),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                    Colors.white,
+                  ),
+                ),
+                child: const Text(
+                  'Go back',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20.0,
+                    height: 1.2,
+                    letterSpacing: 0.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 60),
+            ],
+          ),
         ),
       );
     },
