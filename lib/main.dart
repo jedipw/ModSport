@@ -13,12 +13,13 @@ import 'package:modsport/views/login_view.dart';
 import 'package:modsport/views/register_view.dart';
 import 'package:modsport/views/status_view.dart';
 import 'package:modsport/views/verify_email_view.dart';
-
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 // Importing Firebase options
 import 'firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -28,15 +29,27 @@ void main() async {
 }
 
 // MainApp widget that builds the app
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({Key? key}) : super(key: key);
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(seconds: 1))
+        .then((value) => {FlutterNativeSplash.remove()});
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       // Setting the initial route for the app
       initialRoute: loginRoute,
-
       // Generating routes for each screen/view in the app
       onGenerateRoute: (settings) {
         switch (settings.name) {
