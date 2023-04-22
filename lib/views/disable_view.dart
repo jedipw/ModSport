@@ -562,13 +562,20 @@ class _DisableViewState extends State<DisableView> {
             ),
           ),
           Positioned(
-            left: 15,
+            left: 5,
             top: 65,
-            child: IconButton(
+            child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE17325),
+                padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                shape: const CircleBorder(),
+                fixedSize: const Size.fromRadius(25),
+                elevation: 0,
+              ),
+              child: const Icon(Icons.arrow_back_ios, color: Colors.white),
             ),
           ),
         ]),

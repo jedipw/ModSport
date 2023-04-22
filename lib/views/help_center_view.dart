@@ -44,7 +44,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: const [
                     Text(
-                      'HELP CENTER',
+                      'HOW CAN WE HELP?',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontStyle: FontStyle.normal,
@@ -58,9 +58,9 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                 ),
               ),
               Positioned(
-                left: 15,
+                left: 5,
                 top: 65,
-                child: IconButton(
+                child: ElevatedButton(
                   onPressed: () {
                     if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
                       _scaffoldKey.currentState?.openEndDrawer();
@@ -68,7 +68,13 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       _scaffoldKey.currentState?.openDrawer();
                     }
                   },
-                  icon: const Icon(Icons.menu, color: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE17325),
+                    shape: const CircleBorder(),
+                    fixedSize: const Size.fromRadius(25),
+                    elevation: 0,
+                  ),
+                  child: const Icon(Icons.menu, color: Colors.white),
                 ),
               ),
             ],

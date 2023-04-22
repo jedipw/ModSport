@@ -342,33 +342,18 @@ class _ReservationViewState extends State<ReservationView> {
                 ),
                 if (hasRole) ...[
                   Positioned(
-                    right: 10,
+                    right: 20,
                     child: SizedBox(
-                      width: 70.0,
-                      height: 70.0,
-                      child: IconButton(
-                        icon: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.25),
-                                blurRadius: 4,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: CircleAvatar(
-                            backgroundColor: isDisableMenu
-                                ? const Color(0xFFCC0019)
-                                : const Color(0xFFE17325),
-                            radius: 35.0,
-                            child: const Icon(
-                              Icons.swap_horiz,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                          ),
+                      width: 60.0,
+                      height: 60.0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(0),
+                          elevation: 5,
+                          backgroundColor: isDisableMenu
+                              ? const Color(0xFFCC0019)
+                              : const Color(0xFFE17325),
                         ),
                         onPressed: () {
                           if (isDisableMenu &&
@@ -425,11 +410,21 @@ class _ReservationViewState extends State<ReservationView> {
                             });
                           }
                         },
+                        child: Container(
+                          width: 70,
+                          height: 70,
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.swap_horiz,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                   Positioned(
-                    right: 15,
+                    right: 20,
                     top: 65,
                     child: Row(
                       children: [
