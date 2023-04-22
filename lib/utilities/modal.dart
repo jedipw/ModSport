@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 
 typedef OnPressedCallBack = Function();
@@ -98,7 +99,7 @@ dynamic showConfirmationModal(BuildContext context, OnPressedCallBack onPressed,
                     fontSize: 25.0,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Poppins',
-                    color: Color(0xFFCC0019),
+                    color: primaryRed,
                     height: 1.3,
                     letterSpacing: 0.0,
                   ),
@@ -149,7 +150,7 @@ dynamic showConfirmationModal(BuildContext context, OnPressedCallBack onPressed,
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xFFCC0019),
+                            primaryRed,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,

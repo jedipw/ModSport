@@ -433,7 +433,7 @@ class _ReservationViewState extends State<ReservationView> {
                           padding: const EdgeInsets.all(0),
                           elevation: 5,
                           backgroundColor: isDisableMenu
-                              ? const Color(0xFFCC0019)
+                              ? primaryRed
                               : primaryOrange,
                         ),
                         onPressed: () {
