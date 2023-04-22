@@ -6,19 +6,17 @@ import 'package:modsport/utilities/types.dart';
 class FirebaseCloudStorage {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<LocationData> getLocation(String locationId) async {
+  Future<String> getLocation(String locationId) async {
     DocumentSnapshot documentSnapshot =
         await _firestore.collection('location').doc(locationId).get();
-    return LocationData(
-      imgUrl: documentSnapshot['imgUrl'],
-      locationName: documentSnapshot['locationName'],
-    );
+    return documentSnapshot['locationName'];
   }
 
   Future<ZoneData> getZone(String zoneId) async {
     DocumentSnapshot documentSnapshot =
         await _firestore.collection('zone').doc(zoneId).get();
     return ZoneData(
+        imgUrl: documentSnapshot['imgUrl'],
         locationId: documentSnapshot['locationId'],
         zoneName: documentSnapshot['zoneName']);
   }
