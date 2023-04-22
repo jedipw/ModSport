@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/drawer.dart';
 import 'package:modsport/views/detail_view.dart';
 
@@ -31,8 +32,8 @@ class _StatusViewState extends State<StatusView> {
                     Center(
                       child: TextButton(
                         style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors
-                                .orange)), // set button style with background color
+                            backgroundColor: MaterialStateProperty.all(
+                                primaryOrange)), // set button style with background color
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -62,7 +63,7 @@ class _StatusViewState extends State<StatusView> {
               Container(
                 height: 125,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFE17325),
+                  color: primaryOrange,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20.0),
                     bottomRight: Radius.circular(20.0),
@@ -99,7 +100,7 @@ class _StatusViewState extends State<StatusView> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE17325),
+                    backgroundColor: primaryOrange,
                     shape: const CircleBorder(),
                     fixedSize: const Size.fromRadius(25),
                     elevation: 0,

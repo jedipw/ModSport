@@ -1,6 +1,7 @@
 import 'dart:developer' show log;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:modsport/services/cloud/cloud_storage_constants.dart';
 import 'package:modsport/utilities/types.dart';
 
 class FirebaseCloudStorage {
@@ -8,24 +9,24 @@ class FirebaseCloudStorage {
 
   Future<String> getLocation(String locationId) async {
     DocumentSnapshot documentSnapshot =
-        await _firestore.collection('location').doc(locationId).get();
-    return documentSnapshot['locationName'];
+        await _firestore.collection(locationCollection).doc(locationId).get();
+    return documentSnapshot[locationNameField];
   }
 
   Future<ZoneData> getZone(String zoneId) async {
     DocumentSnapshot documentSnapshot =
-        await _firestore.collection('zone').doc(zoneId).get();
+        await _firestore.collection(zoneCollection).doc(zoneId).get();
     return ZoneData(
-        imgUrl: documentSnapshot['imgUrl'],
-        locationId: documentSnapshot['locationId'],
-        zoneName: documentSnapshot['zoneName']);
+        imgUrl: documentSnapshot[imgUrlField],
+        locationId: documentSnapshot[locationIdField],
+        zoneName: documentSnapshot[zoneNameField]);
   }
 
   Future<List<ReservationData>> getReservation(
       String zoneId, bool isDisableMenu, int selectedDateIndex) async {
     QuerySnapshot querySnapshot = await _firestore
-        .collection('reservation')
-        .where('zoneId', isEqualTo: zoneId)
+        .collection(reservationCollection)
+        .where(zoneIdField, isEqualTo: zoneId)
         .get();
 
     final DateTime now = DateTime.now().add(Duration(days: selectedDateIndex));
@@ -78,9 +79,9 @@ class FirebaseCloudStorage {
 
     List<ReservationData> reservations = [];
     for (var doc in querySnapshot.docs) {
-      int capacity = doc['capacity'];
-      DateTime startTime = (doc['startTime'])?.toDate();
-      DateTime endTime = (doc['endTime'])?.toDate();
+      int capacity = doc[capacityField];
+      DateTime startTime = (doc[startTimeField])?.toDate();
+      DateTime endTime = (doc[endTimeField])?.toDate();
 
       if (!isTimeSlotExpired(DateTime(now.year, now.month, now.day,
               endTime.hour, endTime.minute, endTime.second)) &&
@@ -131,14 +132,14 @@ class FirebaseCloudStorage {
 
   Future<List<DisableData>> getDisableReservation(String zoneId) async {
     QuerySnapshot querySnapshot = await _firestore
-        .collection('disable')
-        .where('zoneId', isEqualTo: zoneId)
+        .collection(disableCollection)
+        .where(zoneIdField, isEqualTo: zoneId)
         .get();
 
     List<DisableData> disabledReservations = [];
     for (var doc in querySnapshot.docs) {
-      DateTime startDateTime = (doc['startDateTime'])?.toDate();
-      String reason = doc['disableReason'];
+      DateTime startDateTime = (doc[startDateTimeField])?.toDate();
+      String reason = doc[disableReasonField];
       disabledReservations.add(DisableData(
           disableId: doc.id,
           startDateTime: startDateTime,
@@ -150,14 +151,14 @@ class FirebaseCloudStorage {
 
   Future<List<UserReservationData>> getAllUserReservation(String zoneId) async {
     QuerySnapshot querySnapshot = await _firestore
-        .collection('userreservation')
-        .where('zoneId', isEqualTo: zoneId)
+        .collection(userReservationCollection)
+        .where(zoneIdField, isEqualTo: zoneId)
         .get();
 
     List<UserReservationData> userReservations = [];
     for (var doc in querySnapshot.docs) {
-      DateTime startDateTime = (doc['startDateTime'])?.toDate();
-      String userId = doc['userId'] as String;
+      DateTime startDateTime = (doc[startDateTimeField])?.toDate();
+      String userId = doc[userIdField] as String;
       userReservations.add(UserReservationData(
         startDateTime: startDateTime,
         userId: userId,
@@ -174,17 +175,19 @@ class FirebaseCloudStorage {
     final DateTime now = DateTime.now().add(Duration(days: selectedDateIndex));
 
     for (final reservationId in reservationIds) {
-      final DocumentSnapshot reservationSnapshot =
-          await _firestore.collection('reservation').doc(reservationId).get();
+      final DocumentSnapshot reservationSnapshot = await _firestore
+          .collection(reservationCollection)
+          .doc(reservationId)
+          .get();
       final DateTime startTime =
-          (reservationSnapshot['startTime'] as Timestamp).toDate();
+          (reservationSnapshot[startTimeField] as Timestamp).toDate();
       final DateTime endTime =
-          (reservationSnapshot['endTime'] as Timestamp).toDate();
+          (reservationSnapshot[endTimeField] as Timestamp).toDate();
 
       reservationDetails.add({
-        'startTime': DateTime(now.year, now.month, now.day, startTime.hour,
+        startTimeField: DateTime(now.year, now.month, now.day, startTime.hour,
             startTime.minute, startTime.second),
-        'endTime': DateTime(now.year, now.month, now.day, endTime.hour,
+        endTimeField: DateTime(now.year, now.month, now.day, endTime.hour,
             endTime.minute, endTime.second),
       });
     }
@@ -199,10 +202,10 @@ class FirebaseCloudStorage {
   ) async {
     try {
       for (var startDateTime in startDateTimeList) {
-        await _firestore.collection('disable').add({
-          'zoneId': zoneId,
-          'disableReason': disableReason,
-          'startDateTime': startDateTime,
+        await _firestore.collection(disableCollection).add({
+          zoneIdField: zoneId,
+          disableReasonField: disableReason,
+          startDateTimeField: startDateTime,
         });
       }
     } catch (e) {
@@ -212,7 +215,7 @@ class FirebaseCloudStorage {
 
   Future<void> deleteDisableReservation(List<String> reservationIds) async {
     final disableReservationRef =
-        FirebaseFirestore.instance.collection('disable');
+        FirebaseFirestore.instance.collection(disableCollection);
 
     for (final id in reservationIds) {
       final reservationRef = disableReservationRef.doc(id);
@@ -223,38 +226,13 @@ class FirebaseCloudStorage {
   Future<void> updateDisableReason(
       List<String> disableIds, String disableReason) async {
     final CollectionReference disableReservationRef =
-        FirebaseFirestore.instance.collection('disable');
+        FirebaseFirestore.instance.collection(disableCollection);
 
     for (String disableId in disableIds) {
       await disableReservationRef.doc(disableId).update({
-        'disableReason': disableReason,
+        disableReasonField: disableReason,
       });
     }
-  }
-
-  Future<List<String>> getReservationIdsFromDisableIds(
-      List<DateTime> startTimes, String zoneId) async {
-    // Create a list to hold the reservation IDs
-    List<String> reservationIds = [];
-
-    // Get a reference to the Firestore collection for reservations
-    final CollectionReference reservationRef =
-        FirebaseFirestore.instance.collection('reservations');
-
-    // Create a query to get all the reservations with the given start times and zone ID
-    Query reservationQuery = reservationRef
-        .where('startTime', whereIn: startTimes)
-        .where('zoneId', isEqualTo: zoneId);
-
-    // Execute the query and get the snapshot
-    QuerySnapshot reservationSnapshot = await reservationQuery.get();
-
-    // Loop through the snapshot documents and add the reservation IDs to the list
-    for (QueryDocumentSnapshot reservationDoc in reservationSnapshot.docs) {
-      reservationIds.add(reservationDoc.id);
-    }
-
-    return reservationIds;
   }
 
   Future<List<String>> getReservationIds(
@@ -263,8 +241,8 @@ class FirebaseCloudStorage {
 
     final reservationIds = <String>[];
     final reservations = await FirebaseFirestore.instance
-        .collection('reservation')
-        .where('zoneId', isEqualTo: zoneId)
+        .collection(reservationCollection)
+        .where(zoneIdField, isEqualTo: zoneId)
         .get();
 
     DateTime? resStartTime;
@@ -272,12 +250,15 @@ class FirebaseCloudStorage {
       if (startTimes.isNotEmpty) {
         resStartTime = startTime;
         for (final reservation in reservations.docs) {
-          final dayName = dayFormat.format(reservation['startTime'].toDate());
+          final dayName =
+              dayFormat.format(reservation[startTimeField].toDate());
 
           if (dayName == dayFormat.format(resStartTime!) &&
-              reservation['startTime'].toDate().hour == resStartTime.hour &&
-              reservation['startTime'].toDate().minute == resStartTime.minute &&
-              reservation['startTime'].toDate().second == resStartTime.second) {
+              reservation[startTimeField].toDate().hour == resStartTime.hour &&
+              reservation[startTimeField].toDate().minute ==
+                  resStartTime.minute &&
+              reservation[startTimeField].toDate().second ==
+                  resStartTime.second) {
             reservationIds.add(reservation.id);
           }
         }
