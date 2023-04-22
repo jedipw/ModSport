@@ -11,6 +11,7 @@ import 'package:modsport/utilities/reservation/time_slot_loading.dart';
 import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
 import 'package:modsport/utilities/reservation/reserve_button.dart';
 import 'package:modsport/utilities/reservation/disable_button.dart';
+import 'package:modsport/utilities/success_modal.dart';
 import 'package:modsport/utilities/types.dart';
 import 'package:modsport/views/disable_view.dart';
 import 'package:shimmer/shimmer.dart';
@@ -741,99 +742,8 @@ class _ReservationViewState extends State<ReservationView> {
                                                             Navigator.of(
                                                                     context)
                                                                 .pop();
-                                                            showDialog(
-                                                              barrierDismissible:
-                                                                  false,
-                                                              context: context,
-                                                              barrierColor: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                Future.delayed(
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                });
-                                                                return Center(
-                                                                  child:
-                                                                      AlertDialog(
-                                                                    shape:
-                                                                        RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10.0),
-                                                                    ),
-                                                                    contentPadding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    content:
-                                                                        Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      children: [
-                                                                        const SizedBox(
-                                                                            height:
-                                                                                60),
-                                                                        Container(
-                                                                          width:
-                                                                              100,
-                                                                          height:
-                                                                              100,
-                                                                          decoration:
-                                                                              const BoxDecoration(
-                                                                            shape:
-                                                                                BoxShape.circle,
-                                                                            color:
-                                                                                Colors.green,
-                                                                          ),
-                                                                          child: const Icon(
-                                                                              Icons.check,
-                                                                              color: Colors.white,
-                                                                              size: 80),
-                                                                        ),
-                                                                        const SizedBox(
-                                                                            height:
-                                                                                10),
-                                                                        const Text(
-                                                                          'Success!',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontSize:
-                                                                                20.0,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            color: Color.fromRGBO(
-                                                                                0,
-                                                                                0,
-                                                                                0,
-                                                                                0.8),
-                                                                            height:
-                                                                                1.3,
-                                                                            letterSpacing:
-                                                                                0.0,
-                                                                          ),
-                                                                          textAlign:
-                                                                              TextAlign.center,
-                                                                        ),
-                                                                        const SizedBox(
-                                                                            height:
-                                                                                60),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
+                                                            showSuccessModal(
+                                                                context, true);
                                                           },
                                                           style: ButtonStyle(
                                                             backgroundColor:
@@ -928,56 +838,7 @@ class _ReservationViewState extends State<ReservationView> {
                                     setState(() {
                                       _isReserved = true;
                                     });
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      barrierColor:
-                                          Colors.white.withOpacity(0.5),
-                                      builder: (BuildContext context) {
-                                        return Center(
-                                          child: AlertDialog(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                            ),
-                                            contentPadding: EdgeInsets.zero,
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const SizedBox(height: 60),
-                                                Container(
-                                                  width: 100,
-                                                  height: 100,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.green,
-                                                  ),
-                                                  child: const Icon(Icons.check,
-                                                      color: Colors.white,
-                                                      size: 80),
-                                                ),
-                                                const SizedBox(height: 10),
-                                                const Text(
-                                                  'Success!',
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Poppins',
-                                                    color: Color.fromRGBO(
-                                                        0, 0, 0, 0.8),
-                                                    height: 1.3,
-                                                    letterSpacing: 0.0,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                const SizedBox(height: 60),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
+                                    showSuccessModal(context, false);
                                     Future.delayed(const Duration(seconds: 1),
                                         () {
                                       Navigator.of(context).pop();
@@ -1103,67 +964,9 @@ class _ReservationViewState extends State<ReservationView> {
                                                                             context)
                                                                         .pop())
                                                                 .then((_) =>
-                                                                    showDialog(
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      context:
-                                                                          context,
-                                                                      barrierColor: Colors
-                                                                          .white
-                                                                          .withOpacity(
-                                                                              0.5),
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        Future.delayed(
-                                                                            const Duration(seconds: 1),
-                                                                            () {
-                                                                          Navigator.of(context)
-                                                                              .pop();
-                                                                        });
-                                                                        return Center(
-                                                                          child:
-                                                                              AlertDialog(
-                                                                            shape:
-                                                                                RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(10.0),
-                                                                            ),
-                                                                            contentPadding:
-                                                                                EdgeInsets.zero,
-                                                                            content:
-                                                                                Column(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              children: [
-                                                                                const SizedBox(height: 60),
-                                                                                Container(
-                                                                                  width: 100,
-                                                                                  height: 100,
-                                                                                  decoration: const BoxDecoration(
-                                                                                    shape: BoxShape.circle,
-                                                                                    color: Colors.green,
-                                                                                  ),
-                                                                                  child: const Icon(Icons.check, color: Colors.white, size: 80),
-                                                                                ),
-                                                                                const SizedBox(height: 10),
-                                                                                const Text(
-                                                                                  'Success!',
-                                                                                  style: TextStyle(
-                                                                                    fontSize: 20.0,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    fontFamily: 'Poppins',
-                                                                                    color: Color.fromRGBO(0, 0, 0, 0.8),
-                                                                                    height: 1.3,
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
-                                                                                  textAlign: TextAlign.center,
-                                                                                ),
-                                                                                const SizedBox(height: 60),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ))
+                                                                    showSuccessModal(
+                                                                        context,
+                                                                        true))
                                                                 .then((_) =>
                                                                     setState(
                                                                       () {
