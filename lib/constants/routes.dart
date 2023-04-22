@@ -5,4 +5,4 @@ const statusRoute = '/status/';
 const helpCenterRoute = '/helpCenter/';
 const registerRoute = '/register/';
 const forgetPasswordRoute = '/forgetPasswordRoute/';
-const verifyEmailRoute = '/verifyEmailRoute';
+const verifyEmailRoute = '/verifyEmailRoute/';
