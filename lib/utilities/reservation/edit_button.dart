@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+typedef OnPressedCallBack = Function();
+
 class EditButton extends StatelessWidget {
-  const EditButton({Key? key, required this.selectedDateIndex})
-      : super(key: key);
-  final int selectedDateIndex;
+  const EditButton({Key? key, required this.onPressed}) : super(key: key);
+  final OnPressedCallBack onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +27,7 @@ class EditButton extends StatelessWidget {
           ),
         ), // Set the button background color to grey
 
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     fullscreenDialog: true,
-          //     builder: (context) =>
-          //         DisableView(zoneId: '', reservationIds: [], reason: '', selectedDateIndex: selectedDateIndex,),
-          //   ),
-          // );
-        },
+        onPressed: onPressed,
 
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

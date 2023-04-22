@@ -45,7 +45,7 @@ class _StatusViewState extends State<StatusView> {
                           ); // navigate to the detailed status page when button is pressed
                         },
                         child: const Text(
-                          'Detailed status (ID: 54321, StartTime: 17 April 08:00:00)',
+                          'Zone ID: 54321, StartTime: 17 April 08:00:00',
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -100,7 +100,6 @@ class _StatusViewState extends State<StatusView> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE17325),
-                    
                     shape: const CircleBorder(),
                     fixedSize: const Size.fromRadius(25),
                     elevation: 0,
