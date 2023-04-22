@@ -27,7 +27,7 @@ TextStyle bottomTextStyle = const TextStyle(
   fontSize: 14,
   height:
       1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
-  color: primaryOrange,
+  color: Color(0xFFDB611D),
 );
 
 // A stateless widget for the disable view
@@ -256,7 +256,7 @@ class _DisableViewState extends State<DisableView> {
                         height:
                             1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
                         color: numOfCharacter < 10 || numOfCharacter > 250
-                            ? primaryOrange
+                            ? const Color(0xFFDB611D)
                             : const Color(0xFF808080),
                       ),
                     ),

@@ -22,7 +22,7 @@ class ForgetPasswordView extends StatelessWidget {
           style: ButtonStyle(
               // style the button
               backgroundColor: MaterialStateProperty.all(
-                  Colors.orange)), // set button background color
+                  primaryOrange)), // set button background color
           onPressed: () {
             // method called when button is pressed
             Navigator.of(context).pushNamedAndRemoveUntil(
