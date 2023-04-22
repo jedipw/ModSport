@@ -19,6 +19,7 @@ dependencies:
   path_provider: ^2.0.14
   sqflite: ^2.2.6
   shimmer: ^2.0.0
+  flutter_native_splash: ^2.2.19
 
 dev_dependencies:
   flutter_test:

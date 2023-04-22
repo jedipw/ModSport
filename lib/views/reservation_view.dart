@@ -153,7 +153,6 @@ class _ReservationViewState extends State<ReservationView> {
           reservationIds = reservations;
           _isReservationidLoaded = true;
         });
-        log(reservations.toString());
       }
     } catch (e) {
       log('Error fetching reservation data: $e');
