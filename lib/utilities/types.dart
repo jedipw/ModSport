@@ -25,20 +25,12 @@ class UserReservationData {
 class ZoneData {
   final String locationId;
   final String zoneName;
+  final String imgUrl;
 
   ZoneData({
     required this.locationId,
     required this.zoneName,
-  });
-}
-
-class LocationData {
-  final String imgUrl;
-  final String locationName;
-
-  LocationData({
     required this.imgUrl,
-    required this.locationName,
   });
 }
 

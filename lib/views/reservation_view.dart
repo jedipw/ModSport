@@ -209,10 +209,12 @@ class _ReservationViewState extends State<ReservationView> {
       ZoneData zoneData = await FirebaseCloudStorage().getZone(widget.zoneId);
       String locationId = zoneData.locationId;
       String zoneName = zoneData.zoneName;
+      String imgUrl = zoneData.imgUrl;
 
       // Update the state
       if (mounted) {
         setState(() {
+          _imgUrl = imgUrl;
           _locationId = locationId;
           _zoneName = zoneName;
           _isZoneLoaded = true;
@@ -227,17 +229,15 @@ class _ReservationViewState extends State<ReservationView> {
     try {
       await _getZoneData();
       // Get the location data
-      LocationData locationData =
+      String locationData =
           await FirebaseCloudStorage().getLocation(_locationId);
 
       // Extract the imgUrl and locationName from the location data
-      String imgUrl = locationData.imgUrl;
-      String locationName = locationData.locationName;
+      String locationName = locationData;
 
       // Update the state with the imgUrl
       if (mounted) {
         setState(() {
-          _imgUrl = imgUrl;
           _locationName = locationName;
           _isLocationLoaded = true;
         });
