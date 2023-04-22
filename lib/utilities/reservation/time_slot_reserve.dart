@@ -105,7 +105,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                               border: Border.all(
                                 width: 2,
                                 color: widget.isReserved
-                                    ? const Color(0xFF808080)
+                                    ? primaryGray
                                     : primaryOrange,
                               ),
                             ),
@@ -125,12 +125,12 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                                     (widget.isReserved &&
                                         index == widget.selectedTimeSlot)
                                 ? primaryOrange
-                                : const Color(0xFF808080),
+                                : primaryGray,
                           ),
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.people),
+                            const Icon(Icons.people, color: primaryGray),
                             const SizedBox(width: 8),
                             Text(
                               '$numOfReservation/${widget.reservation[index].capacity}',
@@ -140,7 +140,7 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
                                 fontWeight: FontWeight.w500,
                                 fontSize: 22,
                                 height: 1.5,
-                                color: Color(0xFF808080),
+                                color: primaryGray,
                               ),
                             ),
                           ],

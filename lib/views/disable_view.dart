@@ -17,7 +17,7 @@ TextStyle topTextStyle = const TextStyle(
   fontSize: 22,
   height:
       1.5, // or line-height: 33px, which is equivalent to 1.5 times the font size
-  color: Color.fromRGBO(0, 0, 0, 0.6),
+  color: primaryGray,
 );
 
 TextStyle bottomTextStyle = const TextStyle(
@@ -257,7 +257,7 @@ class _DisableViewState extends State<DisableView> {
                             1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
                         color: numOfCharacter < 10 || numOfCharacter > 250
                             ? const Color(0xFFDB611D)
-                            : const Color(0xFF808080),
+                            : primaryGray,
                       ),
                     ),
                     if (numOfCharacter < 10)
@@ -282,7 +282,7 @@ class _DisableViewState extends State<DisableView> {
                     side: MaterialStateProperty.all(
                       BorderSide(
                         color: numOfCharacter > 250 || numOfCharacter < 10
-                            ? const Color(0xFF808080)
+                            ? primaryGray
                             : primaryOrange,
                         width: 3,
                       ),
@@ -336,7 +336,7 @@ class _DisableViewState extends State<DisableView> {
                     "DONE", // Set the button text to "Disable"
                     style: TextStyle(
                       color: numOfCharacter > 250 || numOfCharacter < 10
-                          ? const Color(0xFF808080)
+                          ? primaryGray
                           : primaryOrange,
                       fontSize: 20,
                       fontWeight: FontWeight.w500,

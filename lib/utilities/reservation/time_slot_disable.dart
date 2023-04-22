@@ -80,7 +80,7 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                       }
                       return widget
                               .isDisable(widget.reservation[index].startTime)
-                          ? const Color(0xFF808080)
+                          ? primaryGray
                           : primaryOrange;
                     },
                   ),
@@ -113,19 +113,19 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                             fontSize: 22,
                             color: widget.isDisable(
                                     widget.reservation[index].startTime)
-                                ? const Color(0xFF808080)
+                                ? primaryGray
                                 : primaryOrange,
                           ),
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.people, color: Color(0xFF808080)),
+                            const Icon(Icons.people, color: primaryGray),
                             const SizedBox(width: 8),
                             widget.isDisable(
                                     widget.reservation[index].startTime)
                                 ? const Icon(
                                     Icons.block,
-                                    color: Color(0xFF808080),
+                                    color: primaryGray,
                                     size: 35,
                                   )
                                 : Text(
@@ -136,7 +136,7 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                                       fontWeight: FontWeight.w500,
                                       fontSize: 22,
                                       height: 1.5,
-                                      color: Color(0xFF808080),
+                                      color: primaryGray,
                                     ),
                                   ),
                             const SizedBox(width: 13),

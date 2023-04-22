@@ -68,7 +68,7 @@ class _TimeSlotLoadingState extends State<TimeSlotLoading> {
                         color: Colors.transparent,
                         border: Border.all(
                           width: 2,
-                          color: const Color(0xFF808080),
+                          color: primaryGray,
                         ),
                       ),
                     ),

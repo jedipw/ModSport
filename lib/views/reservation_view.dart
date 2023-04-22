@@ -296,13 +296,12 @@ class _ReservationViewState extends State<ReservationView> {
                     Container(
                       width: double.infinity,
                       height: 240,
-                      color: const Color(0xFF808080),
+                      color: primaryGray,
                     ),
                     const Positioned.fill(
                       child: Align(
                         alignment: Alignment.center,
-                        child:
-                            CircularProgressIndicator(color: primaryOrange),
+                        child: CircularProgressIndicator(color: primaryOrange),
                       ),
                     ),
                     Image.network(
@@ -383,7 +382,7 @@ class _ReservationViewState extends State<ReservationView> {
                     children: [
                       const Icon(
                         Icons.location_on_outlined,
-                        color: Color(0x99000000),
+                        color: primaryGray,
                       ),
                       const SizedBox(
                         width: 5,
@@ -407,7 +406,7 @@ class _ReservationViewState extends State<ReservationView> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     height: 1.5, // 21/14 = 1.5
-                                    color: Color(0x99000000),
+                                    color: primaryGray,
                                     letterSpacing: 0,
                                   ),
                                   children: [
@@ -639,7 +638,7 @@ class _ReservationViewState extends State<ReservationView> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
                               Icon(Icons.event_busy,
-                                  size: 100, color: Color(0x99000000)),
+                                  size: 100, color: primaryGray),
                               SizedBox(height: 20),
                               Text(
                                 'Sorry, we don\'t have any',
@@ -648,7 +647,7 @@ class _ReservationViewState extends State<ReservationView> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   height: 1.5, // 21/14 = 1.5
-                                  color: Color(0x99000000),
+                                  color: primaryGray,
                                   letterSpacing: 0,
                                 ),
                               ),
@@ -659,7 +658,7 @@ class _ReservationViewState extends State<ReservationView> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   height: 1.5, // 21/14 = 1.5
-                                  color: Color(0x99000000),
+                                  color: primaryGray,
                                   letterSpacing: 0,
                                 ),
                               ),
