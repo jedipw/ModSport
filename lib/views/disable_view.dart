@@ -29,27 +29,32 @@ TextStyle bottomTextStyle = const TextStyle(
 
 // A stateless widget for the disable view
 class DisableView extends StatefulWidget {
-  const DisableView(
-      {super.key,
-      required this.zoneId,
-      required this.reservationIds,
-      required this.reason,
-      required this.selectedDateIndex});
+  const DisableView({
+    super.key,
+    required this.disableIds,
+    required this.zoneId,
+    required this.reservationIds,
+    this.reason = '',
+    required this.selectedDateIndex,
+    required this.mode,
+  });
+  final List<String> disableIds;
   final String zoneId;
   final List<String> reservationIds;
   final String reason;
   final int selectedDateIndex;
+  final String mode;
 
   @override
   State<DisableView> createState() => _DisableViewState();
 }
 
 class _DisableViewState extends State<DisableView> {
-  int numOfCharacter = 0;
-  final reasonController = TextEditingController();
   String _zoneName = '';
   List<Map<String, dynamic>> reservationTimes = [];
   List<Timestamp> startTimes = [];
+  TextEditingController reasonController = TextEditingController();
+  int numOfCharacter = 0;
 
   bool _isZoneNameLoaded = false;
   bool _isReservationTimeLoaded = false;
@@ -74,6 +79,8 @@ class _DisableViewState extends State<DisableView> {
     super.initState();
     _getZoneName();
     _getReservationTime();
+    reasonController = TextEditingController(text: widget.reason);
+    numOfCharacter = reasonController.text.length;
   }
 
   @override
@@ -300,11 +307,11 @@ class _DisableViewState extends State<DisableView> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Column(
-                                      children: const [
-                                        SizedBox(height: 40),
+                                      children: [
+                                        const SizedBox(height: 40),
                                         Text(
-                                          'Are you sure\nyou want to\ndisable ?',
-                                          style: TextStyle(
+                                          'Are you sure\nyou want to\n${widget.mode} ?',
+                                          style: const TextStyle(
                                             fontSize: 25.0,
                                             fontWeight: FontWeight.bold,
                                             fontFamily: 'Poppins',
@@ -314,7 +321,7 @@ class _DisableViewState extends State<DisableView> {
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
-                                        SizedBox(height: 30),
+                                        const SizedBox(height: 30),
                                       ],
                                     ),
                                     Column(
@@ -330,11 +337,116 @@ class _DisableViewState extends State<DisableView> {
                                                 onPressed: () async {
                                                   try {
                                                     // Call createDisableReservation to disable the selected time slots
-                                                    await FirebaseCloudStorage()
+                                                    widget.mode == 'disable' ? await FirebaseCloudStorage()
                                                         .createDisableReservation(
                                                           widget.zoneId,
                                                           reasonController.text,
                                                           startTimes,
+                                                        )
+                                                        .then((_) =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop())
+                                                        .then((_) =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop())
+                                                        .then((_) => showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              barrierColor: Colors
+                                                                  .white
+                                                                  .withOpacity(
+                                                                      0.5),
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                Future.delayed(
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            1),
+                                                                    () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                });
+                                                                return Center(
+                                                                  child:
+                                                                      AlertDialog(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                    ),
+                                                                    contentPadding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    content:
+                                                                        Column(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                60),
+                                                                        Container(
+                                                                          width:
+                                                                              100,
+                                                                          height:
+                                                                              100,
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            shape:
+                                                                                BoxShape.circle,
+                                                                            color:
+                                                                                Colors.green,
+                                                                          ),
+                                                                          child: const Icon(
+                                                                              Icons.check,
+                                                                              color: Colors.white,
+                                                                              size: 80),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                10),
+                                                                        const Text(
+                                                                          'Success!',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                20.0,
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontFamily:
+                                                                                'Poppins',
+                                                                            color: Color.fromRGBO(
+                                                                                0,
+                                                                                0,
+                                                                                0,
+                                                                                0.8),
+                                                                            height:
+                                                                                1.3,
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                          ),
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                60),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            )) : await FirebaseCloudStorage()
+                                                        .updateDisableReason(
+                                                          widget.disableIds,
+                                                          reasonController.text,
                                                         )
                                                         .then((_) =>
                                                             Navigator.of(

@@ -1,5 +1,4 @@
 import 'dart:developer' show log;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/utilities/types.dart';
@@ -221,5 +220,72 @@ class FirebaseCloudStorage {
       final reservationRef = disableReservationRef.doc(id);
       await reservationRef.delete();
     }
+  }
+
+  Future<void> updateDisableReason(
+      List<String> disableIds, String disableReason) async {
+    final CollectionReference disableReservationRef =
+        FirebaseFirestore.instance.collection('disable');
+
+    for (String disableId in disableIds) {
+      await disableReservationRef.doc(disableId).update({
+        'disableReason': disableReason,
+      });
+    }
+  }
+
+  Future<List<String>> getReservationIdsFromDisableIds(
+      List<DateTime> startTimes, String zoneId) async {
+    // Create a list to hold the reservation IDs
+    List<String> reservationIds = [];
+
+    // Get a reference to the Firestore collection for reservations
+    final CollectionReference reservationRef =
+        FirebaseFirestore.instance.collection('reservations');
+
+    // Create a query to get all the reservations with the given start times and zone ID
+    Query reservationQuery = reservationRef
+        .where('startTime', whereIn: startTimes)
+        .where('zoneId', isEqualTo: zoneId);
+
+    // Execute the query and get the snapshot
+    QuerySnapshot reservationSnapshot = await reservationQuery.get();
+
+    // Loop through the snapshot documents and add the reservation IDs to the list
+    for (QueryDocumentSnapshot reservationDoc in reservationSnapshot.docs) {
+      reservationIds.add(reservationDoc.id);
+    }
+
+    return reservationIds;
+  }
+
+  Future<List<String>> getReservationIds(
+      List<DateTime?> startTimes, String zoneId) async {
+    final dayFormat = DateFormat('EEEE');
+
+    final reservationIds = <String>[];
+    final reservations = await FirebaseFirestore.instance
+        .collection('reservation')
+        .where('zoneId', isEqualTo: zoneId)
+        .get();
+
+    DateTime? resStartTime;
+    for (final startTime in startTimes) {
+      if (startTimes.isNotEmpty) {
+        resStartTime = startTime;
+        for (final reservation in reservations.docs) {
+          final dayName = dayFormat.format(reservation['startTime'].toDate());
+
+          if (dayName == dayFormat.format(resStartTime!) &&
+              reservation['startTime'].toDate().hour == resStartTime.hour &&
+              reservation['startTime'].toDate().minute == resStartTime.minute &&
+              reservation['startTime'].toDate().second == resStartTime.second) {
+            reservationIds.add(reservation.id);
+          }
+        }
+      }
+    }
+
+    return reservationIds;
   }
 }
