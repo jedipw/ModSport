@@ -320,7 +320,13 @@ class _DisableViewState extends State<DisableView> {
                                       .then((_) => Navigator.of(context).pop());
                             } catch (e) {
                               // Handle error
-                              log('Error disabling reservation: $e');
+                              showErrorModal(
+                                context,
+                                () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                },
+                              );
                             }
                           },
                               false,

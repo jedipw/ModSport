@@ -212,7 +212,7 @@ dynamic showConfirmationModal(BuildContext context, OnPressedCallBack onPressed,
   );
 }
 
-dynamic showErrorModal(BuildContext context) {
+dynamic showErrorModal(BuildContext context, OnPressedCallBack onPressed) {
   showDialog(
     barrierDismissible: false,
     context: context,
@@ -228,15 +228,7 @@ dynamic showErrorModal(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 60),
-              Container(
-                width: 100,
-                height: 100,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: primaryRed,
-                ),
-                child: const Icon(Icons.close, color: Colors.white, size: 80),
-              ),
+              const Icon(Icons.error, color: primaryRed, size: 100),
               const SizedBox(height: 10),
               const Text(
                 'Something went wrong!',
@@ -250,12 +242,21 @@ dynamic showErrorModal(BuildContext context) {
                 ),
                 textAlign: TextAlign.center,
               ),
+              const Text(
+                'Please try again later!',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                  color: Color.fromRGBO(0, 0, 0, 0.8),
+                  height: 1.3,
+                  letterSpacing: 0.0,
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 50),
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
+                onPressed: onPressed,
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
                     primaryOrange,
@@ -264,16 +265,19 @@ dynamic showErrorModal(BuildContext context) {
                     Colors.white,
                   ),
                 ),
-                child: const Text(
-                  'Go back',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20.0,
-                    height: 1.2,
-                    letterSpacing: 0.0,
-                    color: Colors.white,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Text(
+                    'Okay',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20.0,
+                      height: 1.2,
+                      letterSpacing: 0.0,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
