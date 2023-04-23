@@ -86,7 +86,6 @@ class _ReservationViewState extends State<ReservationView> {
     fetchData(firstMode);
   }
 
-
   void handleError() {
     if (mounted) {
       setState(() {
@@ -114,8 +113,8 @@ class _ReservationViewState extends State<ReservationView> {
 
         List<ReservationData> invalidReservations = [];
         for (int i = 0; i < _reservations.length; i++) {
-          int numReservations =
-              countNumOfReservation(_reservations[i].startTime, _userReservation);
+          int numReservations = countNumOfReservation(
+              _reservations[i].startTime, _userReservation);
           if (numReservations >= _reservations[i].capacity! &&
               i != _selectedTimeSlot &&
               !_isDisableMenu) {
@@ -149,7 +148,10 @@ class _ReservationViewState extends State<ReservationView> {
         bool isUserReserved = await FirebaseCloudStorage().getIsUserReserved(
             userId,
             widget.zoneId,
-            DateTime.now().add(Duration(days: _selectedDateIndex)));
+            DateTime.now().add(Duration(days: _selectedDateIndex)),
+            _reservations,
+            _selectedTimeSlot);
+
         if (mounted) {
           setState(() {
             _isReserved = isUserReserved;
@@ -569,8 +571,9 @@ class _ReservationViewState extends State<ReservationView> {
                           if (isEverythingLoaded() && !_isError) ...[
                             if (_selectedDateIndex < 7 &&
                                 _reservations.isNotEmpty &&
-                                !isDisable(_reservations[_selectedTimeSlot]
-                                    .startTime, _disabledReservation) &&
+                                !isDisable(
+                                    _reservations[_selectedTimeSlot].startTime,
+                                    _disabledReservation) &&
                                 !_isDisableMenu)
                               ReserveButton(
                                 isReserved: _isReserved,

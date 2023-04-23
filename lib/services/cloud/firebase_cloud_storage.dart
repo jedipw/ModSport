@@ -367,7 +367,11 @@ class FirebaseCloudStorage {
   }
 
   Future<bool> getIsUserReserved(
-      String userId, String zoneId, DateTime startDateTime) async {
+      String userId,
+      String zoneId,
+      DateTime startDateTime,
+      List<ReservationData> reservation,
+      int selectedTimeSlot) async {
     try {
       final querySnapshot = await userRes
           .where(userIdField, isEqualTo: userId)
@@ -379,9 +383,12 @@ class FirebaseCloudStorage {
         if (docStartDateTime.year == startDateTime.year &&
             docStartDateTime.month == startDateTime.month &&
             docStartDateTime.day == startDateTime.day) {
-          if (docStartDateTime.isBefore(DateTime.now())) {
-            return false;
-          } else {
+          if (reservation[selectedTimeSlot].startTime!.hour ==
+                  docStartDateTime.hour &&
+              reservation[selectedTimeSlot].startTime!.minute ==
+                  docStartDateTime.minute &&
+              reservation[selectedTimeSlot].startTime!.second ==
+                  docStartDateTime.second) {
             return true;
           }
         }

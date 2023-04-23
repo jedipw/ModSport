@@ -2,24 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
-typedef OnChangedCallback = void Function(int? value);
-typedef CountNumOfReservationCallback = int Function(DateTime? startTime);
-typedef IsDisableCallback = bool Function(DateTime? startTime);
-
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
-class TimeSlotLoading extends StatefulWidget {
+class TimeSlotLoading extends StatelessWidget {
   const TimeSlotLoading({
     super.key,
   });
 
-  @override
-  State<TimeSlotLoading> createState() => _TimeSlotLoadingState();
-}
-
-// The State class for the TimeSlot widget
-class _TimeSlotLoadingState extends State<TimeSlotLoading> {
   // The index of the selected time slot
-
   @override
   Widget build(BuildContext context) {
     // Set the inactive radio button color
