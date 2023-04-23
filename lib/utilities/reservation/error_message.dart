@@ -26,7 +26,7 @@ class ErrorMessage extends StatelessWidget {
               ),
             ),
             Text(
-              'Please come back again later.',
+              'Please try again later.',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14,

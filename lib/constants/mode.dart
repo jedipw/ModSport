@@ -3,6 +3,6 @@ const disableMode = 'disable';
 const cancelMode = 'cancel';
 const logOutMode = 'logout';
 const enableMode = 'enable';
-const firstMode = 'first';
+const enterMode = 'enter';
 const userMode = 'user';
 const adminMode = 'admin';
