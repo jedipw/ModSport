@@ -22,9 +22,7 @@ class ReserveButton extends StatelessWidget {
         style: ButtonStyle(
           side: MaterialStateProperty.all(
             BorderSide(
-              color: isReserved
-                  ? primaryRed
-                  : primaryOrange,
+              color: isReserved ? primaryRed : primaryOrange,
               width: 3,
             ),
           ),
@@ -41,8 +39,7 @@ class ReserveButton extends StatelessWidget {
               ? "CANCEL"
               : "RESERVE", // Set the button text based on the isReserved value
           style: TextStyle(
-            color:
-                isReserved ? primaryRed : primaryOrange,
+            color: isReserved ? primaryRed : primaryOrange,
             fontSize: 20,
             fontWeight: FontWeight.w500,
             fontFamily: 'Poppins',
