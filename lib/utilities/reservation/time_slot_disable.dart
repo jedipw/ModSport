@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/types.dart';
+import 'package:modsport/utilities/reservation/function.dart';
 
-typedef CountNumOfReservationCallback = int Function(DateTime? startTime);
 typedef OnChangedCallback = void Function(int index, bool? value);
-typedef IsDisableCallback = bool Function(DateTime? startTime);
 
 class TimeSlotDisable extends StatefulWidget {
   const TimeSlotDisable({
     super.key,
     required this.reservation,
     required this.userReservation,
-    required this.countNumOfReservation,
     required this.disabledReservation,
     required this.selectedTimeSlots,
     required this.onChanged,
-    required this.isDisable,
   });
   final List<DisableData> disabledReservation;
   final List<ReservationData> reservation;
   final List<UserReservationData> userReservation;
-  final CountNumOfReservationCallback countNumOfReservation;
   final List<bool?> selectedTimeSlots;
-  final IsDisableCallback isDisable;
 
   final OnChangedCallback onChanged;
 
@@ -37,11 +32,12 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
       itemCount: widget.reservation.length,
       itemBuilder: (context, index) {
-        final int numOfReservation =
-            widget.countNumOfReservation(widget.reservation[index].startTime);
+        final int numOfReservation = countNumOfReservation(
+            widget.reservation[index].startTime, widget.userReservation);
         return GestureDetector(
           onTap: () {
-            if (!widget.isDisable(widget.reservation[index].startTime)) {
+            if (!isDisable(widget.reservation[index].startTime,
+                widget.disabledReservation)) {
               widget.onChanged(index, !widget.selectedTimeSlots[index]!);
             }
           },
@@ -63,12 +59,13 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
               children: [
                 Checkbox(
                   activeColor: primaryOrange,
-                  value: widget.isDisable(widget.reservation[index].startTime)
+                  value: isDisable(widget.reservation[index].startTime,
+                          widget.disabledReservation)
                       ? !widget.selectedTimeSlots[index]!
                       : widget.selectedTimeSlots[index],
                   onChanged: (bool? value) {
-                    if (!widget
-                        .isDisable(widget.reservation[index].startTime)) {
+                    if (!isDisable(widget.reservation[index].startTime,
+                        widget.disabledReservation)) {
                       widget.onChanged(index, value);
                     }
                   },
@@ -78,8 +75,8 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                       if (states.contains(MaterialState.disabled)) {
                         return primaryOrange;
                       }
-                      return widget
-                              .isDisable(widget.reservation[index].startTime)
+                      return isDisable(widget.reservation[index].startTime,
+                              widget.disabledReservation)
                           ? primaryGray
                           : primaryOrange;
                     },
@@ -111,8 +108,9 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w500,
                             fontSize: 22,
-                            color: widget.isDisable(
-                                    widget.reservation[index].startTime)
+                            color: isDisable(
+                                    widget.reservation[index].startTime,
+                                    widget.disabledReservation)
                                 ? primaryGray
                                 : primaryOrange,
                           ),
@@ -121,8 +119,8 @@ class _TimeSlotDisableState extends State<TimeSlotDisable> {
                           children: [
                             const Icon(Icons.people, color: primaryGray),
                             const SizedBox(width: 8),
-                            widget.isDisable(
-                                    widget.reservation[index].startTime)
+                            isDisable(widget.reservation[index].startTime,
+                                    widget.disabledReservation)
                                 ? const Icon(
                                     Icons.block,
                                     color: primaryGray,

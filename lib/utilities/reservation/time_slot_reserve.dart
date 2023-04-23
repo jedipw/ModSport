@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/types.dart';
+import 'package:modsport/utilities/reservation/function.dart';
 
 typedef OnChangedCallback = void Function(int? value);
-typedef CountNumOfReservationCallback = int Function(DateTime? startTime);
 typedef IsDisableCallback = bool Function(DateTime? startTime);
 
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
 class TimeSlotReserve extends StatefulWidget {
   const TimeSlotReserve({
     super.key,
-    required this.countNumOfReservation,
     required this.reservation,
     required this.disabledReservation,
     required this.userReservation,
@@ -20,7 +19,6 @@ class TimeSlotReserve extends StatefulWidget {
     required this.onChanged,
   });
 
-  final CountNumOfReservationCallback countNumOfReservation;
   final List<ReservationData> reservation;
   final List<DisableData> disabledReservation;
   final List<UserReservationData> userReservation;
@@ -51,8 +49,8 @@ class _TimeSlotReserveState extends State<TimeSlotReserve> {
       itemCount: widget.reservation.length, // increment by 1
       itemBuilder: (context, index) {
         // Builds a RadioListTile widget for each item in the list
-        final int numOfReservation =
-            widget.countNumOfReservation(widget.reservation[index].startTime);
+        final int numOfReservation = countNumOfReservation(
+            widget.reservation[index].startTime, widget.userReservation);
         return Theme(
           data: theme,
           child: Container(
