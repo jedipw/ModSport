@@ -98,12 +98,9 @@ class _ReservationViewState extends State<ReservationView> {
     try {
       if (_reservations.isNotEmpty) {
         int reservationIndex;
-        if (_isReserved) {
-          reservationIndex = await FirebaseCloudStorage()
-              .getUserReservationIndex(_reservations, userId, widget.zoneId);
-        } else {
-          reservationIndex = 0;
-        }
+        reservationIndex = await FirebaseCloudStorage()
+            .getUserReservationIndex(_reservations, userId, widget.zoneId);
+
         if (mounted) {
           setState(() {
             _selectedTimeSlot = reservationIndex;
@@ -299,8 +296,8 @@ class _ReservationViewState extends State<ReservationView> {
             .then((_) => _getReservationData())
             .then((_) => _getUserReservationData())
             .then((_) => _getDisableReservationData())
-            .then((_) => _getIsReservedData())
-            .then((_) => _getReservationIndexData());
+            .then((_) => _getReservationIndexData())
+            .then((_) => _getIsReservedData());
         break;
       case userMode:
         setState(() {
@@ -313,8 +310,8 @@ class _ReservationViewState extends State<ReservationView> {
         await _getReservationData()
             .then((_) => _getUserReservationData())
             .then((_) => _getDisableReservationData())
-            .then((_) => _getIsReservedData())
-            .then((_) => _getReservationIndexData());
+            .then((_) => _getReservationIndexData())
+            .then((_) => _getIsReservedData());
         break;
       case adminMode:
         setState(() {
