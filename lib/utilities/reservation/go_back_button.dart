@@ -13,10 +13,11 @@ class GoBackButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryOrange,
         shape: const CircleBorder(),
+        elevation: 5,
         padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
         fixedSize: const Size.fromRadius(25),
       ),
-      child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+      child: const Icon(Icons.arrow_back_ios, color: Colors.white),
     );
   }
 }

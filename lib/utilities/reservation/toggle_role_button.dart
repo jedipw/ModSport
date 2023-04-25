@@ -17,30 +17,27 @@ class ToggleRoleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 60.0,
-      height: 60.0,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(0),
-          elevation: 5,
-          backgroundColor: isError || !isEverythingLoaded
-              ? primaryGray
-              : isDisableMenu
-                  ? primaryRed
-                  : primaryOrange,
-        ),
-        onPressed: onPressed,
-        child: Container(
-          width: 70,
-          height: 70,
-          alignment: Alignment.center,
-          child: const Icon(
-            Icons.swap_horiz,
-            color: Colors.white,
-            size: 40,
-          ),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(0),
+        elevation: 5,
+        backgroundColor: isError || !isEverythingLoaded
+            ? primaryGray
+            : isDisableMenu
+                ? primaryRed
+                : primaryOrange,
+        fixedSize: const Size.fromRadius(25),
+      ),
+      onPressed: onPressed,
+      child: Container(
+        width: 70,
+        height: 70,
+        alignment: Alignment.center,
+        child: const Icon(
+          Icons.swap_horiz,
+          color: Colors.white,
+          size: 40,
         ),
       ),
     );
