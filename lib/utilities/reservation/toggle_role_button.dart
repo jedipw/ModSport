@@ -9,11 +9,13 @@ class ToggleRoleButton extends StatelessWidget {
       required this.onPressed,
       required this.isError,
       required this.isEverythingLoaded,
-      required this.isDisableMenu});
+      required this.isDisableMenu,
+      required this.isSwipingUp});
   final OnPressedCallBack onPressed;
   final bool isError;
   final bool isEverythingLoaded;
   final bool isDisableMenu;
+  final bool isSwipingUp;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class ToggleRoleButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(0),
-        elevation: 5,
+        elevation: isSwipingUp ? 0 : 5,
         backgroundColor: isError || !isEverythingLoaded
             ? primaryGray
             : isDisableMenu
@@ -34,8 +36,12 @@ class ToggleRoleButton extends StatelessWidget {
         width: 70,
         height: 70,
         alignment: Alignment.center,
-        child: const Icon(
-          Icons.swap_horiz,
+        child: Icon(
+          isSwipingUp
+              ? isDisableMenu
+                  ? Icons.admin_panel_settings_outlined
+                  : Icons.person_2_outlined
+              : Icons.swap_horiz,
           color: Colors.white,
           size: 40,
         ),

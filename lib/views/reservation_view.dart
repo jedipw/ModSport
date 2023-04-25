@@ -1,4 +1,8 @@
 // Import a neccesary package from Flutter.
+
+import 'dart:developer' as dev;
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 
@@ -513,29 +517,34 @@ class _ReservationViewState extends State<ReservationView> {
                 ),
                 color: Colors.white,
               ),
-              duration: const Duration(milliseconds: 75),
+              duration: const Duration(milliseconds: 100),
               margin: EdgeInsets.only(top: marginValue),
               child: Column(
                 children: [
                   GestureDetector(
                     onVerticalDragUpdate: (details) {
-                      setState(() {
-                        marginValue += details.delta.dy;
-                        marginValue = marginValue.clamp(20.0, 210);
-                      });
-                    },
-                    onVerticalDragEnd: (details) {
-                      if (marginValue < 209 && !_isSwipingUp) {
-                        setState(() {
-                          marginValue = 20.0;
-                          _isSwipingUp = true;
-                        });
-                      } else if (marginValue > 21 && _isSwipingUp) {
-                        setState(() {
-                          marginValue = 210;
-                          _isSwipingUp = false;
-                        });
-                      }
+                      setState(
+                        () {
+                          marginValue += details.delta.dy;
+                          marginValue = marginValue.clamp(20.0, 210);
+                          dev.log(marginValue.toString());
+                          if (marginValue > 105 && _isSwipingUp) {
+                            setState(
+                              () {
+                                _isSwipingUp = false;
+                                marginValue = 210;
+                              },
+                            );
+                          } else if (marginValue < 105 && !_isSwipingUp) {
+                            setState(
+                              () {
+                                _isSwipingUp = true;
+                                marginValue = 20;
+                              },
+                            );
+                          }
+                        },
+                      );
                     },
                     child: Container(
                       decoration: const BoxDecoration(
@@ -552,7 +561,7 @@ class _ReservationViewState extends State<ReservationView> {
                               borderRadius: BorderRadius.all(
                                 Radius.circular(30.0),
                               ),
-                              color: primaryGray,
+                              color: Color(0xFFD9D9D9),
                             ),
                             height: 5,
                             width: 150,
@@ -568,12 +577,14 @@ class _ReservationViewState extends State<ReservationView> {
                                   child:
                                       // Zone name
                                       // Container(),
-                                      ZoneName(
-                                    isError: _isError,
-                                    isZoneLoaded: _isZoneLoaded,
-                                    zoneName: _zoneName,
-                                    isSwipingUp: _isSwipingUp,
-                                  ),
+                                      _isSwipingUp
+                                          ? Container()
+                                          : ZoneName(
+                                              isError: _isError,
+                                              isZoneLoaded: _isZoneLoaded,
+                                              zoneName: _zoneName,
+                                              isSwipingUp: _isSwipingUp,
+                                            ),
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(bottom: 25),
@@ -581,16 +592,19 @@ class _ReservationViewState extends State<ReservationView> {
                                       const EdgeInsets.fromLTRB(20, 70, 0, 0),
                                   child:
                                       // Location name
-                                      LocationName(
-                                    isError: _isError,
-                                    isLocationLoaded: _isLocationLoaded,
-                                    locationName: _locationName,
-                                    isSwipingUp: _isSwipingUp,
-                                  ),
+                                      _isSwipingUp
+                                          ? Container()
+                                          : LocationName(
+                                              isError: _isError,
+                                              isLocationLoaded:
+                                                  _isLocationLoaded,
+                                              locationName: _locationName,
+                                              isSwipingUp: _isSwipingUp,
+                                            ),
                                   // Container(),
                                 ),
                                 // If user has staff role, show toggle role button.
-                                if (hasRole) ...[
+                                if (hasRole && !_isSwipingUp) ...[
                                   Positioned(
                                     right: 10,
                                     top: 30,
@@ -599,6 +613,7 @@ class _ReservationViewState extends State<ReservationView> {
                                         Column(
                                       children: [
                                         ToggleRoleButton(
+                                          isSwipingUp: _isSwipingUp,
                                           isError: _isError,
                                           isDisableMenu: _isDisableMenu,
                                           isEverythingLoaded:
@@ -637,11 +652,71 @@ class _ReservationViewState extends State<ReservationView> {
                                         ),
                                         RoleName(
                                           isDisableMenu: _isDisableMenu,
+                                          isSwipingUp: _isSwipingUp,
                                         ),
                                       ],
                                     ),
                                   ),
                                 ],
+
+                                _isSwipingUp
+                                    ? Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Transform.rotate(
+                                                angle: 6 *
+                                                    (pi /
+                                                        180), // convert 30 degrees to radians
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      bottom: 20),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(30.0),
+                                                      bottomLeft:
+                                                          Radius.circular(30.0),
+                                                    ),
+                                                    color: Color(0xFFD9D9D9),
+                                                  ),
+                                                  height: 5,
+                                                  width: 75,
+                                                ),
+                                              ),
+                                              Transform.rotate(
+                                                angle: 354 *
+                                                    (pi /
+                                                        180), // convert 30 degrees to radians
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      bottom: 20),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topRight:
+                                                          Radius.circular(30.0),
+                                                      bottomRight:
+                                                          Radius.circular(30.0),
+                                                    ),
+                                                    color: Color(0xFFD9D9D9),
+                                                  ),
+                                                  height: 5,
+                                                  width: 75,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : Container(),
                               ],
                             ),
                           ),
@@ -649,33 +724,38 @@ class _ReservationViewState extends State<ReservationView> {
                       ),
                     ),
                   ),
-                  Row(
+                  Column(
                     children: [
-                      Expanded(
-                        // List of date
-                        child: DateList(
-                          isEverythingLoaded: isEverythingLoaded(),
-                          isError: _isError,
-                          numOfUserDay: numOfUserDay,
-                          isDisableMenu: _isDisableMenu,
-                          selectedIndex: _selectedDateIndex,
-                          hasRole: hasRole,
-                          onSelected: (index) {
-                            if (index != _selectedDateIndex &&
-                                !_isError &&
-                                isEverythingLoaded()) {
-                              setState(
-                                () {
-                                  _selectedDateIndex = index;
-                                  if (_isDisableMenu) {
-                                    _selectedTimeSlots = [];
-                                  }
-                                },
-                              );
-                              fetchData(_isDisableMenu ? adminMode : userMode);
-                            }
-                          },
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            // List of date
+                            child: DateList(
+                              isEverythingLoaded: isEverythingLoaded(),
+                              isError: _isError,
+                              numOfUserDay: numOfUserDay,
+                              isDisableMenu: _isDisableMenu,
+                              selectedIndex: _selectedDateIndex,
+                              hasRole: hasRole,
+                              onSelected: (index) {
+                                if (index != _selectedDateIndex &&
+                                    !_isError &&
+                                    isEverythingLoaded()) {
+                                  setState(
+                                    () {
+                                      _selectedDateIndex = index;
+                                      if (_isDisableMenu) {
+                                        _selectedTimeSlots = [];
+                                      }
+                                    },
+                                  );
+                                  fetchData(
+                                      _isDisableMenu ? adminMode : userMode);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1083,18 +1163,125 @@ class _ReservationViewState extends State<ReservationView> {
                 ],
               ),
             ),
+            _isSwipingUp
+                ? Stack(
+                    children: [
+                      Container(
+                        height: 125,
+                        decoration: BoxDecoration(
+                          color: _isError || !isEverythingLoaded()
+                              ? primaryGray
+                              : _isDisableMenu
+                                  ? primaryRed
+                                  : primaryOrange,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(20.0),
+                            bottomRight: Radius.circular(20.0),
+                          ),
+                        ),
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  'RESERVATION',
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 24.0,
+                                    height: 1.5,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
             Column(
               children: [
                 const SizedBox(height: 65),
                 Row(
-                  children: const [
-                    SizedBox(width: 12),
+                  children: [
+                    const SizedBox(width: 12),
+
                     // Go back button
-                    GoBackButton(),
+                    GoBackButton(
+                      isSwipingUp: _isSwipingUp,
+                      isError: _isError,
+                      isEverythingLoaded: isEverythingLoaded(),
+                      isDisableMenu: _isDisableMenu,
+                    ),
                   ],
                 ),
               ],
             ),
+            // Positioned(
+            //   right: 70,
+            //   top: 63,
+            //   child:
+            // ),
+            // If user has staff role, show toggle role button.
+            if (hasRole && _isSwipingUp) ...[
+              Positioned(
+                right: 10,
+                top: 65,
+                child:
+                    // Toggle role button
+                    Column(
+                  children: [
+                    ToggleRoleButton(
+                      isSwipingUp: _isSwipingUp,
+                      isError: _isError,
+                      isDisableMenu: _isDisableMenu,
+                      isEverythingLoaded: isEverythingLoaded(),
+                      onPressed: () {
+                        // If currently in disable menu, no error, and everything is loaded
+                        if (_isDisableMenu &&
+                            !_isError &&
+                            isEverythingLoaded()) {
+                          // Switch to user menu
+                          setState(
+                            () {
+                              _isDisableMenu = false;
+                              _selectedDateIndex =
+                                  _selectedDateIndex > numOfUserDay - 1
+                                      ? numOfUserDay - 1
+                                      : _selectedDateIndex;
+                            },
+                          );
+                          fetchData(userMode);
+                          // If currently not in disable menu, no error, and everything is loaded
+                        } else if (!_isDisableMenu &&
+                            !_isError &&
+                            isEverythingLoaded()) {
+                          // Switch to disable menu
+                          setState(
+                            () {
+                              _selectedTimeSlots = [];
+                              _isDisableMenu = true;
+                            },
+                          );
+                          fetchData(adminMode);
+                        }
+                      },
+                    ),
+                    RoleName(
+                      isDisableMenu: _isDisableMenu,
+                      isSwipingUp: _isSwipingUp,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
