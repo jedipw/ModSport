@@ -1,5 +1,6 @@
 // Import a neccesary package from Flutter.
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 
 // Import constants
 import 'package:modsport/constants/mode.dart';
@@ -87,6 +88,9 @@ class _ReservationViewState extends State<ReservationView> {
   List<ReservationData> _reservations = [];
   List<DisableData> _disabledReservation = [];
   List<UserReservationData> _userReservation = [];
+
+  bool _isSwipingUp = false;
+  double marginValue = 210.0;
 
   // Ensure that the data is fetched when entered this page for the first time.
   @override
@@ -497,446 +501,564 @@ class _ReservationViewState extends State<ReservationView> {
     return Scaffold(
       body: Container(
         color: Colors.white,
-        child: Column(
+        child: Stack(
           children: [
-            // Use a Stack widget to position the arrow button on top of the image
-            Stack(
-              children: [
-                // The zone image
-                ZoneImg(isError: _isError, imgUrl: _imgUrl),
-                Column(
-                  children: [
-                    const SizedBox(height: 60),
-                    Row(
-                      children: const [
-                        SizedBox(width: 12),
-                        // Go back button
-                        GoBackButton(),
-                      ],
-                    ),
-                  ],
+            // The zone image
+            ZoneImg(isError: _isError, imgUrl: _imgUrl),
+            AnimatedContainer(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
                 ),
-                // White container that has circular border on top left and top right
-                Positioned.fill(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
-                      color: Colors.white,
-                    ),
-                    margin: const EdgeInsets.only(top: 200),
-                  ),
-                ),
-              ],
-            ),
-
-            Stack(
-              children: [
-                Positioned(
-                  left: 25,
-                  child:
-                      // Zone name
-                      ZoneName(
-                    isError: _isError,
-                    isZoneLoaded: _isZoneLoaded,
-                    zoneName: _zoneName,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 25),
-                  padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
-                  child:
-                      // Location name
-                      LocationName(
-                    isError: _isError,
-                    isLocationLoaded: _isLocationLoaded,
-                    locationName: _locationName,
-                  ),
-                ),
-                // If user has staff role, show toggle role button.
-                if (hasRole) ...[
-                  Positioned(
-                    right: 20,
-                    child:
-                        // Toggle role button
-                        ToggleRoleButton(
-                      isError: _isError,
-                      isDisableMenu: _isDisableMenu,
-                      isEverythingLoaded: isEverythingLoaded(),
-                      onPressed: () {
-                        // If currently in disable menu, no error, and everything is loaded
-                        if (_isDisableMenu &&
-                            !_isError &&
-                            isEverythingLoaded()) {
-                          // Switch to user menu
-                          setState(
-                            () {
-                              _isDisableMenu = false;
-                              _selectedDateIndex =
-                                  _selectedDateIndex > numOfUserDay - 1
-                                      ? numOfUserDay - 1
-                                      : _selectedDateIndex;
-                            },
-                          );
-                          fetchData(userMode);
-                          // If currently not in disable menu, no error, and everything is loaded
-                        } else if (!_isDisableMenu &&
-                            !_isError &&
-                            isEverythingLoaded()) {
-                          // Switch to disable menu
-                          setState(
-                            () {
-                              _selectedTimeSlots = [];
-                              _isDisableMenu = true;
-                            },
-                          );
-                          fetchData(adminMode);
-                        }
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    right: 20,
-                    top: 65,
-                    child:
-                        // Role name (User or Admin)
-                        RoleName(
-                      isDisableMenu: _isDisableMenu,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              children: [
-                Expanded(
-                  // List of date
-                  child: DateList(
-                    isEverythingLoaded: isEverythingLoaded(),
-                    isError: _isError,
-                    numOfUserDay: numOfUserDay,
-                    isDisableMenu: _isDisableMenu,
-                    selectedIndex: _selectedDateIndex,
-                    hasRole: hasRole,
-                    onSelected: (index) {
-                      if (index != _selectedDateIndex &&
-                          !_isError &&
-                          isEverythingLoaded()) {
-                        setState(
-                          () {
-                            _selectedDateIndex = index;
-                            if (_isDisableMenu) {
-                              _selectedTimeSlots = [];
-                            }
-                          },
-                        );
-                        fetchData(_isDisableMenu ? adminMode : userMode);
+                color: Colors.white,
+              ),
+              duration: const Duration(milliseconds: 75),
+              margin: EdgeInsets.only(top: marginValue),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onVerticalDragUpdate: (details) {
+                      setState(() {
+                        marginValue += details.delta.dy;
+                        marginValue = marginValue.clamp(20.0, 210);
+                      });
+                    },
+                    onVerticalDragEnd: (details) {
+                      if (marginValue < 209 && !_isSwipingUp) {
+                        setState(() {
+                          marginValue = 20.0;
+                          _isSwipingUp = true;
+                        });
+                      } else if (marginValue > 21 && _isSwipingUp) {
+                        setState(() {
+                          marginValue = 210;
+                          _isSwipingUp = false;
+                        });
                       }
                     },
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20,
-                      horizontal: 20,
-                    ),
-                    child: _isError
-                        ? Container()
-                        : isEverythingLoaded()
-                            ? _isDisableMenu
-                                // If you are in disable menu, show TimeSlotDisable
-                                ? TimeSlotDisable(
-                                    userReservation: _userReservation,
-                                    reservation: _reservations,
-                                    selectedTimeSlots: _selectedTimeSlots,
-                                    disabledReservation: _disabledReservation,
-                                    onChanged: (int index, bool? value) {
-                                      setState(() {
-                                        _selectedTimeSlots[index] = value;
-                                      });
-                                    },
-                                  )
-                                // If you are in user menu, show TimeSlotReserve
-                                : TimeSlotReserve(
-                                    reservation: _reservations,
-                                    disabledReservation: _disabledReservation,
-                                    userReservation: _userReservation,
-                                    selectedDateIndex: _selectedDateIndex,
-                                    selectedTimeSlot: _selectedTimeSlot,
-                                    isReserved: _isReserved,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedTimeSlot = value!;
-                                        _isReserved = false;
-                                      });
-                                    },
-                                  )
-                            // If data has not been fetched, show TimeSlotLoading
-                            : const TimeSlotLoading(),
-                  ),
-                  if (_isError) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(bottom: 50),
-                          child: const
-                              // Show error message
-                              ErrorMessage(),
-                        ),
-                      ],
-                    ),
-                  ] else if (!_isError &&
-                      _reservations.isEmpty &&
-                      isEverythingLoaded()) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(bottom: 50),
-                          child: const
-                              // Show that there is no reservation (show the message).
-                              NoReservationMessage(),
-                        ),
-                      ],
-                    ),
-                  ],
-                  Positioned(
-                    bottom: 20,
-                    left: 0,
-                    right: 0,
                     child: Container(
-                      color: const Color.fromRGBO(255, 255, 255, 0.75),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0),
+                        ),
+                        color: Colors.white,
+                      ),
+                      child: Column(
                         children: [
-                          if (isEverythingLoaded() && !_isError) ...[
-                            if (_selectedDateIndex < 7 &&
-                                _reservations.isNotEmpty &&
-                                !isDisable(
-                                    _reservations[_selectedTimeSlot].startTime,
-                                    _disabledReservation) &&
-                                !_isDisableMenu)
-                              ReserveButton(
-                                isReserved: _isReserved,
-                                onPressed: () async {
-                                  if (_isReserved) {
-                                    showConfirmationModal(
-                                      context,
-                                      () async {
-                                        Navigator.of(context).pop();
-                                        showLoadModal(context);
-                                        try {
-                                          await FirebaseCloudStorage()
-                                              .deleteUserReservation(
-                                                userId,
-                                                widget.zoneId,
-                                                _reservations[_selectedTimeSlot]
-                                                    .startTime!,
-                                              )
-                                              .then(
-                                                (_) =>
-                                                    Navigator.of(context).pop(),
-                                              )
-                                              .then(
-                                                (_) => showSuccessModal(
-                                                    context, false),
-                                              )
-                                              .then(
-                                                (_) => Future.delayed(
-                                                  const Duration(seconds: 1),
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30.0),
+                              ),
+                              color: primaryGray,
+                            ),
+                            height: 5,
+                            width: 150,
+                            margin: const EdgeInsets.only(top: 10),
+                          ),
+                          SizedBox(
+                            height: 140,
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  left: 25,
+                                  top: 30,
+                                  child:
+                                      // Zone name
+                                      // Container(),
+                                      ZoneName(
+                                    isError: _isError,
+                                    isZoneLoaded: _isZoneLoaded,
+                                    zoneName: _zoneName,
+                                    isSwipingUp: _isSwipingUp,
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 25),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 70, 0, 0),
+                                  child:
+                                      // Location name
+                                      LocationName(
+                                    isError: _isError,
+                                    isLocationLoaded: _isLocationLoaded,
+                                    locationName: _locationName,
+                                    isSwipingUp: _isSwipingUp,
+                                  ),
+                                  // Container(),
+                                ),
+                                // If user has staff role, show toggle role button.
+                                if (hasRole) ...[
+                                  Positioned(
+                                    right: 10,
+                                    top: 30,
+                                    child:
+                                        // Toggle role button
+                                        Column(
+                                      children: [
+                                        ToggleRoleButton(
+                                          isError: _isError,
+                                          isDisableMenu: _isDisableMenu,
+                                          isEverythingLoaded:
+                                              isEverythingLoaded(),
+                                          onPressed: () {
+                                            // If currently in disable menu, no error, and everything is loaded
+                                            if (_isDisableMenu &&
+                                                !_isError &&
+                                                isEverythingLoaded()) {
+                                              // Switch to user menu
+                                              setState(
+                                                () {
+                                                  _isDisableMenu = false;
+                                                  _selectedDateIndex =
+                                                      _selectedDateIndex >
+                                                              numOfUserDay - 1
+                                                          ? numOfUserDay - 1
+                                                          : _selectedDateIndex;
+                                                },
+                                              );
+                                              fetchData(userMode);
+                                              // If currently not in disable menu, no error, and everything is loaded
+                                            } else if (!_isDisableMenu &&
+                                                !_isError &&
+                                                isEverythingLoaded()) {
+                                              // Switch to disable menu
+                                              setState(
+                                                () {
+                                                  _selectedTimeSlots = [];
+                                                  _isDisableMenu = true;
+                                                },
+                                              );
+                                              fetchData(adminMode);
+                                            }
+                                          },
+                                        ),
+                                        RoleName(
+                                          isDisableMenu: _isDisableMenu,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        // List of date
+                        child: DateList(
+                          isEverythingLoaded: isEverythingLoaded(),
+                          isError: _isError,
+                          numOfUserDay: numOfUserDay,
+                          isDisableMenu: _isDisableMenu,
+                          selectedIndex: _selectedDateIndex,
+                          hasRole: hasRole,
+                          onSelected: (index) {
+                            if (index != _selectedDateIndex &&
+                                !_isError &&
+                                isEverythingLoaded()) {
+                              setState(
+                                () {
+                                  _selectedDateIndex = index;
+                                  if (_isDisableMenu) {
+                                    _selectedTimeSlots = [];
+                                  }
+                                },
+                              );
+                              fetchData(_isDisableMenu ? adminMode : userMode);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 20,
+                          ),
+                          child: _isError
+                              ? Container()
+                              : isEverythingLoaded()
+                                  ? _isDisableMenu
+                                      // If you are in disable menu, show TimeSlotDisable
+                                      ? TimeSlotDisable(
+                                          userReservation: _userReservation,
+                                          reservation: _reservations,
+                                          selectedTimeSlots: _selectedTimeSlots,
+                                          disabledReservation:
+                                              _disabledReservation,
+                                          onChanged: (int index, bool? value) {
+                                            setState(() {
+                                              _selectedTimeSlots[index] = value;
+                                            });
+                                          },
+                                        )
+                                      // If you are in user menu, show TimeSlotReserve
+                                      : TimeSlotReserve(
+                                          reservation: _reservations,
+                                          disabledReservation:
+                                              _disabledReservation,
+                                          userReservation: _userReservation,
+                                          selectedDateIndex: _selectedDateIndex,
+                                          selectedTimeSlot: _selectedTimeSlot,
+                                          isReserved: _isReserved,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _selectedTimeSlot = value!;
+                                              _isReserved = false;
+                                            });
+                                          },
+                                        )
+                                  // If data has not been fetched, show TimeSlotLoading
+                                  : const TimeSlotLoading(),
+                        ),
+                        if (_isError) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(bottom: 50),
+                                child: const
+                                    // Show error message
+                                    ErrorMessage(),
+                              ),
+                            ],
+                          ),
+                        ] else if (!_isError &&
+                            _reservations.isEmpty &&
+                            isEverythingLoaded()) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(bottom: 50),
+                                child: const
+                                    // Show that there is no reservation (show the message).
+                                    NoReservationMessage(),
+                              ),
+                            ],
+                          ),
+                        ],
+                        Positioned(
+                          bottom: 20,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            color: const Color.fromRGBO(255, 255, 255, 0.75),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                if (isEverythingLoaded() && !_isError) ...[
+                                  if (_selectedDateIndex < 7 &&
+                                      _reservations.isNotEmpty &&
+                                      !isDisable(
+                                          _reservations[_selectedTimeSlot]
+                                              .startTime,
+                                          _disabledReservation) &&
+                                      !_isDisableMenu)
+                                    ReserveButton(
+                                      isReserved: _isReserved,
+                                      onPressed: () async {
+                                        if (_isReserved) {
+                                          showConfirmationModal(
+                                            context,
+                                            () async {
+                                              Navigator.of(context).pop();
+                                              showLoadModal(context);
+                                              try {
+                                                await FirebaseCloudStorage()
+                                                    .deleteUserReservation(
+                                                      userId,
+                                                      widget.zoneId,
+                                                      _reservations[
+                                                              _selectedTimeSlot]
+                                                          .startTime!,
+                                                    )
+                                                    .then(
+                                                      (_) =>
+                                                          Navigator.of(context)
+                                                              .pop(),
+                                                    )
+                                                    .then(
+                                                      (_) => showSuccessModal(
+                                                          context, false),
+                                                    )
+                                                    .then(
+                                                      (_) => Future.delayed(
+                                                        const Duration(
+                                                            seconds: 1),
+                                                        () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    )
+                                                    .then(
+                                                      (_) => setState(
+                                                        () {
+                                                          _isReserved = false;
+                                                        },
+                                                      ),
+                                                    )
+                                                    .then(
+                                                      (_) =>
+                                                          fetchData(userMode),
+                                                    );
+                                              } catch (e) {
+                                                showErrorModal(
+                                                  context,
                                                   () {
                                                     Navigator.of(context).pop();
+                                                    Navigator.of(context).pop();
+                                                    fetchData(userMode);
                                                   },
-                                                ),
-                                              )
+                                                );
+                                              }
+                                            },
+                                            true,
+                                            cancelMode,
+                                          );
+                                        } else {
+                                          showLoadModal(context);
+                                          try {
+                                            await FirebaseCloudStorage()
+                                                .createUserReservation(
+                                                  _reservations[
+                                                          _selectedTimeSlot]
+                                                      .startTime!,
+                                                  userId,
+                                                  widget.zoneId,
+                                                  _reservations[
+                                                          _selectedTimeSlot]
+                                                      .capacity!,
+                                                )
+                                                .then(
+                                                  (_) => Navigator.of(context)
+                                                      .pop(),
+                                                )
+                                                .then(
+                                                  (_) => showSuccessModal(
+                                                      context, false),
+                                                )
+                                                .then(
+                                                  (_) => Future.delayed(
+                                                    const Duration(seconds: 1),
+                                                    () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                )
+                                                .then(
+                                                  (_) => setState(
+                                                    () {
+                                                      _isReserved = true;
+                                                    },
+                                                  ),
+                                                )
+                                                .then(
+                                                  (_) => fetchData(userMode),
+                                                );
+                                          } catch (e) {
+                                            showErrorModal(
+                                              context,
+                                              () {
+                                                Navigator.of(context).pop();
+                                                Navigator.of(context).pop();
+                                                fetchData(userMode);
+                                              },
+                                            );
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  if ((_isDisableMenu == true &&
+                                      _selectedTimeSlots.every(
+                                          (element) => element == false) &&
+                                      _reservations.any(
+                                        (reservation) {
+                                          return _reservations.any(
+                                            (reservation) {
+                                              return _disabledReservation
+                                                  .map(
+                                                    (disabledData) =>
+                                                        disabledData
+                                                            .startDateTime,
+                                                  )
+                                                  .any(
+                                                    (disabledDateTime) =>
+                                                        disabledDateTime.year == reservation.startTime!.year &&
+                                                        disabledDateTime
+                                                                .month ==
+                                                            reservation
+                                                                .startTime!
+                                                                .month &&
+                                                        disabledDateTime.day ==
+                                                            reservation
+                                                                .startTime!
+                                                                .day &&
+                                                        disabledDateTime.hour ==
+                                                            reservation
+                                                                .startTime!
+                                                                .hour &&
+                                                        disabledDateTime
+                                                                .minute ==
+                                                            reservation
+                                                                .startTime!
+                                                                .minute &&
+                                                        disabledDateTime
+                                                                .second ==
+                                                            reservation
+                                                                .startTime!
+                                                                .second,
+                                                  );
+                                            },
+                                          );
+                                        },
+                                      ))) ...[
+                                    if (checkSameDisableReasonAndDate(
+                                      _disabledReservation,
+                                      DateTime.now().add(
+                                        Duration(
+                                          days: _selectedDateIndex,
+                                        ),
+                                      ),
+                                    )) ...[
+                                      // Edit button
+                                      EditButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              fullscreenDialog: true,
+                                              builder: (context) => DisableView(
+                                                disableIds: _disableIds,
+                                                zoneId: widget.zoneId,
+                                                reservationIds: _reservationIds,
+                                                reason: _firstDisableReason,
+                                                selectedDateIndex:
+                                                    _selectedDateIndex,
+                                                mode: editMode,
+                                              ),
+                                            ),
+                                          )
                                               .then(
                                                 (_) => setState(
                                                   () {
-                                                    _isReserved = false;
+                                                    _selectedTimeSlots = [];
                                                   },
                                                 ),
                                               )
                                               .then(
-                                                (_) => fetchData(userMode),
+                                                (_) => fetchData(
+                                                  adminMode,
+                                                ),
                                               );
-                                        } catch (e) {
-                                          showErrorModal(
-                                            context,
-                                            () {
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).pop();
-                                              fetchData(userMode);
-                                            },
-                                          );
-                                        }
-                                      },
-                                      true,
-                                      cancelMode,
-                                    );
-                                  } else {
-                                    showLoadModal(context);
-                                    try {
-                                      await FirebaseCloudStorage()
-                                          .createUserReservation(
-                                            _reservations[_selectedTimeSlot]
-                                                .startTime!,
-                                            userId,
-                                            widget.zoneId,
-                                            _reservations[_selectedTimeSlot]
-                                                .capacity!,
-                                          )
-                                          .then(
-                                            (_) => Navigator.of(context).pop(),
-                                          )
-                                          .then(
-                                            (_) => showSuccessModal(
-                                                context, false),
-                                          )
-                                          .then(
-                                            (_) => Future.delayed(
-                                              const Duration(seconds: 1),
-                                              () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          )
-                                          .then(
-                                            (_) => setState(
-                                              () {
-                                                _isReserved = true;
-                                              },
-                                            ),
-                                          )
-                                          .then(
-                                            (_) => fetchData(userMode),
-                                          );
-                                    } catch (e) {
-                                      showErrorModal(
-                                        context,
-                                        () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          fetchData(userMode);
                                         },
-                                      );
-                                    }
-                                  }
-                                },
-                              ),
-                            if ((_isDisableMenu == true &&
-                                _selectedTimeSlots
-                                    .every((element) => element == false) &&
-                                _reservations.any(
-                                  (reservation) {
-                                    return _reservations.any(
-                                      (reservation) {
-                                        return _disabledReservation
-                                            .map(
-                                              (disabledData) =>
-                                                  disabledData.startDateTime,
-                                            )
-                                            .any(
-                                              (disabledDateTime) =>
-                                                  disabledDateTime.year == reservation.startTime!.year &&
-                                                  disabledDateTime.month ==
-                                                      reservation
-                                                          .startTime!.month &&
-                                                  disabledDateTime.day ==
-                                                      reservation
-                                                          .startTime!.day &&
-                                                  disabledDateTime.hour ==
-                                                      reservation
-                                                          .startTime!.hour &&
-                                                  disabledDateTime.minute ==
-                                                      reservation
-                                                          .startTime!.minute &&
-                                                  disabledDateTime.second ==
-                                                      reservation
-                                                          .startTime!.second,
-                                            );
-                                      },
-                                    );
-                                  },
-                                ))) ...[
-                              if (checkSameDisableReasonAndDate(
-                                _disabledReservation,
-                                DateTime.now().add(
-                                  Duration(
-                                    days: _selectedDateIndex,
-                                  ),
-                                ),
-                              )) ...[
-                                // Edit button
-                                EditButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        fullscreenDialog: true,
-                                        builder: (context) => DisableView(
-                                          disableIds: _disableIds,
-                                          zoneId: widget.zoneId,
-                                          reservationIds: _reservationIds,
-                                          reason: _firstDisableReason,
-                                          selectedDateIndex: _selectedDateIndex,
-                                          mode: editMode,
-                                        ),
-                                      ),
-                                    )
-                                        .then(
-                                          (_) => setState(
-                                            () {
-                                              _selectedTimeSlots = [];
-                                            },
-                                          ),
-                                        )
-                                        .then(
-                                          (_) => fetchData(
-                                            adminMode,
-                                          ),
-                                        );
-                                  },
-                                )
-                              ],
-                              // Enable button
-                              EnableButton(
-                                onPressed: () {
-                                  showConfirmationModal(
-                                    context,
-                                    () async {
-                                      try {
-                                        Navigator.of(context).pop();
-                                        showLoadModal(context);
-                                        // Call createDisableReservation to disable the selected time slots
-                                        await FirebaseCloudStorage()
-                                            .deleteDisableReservation(
-                                              _disableIds,
-                                            )
-                                            .then(
-                                              (_) =>
-                                                  Navigator.of(context).pop(),
-                                            )
-                                            .then(
-                                              (_) => showSuccessModal(
-                                                  context, false),
-                                            )
-                                            .then(
-                                              (_) => Future.delayed(
-                                                const Duration(seconds: 1),
+                                      )
+                                    ],
+                                    // Enable button
+                                    EnableButton(
+                                      onPressed: () {
+                                        showConfirmationModal(
+                                          context,
+                                          () async {
+                                            try {
+                                              Navigator.of(context).pop();
+                                              showLoadModal(context);
+                                              // Call createDisableReservation to disable the selected time slots
+                                              await FirebaseCloudStorage()
+                                                  .deleteDisableReservation(
+                                                    _disableIds,
+                                                  )
+                                                  .then(
+                                                    (_) => Navigator.of(context)
+                                                        .pop(),
+                                                  )
+                                                  .then(
+                                                    (_) => showSuccessModal(
+                                                        context, false),
+                                                  )
+                                                  .then(
+                                                    (_) => Future.delayed(
+                                                      const Duration(
+                                                          seconds: 1),
+                                                      () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                  )
+                                                  .then(
+                                                    (_) => setState(
+                                                      () {
+                                                        _selectedTimeSlots = [];
+                                                      },
+                                                    ),
+                                                  )
+                                                  .then(
+                                                    (_) => fetchData(adminMode),
+                                                  );
+                                            } catch (e) {
+                                              showErrorModal(
+                                                context,
                                                 () {
                                                   Navigator.of(context).pop();
+                                                  Navigator.of(context).pop();
+                                                  fetchData(userMode);
                                                 },
-                                              ),
-                                            )
+                                              );
+                                            }
+                                          },
+                                          true,
+                                          enableMode,
+                                        );
+                                      },
+                                    ),
+                                  ] else if (!_selectedTimeSlots.every(
+                                          (element) => element == false) &&
+                                      _isDisableMenu == true) ...[
+                                    DisableButton(
+                                      isDisableMenu: _isDisableMenu,
+                                      selectedTimeSlots: _selectedTimeSlots,
+                                      onPressed: () {
+                                        _reservationIds = [];
+                                        _selectedTimeSlots.asMap().forEach(
+                                          (index, isSelected) {
+                                            if (isSelected!) {
+                                              _reservationIds.add(
+                                                _reservations[index]
+                                                    .reservationId,
+                                              );
+                                            }
+                                          },
+                                        );
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            builder: (context) => DisableView(
+                                              disableIds: _disableIds,
+                                              zoneId: widget.zoneId,
+                                              reservationIds: _reservationIds,
+                                              selectedDateIndex:
+                                                  _selectedDateIndex,
+                                              mode: disableMode,
+                                            ),
+                                          ),
+                                        )
                                             .then(
                                               (_) => setState(
                                                 () {
@@ -947,73 +1069,31 @@ class _ReservationViewState extends State<ReservationView> {
                                             .then(
                                               (_) => fetchData(adminMode),
                                             );
-                                      } catch (e) {
-                                        showErrorModal(
-                                          context,
-                                          () {
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).pop();
-                                            fetchData(userMode);
-                                          },
-                                        );
-                                      }
-                                    },
-                                    true,
-                                    enableMode,
-                                  );
-                                },
-                              ),
-                            ] else if (!_selectedTimeSlots
-                                    .every((element) => element == false) &&
-                                _isDisableMenu == true) ...[
-                              DisableButton(
-                                isDisableMenu: _isDisableMenu,
-                                selectedTimeSlots: _selectedTimeSlots,
-                                onPressed: () {
-                                  _reservationIds = [];
-                                  _selectedTimeSlots.asMap().forEach(
-                                    (index, isSelected) {
-                                      if (isSelected!) {
-                                        _reservationIds.add(
-                                          _reservations[index].reservationId,
-                                        );
-                                      }
-                                    },
-                                  );
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      fullscreenDialog: true,
-                                      builder: (context) => DisableView(
-                                        disableIds: _disableIds,
-                                        zoneId: widget.zoneId,
-                                        reservationIds: _reservationIds,
-                                        selectedDateIndex: _selectedDateIndex,
-                                        mode: disableMode,
-                                      ),
+                                      },
                                     ),
-                                  )
-                                      .then(
-                                        (_) => setState(
-                                          () {
-                                            _selectedTimeSlots = [];
-                                          },
-                                        ),
-                                      )
-                                      .then(
-                                        (_) => fetchData(adminMode),
-                                      );
-                                },
-                              ),
-                            ],
-                          ],
-                        ],
-                      ),
+                                  ],
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
+            ),
+            Column(
+              children: [
+                const SizedBox(height: 65),
+                Row(
+                  children: const [
+                    SizedBox(width: 12),
+                    // Go back button
+                    GoBackButton(),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
