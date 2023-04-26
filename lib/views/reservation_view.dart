@@ -1,6 +1,4 @@
 // Import a neccesary package from Flutter.
-
-import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -37,6 +35,7 @@ import 'package:modsport/utilities/types.dart';
 
 // Import disable page
 import 'package:modsport/views/disable_view.dart';
+import 'package:modsport/views/edit_view.dart';
 
 // Imaginary user database (will be removed later)
 const bool hasRole = true;
@@ -759,11 +758,147 @@ class _ReservationViewState extends State<ReservationView> {
                   Expanded(
                     child: Stack(
                       children: [
+                        _reservations.isNotEmpty &&
+                                isEverythingLoaded() &&
+                                !_isError &&
+                                _isDisableMenu &&
+                                _reservations.any(
+                                  (reservation) {
+                                    return _reservations.any(
+                                      (reservation) {
+                                        return _disabledReservation
+                                            .map(
+                                              (disabledData) =>
+                                                  disabledData.startDateTime,
+                                            )
+                                            .any(
+                                              (disabledDateTime) =>
+                                                  disabledDateTime.year == reservation.startTime!.year &&
+                                                  disabledDateTime.month ==
+                                                      reservation
+                                                          .startTime!.month &&
+                                                  disabledDateTime.day ==
+                                                      reservation
+                                                          .startTime!.day &&
+                                                  disabledDateTime.hour ==
+                                                      reservation
+                                                          .startTime!.hour &&
+                                                  disabledDateTime.minute ==
+                                                      reservation
+                                                          .startTime!.minute &&
+                                                  disabledDateTime.second ==
+                                                      reservation
+                                                          .startTime!.second,
+                                            );
+                                      },
+                                    );
+                                  },
+                                )
+                            ? Container(
+                                padding:
+                                    const EdgeInsets.fromLTRB(25, 5, 15, 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(top: 12),
+                                      child: const Text(
+                                        'Choose more reservations to disable',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14,
+                                          height: 1.5, // 39/26 = 1.5
+                                          color: primaryGray,
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            builder: (context) =>
+                                                const EditView(),
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          Text(
+                                            'EDIT',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              height: 1.5, // 39/26 = 1.5
+                                              color: primaryGray,
+                                            ),
+                                          ),
+                                          Icon(Icons.edit, color: primaryGray),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            : Container(),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 20,
-                          ),
+                          padding: EdgeInsets.fromLTRB(
+                              20,
+                              isEverythingLoaded() &&
+                                      !_isError &&
+                                      _isDisableMenu &&
+                                      _reservations.any(
+                                        (reservation) {
+                                          return _reservations.any(
+                                            (reservation) {
+                                              return _disabledReservation
+                                                  .map(
+                                                    (disabledData) =>
+                                                        disabledData
+                                                            .startDateTime,
+                                                  )
+                                                  .any(
+                                                    (disabledDateTime) =>
+                                                        disabledDateTime.year == reservation.startTime!.year &&
+                                                        disabledDateTime
+                                                                .month ==
+                                                            reservation
+                                                                .startTime!
+                                                                .month &&
+                                                        disabledDateTime.day ==
+                                                            reservation
+                                                                .startTime!
+                                                                .day &&
+                                                        disabledDateTime.hour ==
+                                                            reservation
+                                                                .startTime!
+                                                                .hour &&
+                                                        disabledDateTime
+                                                                .minute ==
+                                                            reservation
+                                                                .startTime!
+                                                                .minute &&
+                                                        disabledDateTime
+                                                                .second ==
+                                                            reservation
+                                                                .startTime!
+                                                                .second,
+                                                  );
+                                            },
+                                          );
+                                        },
+                                      )
+                                  ? 45
+                                  : 20,
+                              20,
+                              20),
                           child: _isError
                               ? Container()
                               : isEverythingLoaded()

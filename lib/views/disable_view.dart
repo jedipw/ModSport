@@ -383,7 +383,7 @@ class _DisableViewState extends State<DisableView> {
             ),
           ),
           Positioned(
-            left: 5,
+            left: 10,
             top: 65,
             child: ElevatedButton(
               onPressed: () {
@@ -391,12 +391,12 @@ class _DisableViewState extends State<DisableView> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryOrange,
-                padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 shape: const CircleBorder(),
                 fixedSize: const Size.fromRadius(25),
                 elevation: 0,
               ),
-              child: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              child: const Icon(Icons.close, color: Colors.white, size: 40),
             ),
           ),
         ]),

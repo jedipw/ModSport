@@ -40,6 +40,13 @@ class DateList extends StatelessWidget {
       (index) => today.add(Duration(days: index)),
     );
 
+    bool checkMonth(int index) {
+      return (dateList[index].day == DateTime.now().day &&
+              dateList[index].month == DateTime.now().month) ||
+          (dateList[index].day == 1 &&
+              dateList[index].month == DateTime.now().month + 1);
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.only(left: 12),
       scrollDirection: Axis
@@ -54,6 +61,23 @@ class DateList extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                checkMonth(index)
+                    ? Text(
+                        DateFormat('MMM')
+                            .format(dateList[index])
+                            .substring(0, 3), // Display the month abbreviation.
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: isError || !isEverythingLoaded
+                              ? primaryGray
+                              : primaryOrange,
+                        ),
+                      )
+                    : Container(),
+                SizedBox(height: checkMonth(index) ? 8 : 25),
                 TextButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
@@ -85,13 +109,17 @@ class DateList extends StatelessWidget {
                     children: [
                       const SizedBox(height: 4),
                       Text(
-                        DateFormat('EEE').format(dateList[index]).substring(
-                            0, 3), // Display the day of the week for the date.
+                        dateList[index].day == DateTime.now().day &&
+                                dateList[index].month == dateList[index].month
+                            ? 'Today'
+                            : DateFormat('EEE').format(dateList[index]).substring(
+                                0,
+                                3), // Display the day of the week for the date.
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
-                          fontSize: 17,
+                          fontSize: 16,
                           color: selectedIndex == index
                               ? Colors.white
                               : isError || !isEverythingLoaded
