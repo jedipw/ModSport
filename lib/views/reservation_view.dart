@@ -527,19 +527,16 @@ class _ReservationViewState extends State<ReservationView> {
                         () {
                           marginValue += details.delta.dy;
                           marginValue = marginValue.clamp(20.0, 210);
-                          dev.log(marginValue.toString());
-                          if (marginValue > 105 && _isSwipingUp) {
+                          if (marginValue > 60 && _isSwipingUp) {
                             setState(
                               () {
                                 _isSwipingUp = false;
-                                marginValue = 210;
                               },
                             );
-                          } else if (marginValue < 105 && !_isSwipingUp) {
+                          } else if (marginValue < 60 && !_isSwipingUp) {
                             setState(
                               () {
                                 _isSwipingUp = true;
-                                marginValue = 20;
                               },
                             );
                           }
