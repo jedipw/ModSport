@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 // Importing route constants and custom page route transitions
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/page_route.dart';
+import 'package:modsport/views/change_password_view.dart';
 import 'package:modsport/views/forget_password_view.dart';
 
 // Importing the views/screens used in the app
@@ -87,6 +88,10 @@ class _MainAppState extends State<MainApp> {
           case verifyEmailRoute:
             return ModSportPageRoute(
                 builder: (_) => const VerifyEmailView(), settings: settings);
+
+          case changePasswordRoute:
+            return ModSportPageRoute(
+                builder: (_) => const ChangePasswordView(), settings: settings);
 
           // Return null for any unknown routes
           default:

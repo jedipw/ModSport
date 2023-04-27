@@ -6,3 +6,4 @@ const helpCenterRoute = '/helpCenter/';
 const registerRoute = '/register/';
 const forgetPasswordRoute = '/forgetPasswordRoute/';
 const verifyEmailRoute = '/verifyEmailRoute/';
+const changePasswordRoute = '/changePasswordRoute/';

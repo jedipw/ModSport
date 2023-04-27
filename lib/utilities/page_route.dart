@@ -6,6 +6,7 @@ class ModSportPageRoute<T> extends MaterialPageRoute<T> {
     homeRoute,
     statusRoute,
     helpCenterRoute,
+    changePasswordRoute,
   ];
 
   // Constructor to initialize the class with builder and settings

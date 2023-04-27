@@ -11,102 +11,224 @@ class ModSportDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+      backgroundColor: Colors.white,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          SizedBox(
-            height: 150,
-            child: DrawerHeader(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CircleAvatar(
-                    backgroundColor: primaryOrange,
-                    child: Text(
-                      'FL',
-                      style: TextStyle(color: Colors.white),
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 80, 0, 30),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const CircleAvatar(
+                  backgroundColor: primaryOrange,
+                  maxRadius: 25,
+                  child: Text(
+                    'FL',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Poppins',
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('Firstname Lastname'),
-                      Text('firstname.lastn@kmutt.ac.th'),
-                    ],
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'FIRSTNAME LASTNAME',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        height: 1.5,
+                        color: primaryOrange,
+                      ),
+                    ),
+                    Text(
+                      'firstname.lastn@kmutt.ac.th',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        height: 1.5, // line-height equivalent in Flutter
+                        color: Color.fromRGBO(0, 0, 0,
+                            0.7), // using the `Color.fromRGBO()` constructor
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              ListTile(
+                tileColor: currentDrawerIndex == 0
+                    ? const Color.fromRGBO(217, 217, 217, 0.5)
+                    : Colors.white,
+                title: Row(
+                  children: const [
+                    Icon(Icons.home, color: primaryOrange),
+                    SizedBox(width: 8),
+                    Text(
+                      'Reserve',
+                      style: TextStyle(
+                        color: primaryOrange,
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        height: 1.5, // line-height equivalent in Flutter
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(homeRoute, (route) => false);
+                },
+              ),
+              ListTile(
+                tileColor: currentDrawerIndex == 1
+                    ? const Color.fromRGBO(217, 217, 217, 0.5)
+                    : Colors.white,
+                title: Row(
+                  children: const [
+                    Icon(Icons.event_available, color: primaryOrange),
+                    SizedBox(width: 8),
+                    Text(
+                      'Status',
+                      style: TextStyle(
+                        color: primaryOrange,
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        height: 1.5, // line-height equivalent in Flutter
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(statusRoute, (route) => false);
+                },
+              ),
+              ListTile(
+                tileColor: currentDrawerIndex == 2
+                    ? const Color.fromRGBO(217, 217, 217, 0.5)
+                    : Colors.white,
+                title: Row(
+                  children: const [
+                    Icon(Icons.help_outline, color: primaryOrange),
+                    SizedBox(width: 8),
+                    Text(
+                      'Help Center',
+                      style: TextStyle(
+                        color: primaryOrange,
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        height: 1.5, // line-height equivalent in Flutter
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      helpCenterRoute, (route) => false);
+                },
+              ),
+              ListTile(
+                tileColor: currentDrawerIndex == 3
+                    ? const Color.fromRGBO(217, 217, 217, 0.5)
+                    : Colors.white,
+                title: Row(
+                  children: const [
+                    Icon(Icons.lock_outline, color: primaryOrange),
+                    SizedBox(width: 8),
+                    Text(
+                      'Change Password',
+                      style: TextStyle(
+                        color: primaryOrange,
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        height: 1.5, // line-height equivalent in Flutter
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      changePasswordRoute, (route) => false);
+                },
+              ),
+            ],
+          ),
+          Expanded(
+            child: Container(
+              width: 180,
+              padding: const EdgeInsets.fromLTRB(10, 0, 0, 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      showConfirmationModal(context, () {
+                        Navigator.of(context).pop();
+                        showLoadModal(context);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            loginRoute, (route) => false);
+                      }, false, logOutMode);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: const Color(0xFFE17325),
+                          width: 1,
+                        ),
+                        color: const Color(0xFFFFFFFF),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Text(
+                            'Sign out',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              height: 1.5, // line-height equivalent in Flutter
+                              color:
+                                  primaryOrange, // assuming primaryOrange is a shade of orange
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Icon(Icons.logout, color: primaryOrange),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-          ListTile(
-            title: Row(
-              children: [
-                Icon(Icons.home,
-                    color:
-                        currentDrawerIndex == 0 ? primaryOrange : Colors.black),
-                const SizedBox(width: 8),
-                const Text('Home'),
-              ],
-            ),
-            selectedColor: primaryOrange,
-            selected: currentDrawerIndex == 0,
-            onTap: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(homeRoute, (route) => false);
-            },
-          ),
-          ListTile(
-            selectedColor: primaryOrange,
-            selected: currentDrawerIndex == 1,
-            title: Row(
-              children: [
-                Icon(Icons.rule,
-                    color:
-                        currentDrawerIndex == 1 ? primaryOrange : Colors.black),
-                const SizedBox(width: 8),
-                const Text('Status'),
-              ],
-            ),
-            onTap: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(statusRoute, (route) => false);
-            },
-          ),
-          ListTile(
-            selectedColor: primaryOrange,
-            selected: currentDrawerIndex == 2,
-            title: Row(
-              children: [
-                Icon(currentDrawerIndex == 2 ? Icons.help : Icons.help_outline,
-                    color:
-                        currentDrawerIndex == 2 ? primaryOrange : Colors.black),
-                const SizedBox(width: 8),
-                const Text('Help Center'),
-              ],
-            ),
-            onTap: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(helpCenterRoute, (route) => false);
-            },
-          ),
-          ListTile(
-            title: Row(
-              children: const [
-                Icon(Icons.logout, color: Colors.black),
-                SizedBox(width: 8),
-                Text('Log out'),
-              ],
-            ),
-            onTap: () {
-              showConfirmationModal(context, () {
-                Navigator.of(context).pop();
-                showLoadModal(context);
-                Navigator.of(context).pop();
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-              }, false, logOutMode);
-            },
           ),
         ],
       ),

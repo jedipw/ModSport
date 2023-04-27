@@ -110,7 +110,6 @@ class TimeSlotDisable extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.people, color: primaryGray),
                             const SizedBox(width: 8),
                             isDisable(reservation[index].startTime,
                                     disabledReservation)
@@ -119,16 +118,23 @@ class TimeSlotDisable extends StatelessWidget {
                                     color: primaryGray,
                                     size: 35,
                                   )
-                                : Text(
-                                    '$numOfReservation/${reservation[index].capacity}',
-                                    style: const TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 22,
-                                      height: 1.5,
-                                      color: primaryGray,
-                                    ),
+                                : Row(
+                                    children: [
+                                      const Icon(Icons.people,
+                                          color: primaryGray),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '$numOfReservation/${reservation[index].capacity}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontStyle: FontStyle.normal,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 22,
+                                          height: 1.5,
+                                          color: primaryGray,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                             const SizedBox(width: 13),
                           ],
