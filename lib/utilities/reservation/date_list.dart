@@ -42,7 +42,7 @@ class DateList extends StatelessWidget {
 
     bool checkMonth(int index) {
       return (dateList[index].day == DateTime.now().day &&
-              dateList[index].month == DateTime.now().month) ||
+              dateList[index].month == DateTime.now().month && dateList[index].day != 1) ||
           (dateList[index].day == 1 &&
               dateList[index].month == DateTime.now().month + 1);
     }

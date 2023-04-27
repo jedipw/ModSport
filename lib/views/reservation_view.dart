@@ -560,7 +560,7 @@ class _ReservationViewState extends State<ReservationView> {
                               color: Color(0xFFD9D9D9),
                             ),
                             height: 5,
-                            width: 150,
+                            width: 50,
                             margin: const EdgeInsets.only(top: 10),
                           ),
                           SizedBox(
@@ -665,7 +665,7 @@ class _ReservationViewState extends State<ReservationView> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Transform.rotate(
-                                                angle: 6 *
+                                                angle: 10 *
                                                     (pi /
                                                         180), // convert 30 degrees to radians
                                                 child: Container(
@@ -683,11 +683,11 @@ class _ReservationViewState extends State<ReservationView> {
                                                     color: Color(0xFFD9D9D9),
                                                   ),
                                                   height: 5,
-                                                  width: 75,
+                                                  width: 25,
                                                 ),
                                               ),
                                               Transform.rotate(
-                                                angle: 354 *
+                                                angle: 350 *
                                                     (pi /
                                                         180), // convert 30 degrees to radians
                                                 child: Container(
@@ -705,7 +705,7 @@ class _ReservationViewState extends State<ReservationView> {
                                                     color: Color(0xFFD9D9D9),
                                                   ),
                                                   height: 5,
-                                                  width: 75,
+                                                  width: 25,
                                                 ),
                                               ),
                                             ],
