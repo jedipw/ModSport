@@ -182,28 +182,31 @@ class ModSportDrawer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      showConfirmationModal(context, () {
-                        Navigator.of(context).pop();
-                        showLoadModal(context);
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            loginRoute, (route) => false);
-                      }, false, logOutMode);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: const Color(0xFFE17325),
-                          width: 1,
+                  SizedBox(
+                    height: 50,
+                    width: 150,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                        side: const BorderSide(
+                          color: primaryOrange,
                         ),
-                        color: const Color(0xFFFFFFFF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      onPressed: () {
+                        showConfirmationModal(context, () {
+                          Navigator.of(context).pop();
+                          showLoadModal(context);
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              loginRoute, (route) => false);
+                        }, false, logOutMode);
+                      },
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: const [
                           Text(
