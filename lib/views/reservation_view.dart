@@ -820,7 +820,6 @@ class _ReservationViewState extends State<ReservationView> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            fullscreenDialog: true,
                                             builder: (context) =>
                                                 const EditView(),
                                           ),

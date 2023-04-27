@@ -15,7 +15,7 @@ class EditView extends StatelessWidget {
           Container(
             height: 125,
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: primaryOrange,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
                 bottomRight: Radius.circular(20.0),
@@ -34,7 +34,7 @@ class EditView extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 24.0,
                     height: 1.5,
-                    color: primaryOrange,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -48,13 +48,14 @@ class EditView extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                backgroundColor: primaryOrange,
+                padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
                 shape: const CircleBorder(),
                 fixedSize: const Size.fromRadius(25),
                 elevation: 0,
               ),
-              child: const Icon(Icons.close, color: primaryOrange, size: 40),
+              child: const Icon(Icons.arrow_back_ios,
+                  color: Colors.white, size: 30),
             ),
           ),
         ],
