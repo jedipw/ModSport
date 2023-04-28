@@ -1,17 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
 
-class EditView extends StatelessWidget {
-  const EditView({super.key});
+class EditView extends StatefulWidget {
+  const EditView({super.key, required this.selectedDateIndex});
+  final int selectedDateIndex;
+
+  @override
+  State<EditView> createState() => _EditViewState();
+}
+
+class _EditViewState extends State<EditView> {
+  String _getDayOrdinal(int day) {
+    if (day >= 11 && day <= 13) {
+      return '${day}th';
+    }
+    switch (day % 10) {
+      case 1:
+        return '${day}st';
+      case 2:
+        return '${day}nd';
+      case 3:
+        return '${day}rd';
+      default:
+        return '${day}th';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    DateTime currentDate =
+        DateTime.now().add(Duration(days: widget.selectedDateIndex));
+
     return Scaffold(
         body: Container(
       color: Colors.white,
       child: Stack(
         children: [
-          Column(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                const SizedBox(height: 140),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const SizedBox(width: 20),
+                        Text(
+                          '${_getDayOrdinal(currentDate.day)} ${DateFormat('MMMM').format(currentDate)} ${currentDate.year}',
+                          style: const TextStyle(
+                            color: primaryOrange,
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18.0,
+                            height:
+                                1.5, // adjust line height with the line-height CSS property
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: const [
+                        Text(
+                          'Show Reasons',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16.0,
+                            height:
+                                1.5, // adjust line height with the line-height CSS property
+                            decoration: TextDecoration.underline,
+                            color: primaryGray,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           Container(
             height: 125,
             decoration: const BoxDecoration(

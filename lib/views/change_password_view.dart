@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/drawer.dart';
+import 'package:flutter/services.dart';
 
 class ChangePasswordView extends StatefulWidget {
   const ChangePasswordView({super.key});
@@ -14,6 +15,13 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    // Set the iphone text header to black
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.white, // set to Colors.black for black color
+      ),
+    );
+
     return Scaffold(
       key: _scaffoldKey,
       drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
