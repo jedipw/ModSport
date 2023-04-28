@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/drawer.dart';
 
@@ -16,6 +19,21 @@ class _HelpCenterViewState extends State<HelpCenterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      onDrawerChanged: (isOpened) {
+        isOpened && Platform.isIOS
+            ? SystemChrome.setSystemUIOverlayStyle(
+                SystemUiOverlayStyle.dark.copyWith(
+                statusBarColor:
+                    primaryGray, // set to Colors.black for black color
+              ))
+            : Platform.isIOS
+                ? SystemChrome.setSystemUIOverlayStyle(
+                    SystemUiOverlayStyle.light.copyWith(
+                    statusBarColor:
+                        primaryGray, // set to Colors.black for black color
+                  ))
+                : null;
+      },
       key: _scaffoldKey,
       drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
       body: Stack(

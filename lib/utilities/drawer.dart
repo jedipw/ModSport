@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/modal.dart';
+import 'package:flutter/services.dart';
 
 class ModSportDrawer extends StatelessWidget {
   const ModSportDrawer({super.key, required this.currentDrawerIndex});
@@ -90,6 +93,13 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Platform.isIOS
+                      ? SystemChrome.setSystemUIOverlayStyle(
+                          SystemUiOverlayStyle.light.copyWith(
+                          statusBarColor: Colors
+                              .white, // set to Colors.black for black color
+                        ))
+                      : null;
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil(homeRoute, (route) => false);
                 },
@@ -116,6 +126,13 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Platform.isIOS
+                      ? SystemChrome.setSystemUIOverlayStyle(
+                          SystemUiOverlayStyle.light.copyWith(
+                          statusBarColor: Colors
+                              .white, // set to Colors.black for black color
+                        ))
+                      : null;
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil(statusRoute, (route) => false);
                 },
@@ -142,6 +159,14 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Platform.isIOS
+                      ? SystemChrome.setSystemUIOverlayStyle(
+                          SystemUiOverlayStyle.light.copyWith(
+                            statusBarColor: Colors
+                                .white, // set to Colors.black for black color
+                          ),
+                        )
+                      : null;
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       helpCenterRoute, (route) => false);
                 },
@@ -168,6 +193,14 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Platform.isIOS
+                      ? SystemChrome.setSystemUIOverlayStyle(
+                          SystemUiOverlayStyle.dark.copyWith(
+                            statusBarColor: Colors
+                                .white, // set to Colors.black for black color
+                          ),
+                        )
+                      : null;
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       changePasswordRoute, (route) => false);
                 },

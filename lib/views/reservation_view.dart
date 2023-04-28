@@ -820,8 +820,9 @@ class _ReservationViewState extends State<ReservationView> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                const EditView(),
+                                            builder: (context) => EditView(
+                                                selectedDateIndex:
+                                                    _selectedDateIndex),
                                           ),
                                         );
                                       },
@@ -982,7 +983,7 @@ class _ReservationViewState extends State<ReservationView> {
                                       isReserved: _isReserved,
                                       onPressed: () async {
                                         if (_isReserved) {
-                                          showConfirmationModal(
+                                          showCancelConfirmationModal(
                                             context,
                                             () async {
                                               Navigator.of(context).pop();
@@ -1037,8 +1038,6 @@ class _ReservationViewState extends State<ReservationView> {
                                                 );
                                               }
                                             },
-                                            true,
-                                            cancelMode,
                                           );
                                         } else {
                                           showLoadModal(context);
