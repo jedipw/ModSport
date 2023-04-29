@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
@@ -156,6 +157,8 @@ class RegisterView extends StatelessWidget {
                                 context,
                                 () async {
                                   try {
+                                    FirebaseFirestore firestore =
+                                        FirebaseFirestore.instance;
                                     final email = emailController.text;
                                     final password = passwordController.text;
                                     Navigator.of(context).pop();
@@ -164,6 +167,17 @@ class RegisterView extends StatelessWidget {
                                         .instance
                                         .createUserWithEmailAndPassword(
                                             email: email, password: password);
+                                    await firestore.collection('user').add({
+                                      'userId': userCredential.user!.uid,
+                                      'firstName': FnameController.text,
+                                      'lastName': LnameController.text,
+                                      'hasRole': false,
+                                    }).then((value) {
+                                      print('User added to Firestore');
+                                    }).catchError((error) {
+                                      print(
+                                          'Error adding user to Firestore: $error');
+                                    });
                                     Navigator.of(context).pop();
                                     Navigator.of(context).pushNamed(
                                       //navigates to homeRoute screen and removes previous routes
