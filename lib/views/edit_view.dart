@@ -11,6 +11,8 @@ class EditView extends StatefulWidget {
 }
 
 class _EditViewState extends State<EditView> {
+  bool _isReasonShow = false;
+
   String _getDayOrdinal(int day) {
     if (day >= 11 && day <= 13) {
       return '${day}th';
@@ -63,21 +65,34 @@ class _EditViewState extends State<EditView> {
                       ],
                     ),
                     Row(
-                      children: const [
-                        Text(
-                          'Show Reasons',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16.0,
-                            height:
-                                1.5, // adjust line height with the line-height CSS property
-                            decoration: TextDecoration.underline,
-                            color: primaryGray,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            if (_isReasonShow) {
+                              setState(() {
+                                _isReasonShow = false;
+                              });
+                            } else {
+                              setState(() {
+                                _isReasonShow = true;
+                              });
+                            }
+                          },
+                          child: Text(
+                            _isReasonShow ? 'Hide Reasons' : 'Show Reasons',
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16.0,
+                              height:
+                                  1.5, // adjust line height with the line-height CSS property
+                              decoration: TextDecoration.underline,
+                              color: primaryGray,
+                            ),
                           ),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                       ],
                     ),
                   ],

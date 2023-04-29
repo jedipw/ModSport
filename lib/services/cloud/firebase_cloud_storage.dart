@@ -206,6 +206,8 @@ class FirebaseCloudStorage {
           startDateTimeField: startDateTime,
         });
       }
+
+      
     } catch (e) {
       throw CouldNotCreateException();
     }
@@ -213,11 +215,8 @@ class FirebaseCloudStorage {
 
   Future<void> deleteDisableReservation(List<String> reservationIds) async {
     try {
-      final disableReservationRef =
-          FirebaseFirestore.instance.collection(disableCollection);
-
       for (final id in reservationIds) {
-        final reservationRef = disableReservationRef.doc(id);
+        final reservationRef = disable.doc(id);
         await reservationRef.delete();
       }
     } catch (e) {
@@ -228,11 +227,8 @@ class FirebaseCloudStorage {
   Future<void> updateDisableReason(
       List<String> disableIds, String disableReason) async {
     try {
-      final CollectionReference disableReservationRef =
-          FirebaseFirestore.instance.collection(disableCollection);
-
       for (String disableId in disableIds) {
-        await disableReservationRef.doc(disableId).update({
+        await disable.doc(disableId).update({
           disableReasonField: disableReason,
         });
       }
@@ -247,10 +243,8 @@ class FirebaseCloudStorage {
       final dayFormat = DateFormat('EEEE');
 
       final reservationIds = <String>[];
-      final reservations = await FirebaseFirestore.instance
-          .collection(reservationCollection)
-          .where(zoneIdField, isEqualTo: zoneId)
-          .get();
+      final reservations =
+          await res.where(zoneIdField, isEqualTo: zoneId).get();
 
       DateTime? resStartTime;
       for (final startTime in startTimes) {
@@ -354,12 +348,15 @@ class FirebaseCloudStorage {
 
       // 5. Create a new reservation document
       if (canCreate) {
-        await userRes.add({
-          'startDateTime': startDateTime,
-          'userId': userId,
-          'zoneId': zoneId,
-          // Add any other fields you want to store in the document
-        });
+        await userRes.add(
+          {
+            'startDateTime': startDateTime,
+            'userId': userId,
+            'zoneId': zoneId,
+            'isSuccessful': true,
+            // Add any other fields you want to store in the document
+          },
+        );
       }
     } catch (e) {
       throw CouldNotCreateException();
