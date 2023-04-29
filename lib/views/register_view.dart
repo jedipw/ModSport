@@ -167,8 +167,7 @@ class RegisterView extends StatelessWidget {
                                         .instance
                                         .createUserWithEmailAndPassword(
                                             email: email, password: password);
-                                    await firestore.collection('user').add({
-                                      'userId': userCredential.user!.uid,
+                                    await firestore.collection('user').doc(userCredential.user!.uid).set({
                                       'firstName': FnameController.text,
                                       'lastName': LnameController.text,
                                       'hasRole': false,
