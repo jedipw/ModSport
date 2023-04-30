@@ -121,14 +121,14 @@ class TimeSlotDisable extends StatelessWidget {
                                 : Row(
                                     children: [
                                       const Icon(Icons.people,
-                                          color: primaryGray),
-                                      const SizedBox(width: 8),
+                                          color: primaryGray, size: 30),
+                                      const SizedBox(width: 4),
                                       Text(
                                         '$numOfReservation/${reservation[index].capacity}',
                                         style: const TextStyle(
                                           fontFamily: 'Poppins',
                                           fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: 22,
                                           height: 1.5,
                                           color: primaryGray,

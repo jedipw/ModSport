@@ -347,7 +347,7 @@ class _DisableViewState extends State<DisableView> {
                     bottomRight: Radius.circular(20.0),
                   ),
                 ),
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 17),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,

@@ -1304,7 +1304,7 @@ class _ReservationViewState extends State<ReservationView> {
                             bottomRight: Radius.circular(20.0),
                           ),
                         ),
-                        padding: const EdgeInsets.only(bottom: 20),
+                        padding: const EdgeInsets.only(bottom: 17),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [

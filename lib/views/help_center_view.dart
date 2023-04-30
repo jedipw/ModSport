@@ -57,7 +57,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     bottomRight: Radius.circular(20.0),
                   ),
                 ),
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 17),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
