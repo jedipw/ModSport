@@ -42,8 +42,7 @@ class DateList extends StatelessWidget {
 
     bool checkMonth(int index) {
       return (dateList[index].day == DateTime.now().day &&
-              dateList[index].month == DateTime.now().month &&
-              dateList[index].day != 1) ||
+              dateList[index].month == DateTime.now().month) ||
           (dateList[index].day == 1 &&
               dateList[index].month == DateTime.now().month + 1);
     }
@@ -136,7 +135,7 @@ class DateList extends StatelessWidget {
                           fontFamily: 'Poppins',
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
-                          fontSize: 22,
+                          fontSize: 24,
                           color: selectedIndex == index
                               ? Colors.white
                               : isError || !isEverythingLoaded
