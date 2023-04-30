@@ -47,7 +47,7 @@ class TimeSlotReserve extends StatelessWidget {
         return Theme(
           data: theme,
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.white,
