@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
+
+import '../utilities/modal.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView(
@@ -226,6 +230,7 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController passwordController = TextEditingController();
   bool _isEmailValid = true;
   bool _isPasswordOk = true;
+  bool _isSomeThingWrong = false;
 
   @override
   void dispose() {
@@ -377,42 +382,108 @@ class _LoginViewState extends State<LoginView> {
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        if (_isSomeThingWrong)
+                          const Text(
+                            "Please make sure that you log in with the correct email and password",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                      ],
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          final email = emailController.text;
+                          final password = passwordController.text;
                           if (_formKey.currentState!.validate()) {
                             // Do something if the form is valid
                             // For example, check if the email is valid
                             if (_isValidEmail(emailController.text) &&
                                 passwordController.value.text != "") {
-                              // Navigate to next screen
                               setState(() {
                                 _isEmailValid = true;
                                 _isPasswordOk = true;
+                                _isSomeThingWrong = false;
                               });
-                              print(emailController.text + passwordController.text);
+                              try {
+                                showLoadModal(context);
+                                final userCredential = await FirebaseAuth
+                                    .instance
+                                    .signInWithEmailAndPassword(
+                                        email: email, password: password);
+                                Navigator.of(context).pop();
+                                if (userCredential.user?.emailVerified ??
+                                    false) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    // navigates to homeRoute screen and removes previous routes
+                                    homeRoute,
+                                    (route) => false,
+                                  );
+                                } else {
+                                  Navigator.of(context).pushNamed(
+                                    verifyEmailRoute,
+                                  );
+                                }
+                              } on FirebaseAuthException catch (e) {
+                                setState(() {
+                                  _isSomeThingWrong = true;
+                                });
+                                if (e.code == 'user-not-found') {
+                                  print('User not found');
+                                } else {
+                                  print('SOMETHING ELSE HAPPEND');
+                                  print(e.code);
+                                }
+                              }
                             } else {
-                              setState(() {
-                                _isEmailValid = false;
-                                _isPasswordOk = false;
-                              });
+                              if (emailController.text == "" ||
+                                  !_isValidEmail(emailController.text)) {
+                                setState(() {
+                                  _isEmailValid = false;
+                                });
+                              } else {
+                                setState(() {
+                                  _isEmailValid = true;
+                                });
+                              }
+                              if (passwordController.value.text == "") {
+                                setState(() {
+                                  _isPasswordOk = false;
+                                });
+                              } else {
+                                setState(() {
+                                  _isPasswordOk = true;
+                                });
+                              }
+                              if (_isPasswordOk && _isEmailValid) {
+                                setState(() {
+                                  _isSomeThingWrong = true;
+                                });
+                              }
                             }
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(primaryOrange),
-                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40))),
+                          backgroundColor:
+                              MaterialStateProperty.all(primaryOrange),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40))),
                           fixedSize:
                               MaterialStateProperty.all(const Size(173.42, 64)),
                           side: MaterialStateProperty.all(BorderSide(
                             color: primaryOrange,
                             width: 2,
                           )),
-                          overlayColor: MaterialStateProperty.all(Color.fromRGBO(
-                              0, 0, 0, 0.25)), // for the drop shadow effect
+                          overlayColor: MaterialStateProperty.all(
+                              Color.fromRGBO(
+                                  0, 0, 0, 0.25)), // for the drop shadow effect
                           elevation: MaterialStateProperty.all(
                               4), // for the drop shadow effect
                           shadowColor: MaterialStateProperty.all(
@@ -446,10 +517,8 @@ class _LoginViewState extends State<LoginView> {
 
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
-    final emailRegex = RegExp(
-        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]" +
-            r"{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]" +
-            r"{0,61}[a-zA-Z0-9])?)*$");
+    final emailRegex =
+        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
   }
 }
