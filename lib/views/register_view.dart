@@ -144,14 +144,6 @@ class RegisterView extends StatelessWidget {
                                 const Size(173.42, 64)),
                           ),
                           onPressed: () async {
-                            // if (_formKey.currentState!.validate()) {
-                            //   final email = emailController.text;
-                            //   final password = passwordController.text;
-                            //   final userCredential = await FirebaseAuth.instance
-                            //       .createUserWithEmailAndPassword(
-                            //           email: email, password: password);
-                            //   print(userCredential);
-                            // }
                             if (_formKey.currentState!.validate()) {
                               showAccountConfirmationModal(
                                 context,
