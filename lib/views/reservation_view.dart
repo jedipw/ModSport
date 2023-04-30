@@ -796,16 +796,19 @@ class _ReservationViewState extends State<ReservationView> {
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.only(top: 14),
-                                      child: const Text(
-                                        'Choose more reservations to disable',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          height: 1.5, // 39/26 = 1.5
-                                          color: primaryGray,
-                                        ),
-                                      ),
+                                      child: _disabledReservation.length ==
+                                              _reservations.length
+                                          ? Container()
+                                          : const Text(
+                                              'Choose more reservations to disable',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                height: 1.5, // 39/26 = 1.5
+                                                color: primaryGray,
+                                              ),
+                                            ),
                                     ),
                                     TextButton(
                                       onPressed: () {
