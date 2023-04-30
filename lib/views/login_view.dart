@@ -394,6 +394,33 @@ class _LoginViewState extends State<LoginView> {
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              forgetPasswordRoute,
+                            );
+                          },
+                          child: const Text(
+                            "Forget password?",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              height: 1.0,
+                              decoration: TextDecoration.underline,
+                              color: Color(0xFFCC0019),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -477,17 +504,17 @@ class _LoginViewState extends State<LoginView> {
                                   borderRadius: BorderRadius.circular(40))),
                           fixedSize:
                               MaterialStateProperty.all(const Size(173.42, 64)),
-                          side: MaterialStateProperty.all(BorderSide(
+                          side: MaterialStateProperty.all(const BorderSide(
                             color: primaryOrange,
                             width: 2,
                           )),
                           overlayColor: MaterialStateProperty.all(
-                              Color.fromRGBO(
+                              const Color.fromRGBO(
                                   0, 0, 0, 0.25)), // for the drop shadow effect
                           elevation: MaterialStateProperty.all(
                               4), // for the drop shadow effect
                           shadowColor: MaterialStateProperty.all(
-                              Color.fromRGBO(0, 0, 0, 0.25)),
+                              const Color.fromRGBO(0, 0, 0, 0.25)),
                         ),
                         child: Container(
                           width: 173.42,
@@ -506,6 +533,54 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ],
                   ),
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Don’t have an account?",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                              height: 1.5,
+                              color: Color.fromRGBO(0, 0, 0, 0.45),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      registerRoute,
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Sign up",
+                                    style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14,
+                                      height: 1.0,
+                                      decoration: TextDecoration.underline,
+                                      color: primaryOrange,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

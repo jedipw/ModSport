@@ -159,9 +159,31 @@ class RegisterView extends StatelessWidget {
                                         .instance
                                         .createUserWithEmailAndPassword(
                                             email: email, password: password);
-                                    await firestore.collection('user').doc(userCredential.user!.uid).set({
-                                      'firstName': FnameController.text,
-                                      'lastName': LnameController.text,
+                                    userCredential.user?.updateDisplayName(
+                                      "${FnameController.text
+                                              .trim()
+                                              .toUpperCase()
+                                              .substring(0, 1)}${FnameController.text
+                                              .trim()
+                                              .toLowerCase()
+                                              .substring(1)} ${LnameController.text
+                                              .trim()
+                                              .toUpperCase()
+                                              .substring(0, 1)}${LnameController.text
+                                              .trim()
+                                              .toLowerCase()
+                                              .substring(1)}",
+                                    );
+                                    await firestore
+                                        .collection('user')
+                                        .doc(userCredential.user!.uid)
+                                        .set({
+                                      'firstName': FnameController.text
+                                          .trim()
+                                          .toLowerCase(),
+                                      'lastName': LnameController.text
+                                          .trim()
+                                          .toLowerCase(),
                                       'hasRole': false,
                                     }).then((value) {
                                       print('User added to Firestore');
@@ -185,8 +207,22 @@ class RegisterView extends StatelessWidget {
                                     // throw(e);
                                   }
                                 },
-                                FnameController.text,
-                                LnameController.text,
+                                FnameController.text
+                                        .trim()
+                                        .toUpperCase()
+                                        .substring(0, 1) +
+                                    FnameController.text
+                                        .trim()
+                                        .toLowerCase()
+                                        .substring(1),
+                                LnameController.text
+                                        .trim()
+                                        .toUpperCase()
+                                        .substring(0, 1) +
+                                    LnameController.text
+                                        .trim()
+                                        .toLowerCase()
+                                        .substring(1),
                                 emailController.text,
                               );
                             }

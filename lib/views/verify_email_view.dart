@@ -77,12 +77,12 @@ class _VerifyEmailViewComponentState extends State<VerifyEmailViewComponent> {
               shape: MaterialStateProperty.all(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(40),
               )),
-              minimumSize: MaterialStateProperty.all(Size(208, 60)),
-              side: MaterialStateProperty.all(BorderSide(
+              minimumSize: MaterialStateProperty.all(const Size(208, 60)),
+              side: MaterialStateProperty.all(const BorderSide(
                 color: primaryOrange,
               )),
-              overlayColor: MaterialStateProperty.all(Color(0x1FE17325)),
-              shadowColor: MaterialStateProperty.all(Color(0x3D000000)),
+              overlayColor: MaterialStateProperty.all(const Color(0x1FE17325)),
+              shadowColor: MaterialStateProperty.all(const Color(0x3D000000)),
               elevation: MaterialStateProperty.all(4),
             ),
             onPressed: () async {
