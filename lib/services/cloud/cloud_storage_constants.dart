@@ -31,3 +31,6 @@ const startDateTimeField = 'startDateTime';
 // Zone field
 const imgUrlField = 'imgUrl';
 const zoneNameField = 'zoneName';
+
+// User reservation
+const isSuccessfulField = 'isSuccessful';

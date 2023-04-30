@@ -33,8 +33,8 @@ class LocationName extends StatelessWidget {
                   '---',
                   style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
                     height: 1.5, // 39/26 = 1.5
                     color: primaryGray,
                   ),
@@ -56,7 +56,7 @@ class LocationName extends StatelessWidget {
                         locationName,
                         style: const TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w500,
                           height: 1.5, // 21/14 = 1.5
                           color: primaryGray,

@@ -224,6 +224,30 @@ class _ReservationViewState extends State<ReservationView> {
           },
         );
       }
+
+      List<ReservationData> invalidReservations = [];
+      // Check if number of user reservation has exceeded the capacity and user is the one who reserved it
+      for (int i = 0; i < _reservations.length; i++) {
+        int numReservations =
+            countNumOfReservation(_reservations[i].startTime, _userReservation);
+        if (numReservations >= _reservations[i].capacity! &&
+            _userReservation.every((element) =>
+                element.startDateTime != _reservations[i].startTime) &&
+            !_isDisableMenu) {
+          invalidReservations.add(_reservations[i]);
+        }
+      }
+
+      // Remove invalid reservations
+      for (int i = 0; i < invalidReservations.length; i++) {
+        if (mounted) {
+          setState(
+            () {
+              _reservations.remove(invalidReservations[i]);
+            },
+          );
+        }
+      }
     } catch (e) {
       handleError();
     }
@@ -255,8 +279,8 @@ class _ReservationViewState extends State<ReservationView> {
           DateTime.now().add(Duration(days: _selectedDateIndex));
 
       // Get disable reservation data
-      List<DisableData> disable =
-          await FirebaseCloudStorage().getDisableReservation(widget.zoneId);
+      List<DisableData> disable = await FirebaseCloudStorage()
+          .getDisableReservation(widget.zoneId, _selectedDateIndex);
 
       // Update the state
       if (mounted) {
@@ -346,31 +370,6 @@ class _ReservationViewState extends State<ReservationView> {
     }
   }
 
-  void removeInvalidReservation() {
-    List<ReservationData> invalidReservations = [];
-    // Check if number of user reservation has exceeded the capacity and user is the one who reserved it
-    for (int i = 0; i < _reservations.length; i++) {
-      int numReservations =
-          countNumOfReservation(_reservations[i].startTime, _userReservation);
-      if (numReservations >= _reservations[i].capacity! &&
-          i != _selectedTimeSlot &&
-          !_isDisableMenu) {
-        invalidReservations.add(_reservations[i]);
-      }
-    }
-
-    // Remove invalid reservations
-    for (int i = 0; i < invalidReservations.length; i++) {
-      if (mounted) {
-        setState(
-          () {
-            _reservations.remove(invalidReservations[i]);
-          },
-        );
-      }
-    }
-  }
-
   Future<void> _getIsReservedData() async {
     try {
       if (_reservations.isNotEmpty) {
@@ -415,19 +414,16 @@ class _ReservationViewState extends State<ReservationView> {
               (_) => _getLocationData(),
             )
             .then(
-              (_) => _getReservationData(),
+              (_) => _getUserReservationData(),
             )
             .then(
-              (_) => _getUserReservationData(),
+              (_) => _getReservationData(),
             )
             .then(
               (_) => _getDisableReservationData(),
             )
             .then(
               (_) => _getReservationIndexData(),
-            )
-            .then(
-              (_) => removeInvalidReservation(),
             )
             .then(
               (_) => _getIsReservedData(),
@@ -445,18 +441,15 @@ class _ReservationViewState extends State<ReservationView> {
             _isReservationIndexLoaded = false;
           },
         );
-        await _getReservationData()
+        await _getUserReservationData()
             .then(
-              (_) => _getUserReservationData(),
+              (_) => _getReservationData(),
             )
             .then(
               (_) => _getDisableReservationData(),
             )
             .then(
               (_) => _getReservationIndexData(),
-            )
-            .then(
-              (_) => removeInvalidReservation(),
             )
             .then(
               (_) => _getIsReservedData(),
@@ -467,15 +460,16 @@ class _ReservationViewState extends State<ReservationView> {
       case adminMode:
         setState(
           () {
+            _selectedTimeSlot = 0;
             _isReservationLoaded = false;
             _isUserReservationLoaded = false;
             _isDisableReservationLoaded = false;
             _isReservationIdLoaded = false;
           },
         );
-        await _getReservationData()
+        await _getUserReservationData()
             .then(
-              (_) => _getUserReservationData(),
+              (_) => _getReservationData(),
             )
             .then(
               (_) => _getDisableReservationData(),
@@ -822,7 +816,8 @@ class _ReservationViewState extends State<ReservationView> {
                                           MaterialPageRoute(
                                             builder: (context) => EditView(
                                                 selectedDateIndex:
-                                                    _selectedDateIndex),
+                                                    _selectedDateIndex,
+                                                zoneId: widget.zoneId),
                                           ),
                                         );
                                       },
@@ -850,7 +845,7 @@ class _ReservationViewState extends State<ReservationView> {
                             : Container(),
                         Container(
                           padding: EdgeInsets.fromLTRB(
-                              20,
+                              10,
                               isEverythingLoaded() &&
                                       !_isError &&
                                       _isDisableMenu &&
@@ -897,7 +892,7 @@ class _ReservationViewState extends State<ReservationView> {
                                       )
                                   ? 45
                                   : 20,
-                              20,
+                              10,
                               20),
                           child: _isError
                               ? Container()
@@ -1309,7 +1304,7 @@ class _ReservationViewState extends State<ReservationView> {
                             bottomRight: Radius.circular(20.0),
                           ),
                         ),
-                        padding: const EdgeInsets.only(bottom: 20),
+                        padding: const EdgeInsets.only(bottom: 17),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [

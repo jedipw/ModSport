@@ -43,7 +43,7 @@ class ZoneName extends StatelessWidget {
                   zoneName,
                   style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     fontSize: 26,
                     height: 1.5, // 39/26 = 1.5
                     color: primaryOrange,
