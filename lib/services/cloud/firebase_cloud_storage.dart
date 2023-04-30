@@ -54,7 +54,7 @@ class FirebaseCloudStorage {
       }
 
       final List<DisableData> disabledReservation =
-          await getDisableReservation(zoneId);
+          await getDisableReservation(zoneId, selectedDateIndex);
 
       bool isDisable(DateTime? startTime) {
         for (int i = 0; i < disabledReservation.length; i++) {
@@ -117,20 +117,30 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<List<DisableData>> getDisableReservation(String zoneId) async {
+  Future<List<DisableData>> getDisableReservation(
+      String zoneId, int selectedDateIndex) async {
     try {
+      final DateTime now =
+          DateTime.now().add(Duration(days: selectedDateIndex));
+
       QuerySnapshot querySnapshot =
           await disable.where(zoneIdField, isEqualTo: zoneId).get();
 
       List<DisableData> disabledReservations = [];
       for (var doc in querySnapshot.docs) {
-        DateTime startDateTime = (doc[startDateTimeField])?.toDate();
-        String reason = doc[disableReasonField];
-        disabledReservations.add(DisableData(
-            disableId: doc.id,
-            startDateTime: startDateTime,
-            disableReason: reason));
+        if (doc[startDateTimeField]?.toDate().year == now.year &&
+            doc[startDateTimeField]?.toDate().month == now.month &&
+            doc[startDateTimeField]?.toDate().day == now.day) {
+          DateTime startDateTime = (doc[startDateTimeField])?.toDate();
+          String reason = doc[disableReasonField];
+          disabledReservations.add(DisableData(
+              disableId: doc.id,
+              startDateTime: startDateTime,
+              disableReason: reason));
+        }
       }
+      disabledReservations
+          .sort((a, b) => a.startDateTime.compareTo(b.startDateTime));
 
       return disabledReservations;
     } catch (e) {
@@ -140,8 +150,10 @@ class FirebaseCloudStorage {
 
   Future<List<UserReservationData>> getAllUserReservation(String zoneId) async {
     try {
-      QuerySnapshot querySnapshot =
-          await userRes.where(zoneIdField, isEqualTo: zoneId).get();
+      QuerySnapshot querySnapshot = await userRes
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(isSuccessfulField, isEqualTo: true)
+          .get();
 
       List<UserReservationData> userReservations = [];
       for (var doc in querySnapshot.docs) {
@@ -205,6 +217,31 @@ class FirebaseCloudStorage {
           disableReasonField: disableReason,
           startDateTimeField: startDateTime,
         });
+
+        // Update userReservation to set isSuccessful to false
+        final querySnapshot =
+            await userRes.where(zoneIdField, isEqualTo: zoneId).get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          await Future.wait(querySnapshot.docs.map((doc) async {
+            if (startDateTime.toDate().year ==
+                    doc[startDateTimeField].toDate().year &&
+                startDateTime.toDate().month ==
+                    doc[startDateTimeField].toDate().month &&
+                startDateTime.toDate().day ==
+                    doc[startDateTimeField].toDate().day &&
+                startDateTime.toDate().hour ==
+                    doc[startDateTimeField].toDate().hour &&
+                startDateTime.toDate().minute ==
+                    doc[startDateTimeField].toDate().minute &&
+                startDateTime.toDate().second ==
+                    doc[startDateTimeField].toDate().second) {
+              return doc.reference.update({
+                'isSuccessful': false,
+              });
+            }
+          }));
+        }
       }
     } catch (e) {
       throw CouldNotCreateException();
@@ -213,11 +250,8 @@ class FirebaseCloudStorage {
 
   Future<void> deleteDisableReservation(List<String> reservationIds) async {
     try {
-      final disableReservationRef =
-          FirebaseFirestore.instance.collection(disableCollection);
-
       for (final id in reservationIds) {
-        final reservationRef = disableReservationRef.doc(id);
+        final reservationRef = disable.doc(id);
         await reservationRef.delete();
       }
     } catch (e) {
@@ -228,11 +262,8 @@ class FirebaseCloudStorage {
   Future<void> updateDisableReason(
       List<String> disableIds, String disableReason) async {
     try {
-      final CollectionReference disableReservationRef =
-          FirebaseFirestore.instance.collection(disableCollection);
-
       for (String disableId in disableIds) {
-        await disableReservationRef.doc(disableId).update({
+        await disable.doc(disableId).update({
           disableReasonField: disableReason,
         });
       }
@@ -247,10 +278,8 @@ class FirebaseCloudStorage {
       final dayFormat = DateFormat('EEEE');
 
       final reservationIds = <String>[];
-      final reservations = await FirebaseFirestore.instance
-          .collection(reservationCollection)
-          .where(zoneIdField, isEqualTo: zoneId)
-          .get();
+      final reservations =
+          await res.where(zoneIdField, isEqualTo: zoneId).get();
 
       DateTime? resStartTime;
       for (final startTime in startTimes) {
@@ -286,6 +315,7 @@ class FirebaseCloudStorage {
           await getAllUserReservation(zoneId);
 
       bool canCreate = true;
+      bool needToUpdate = false;
 
       int countNumOfReservation(DateTime? startTime) {
         int num = 0;
@@ -322,9 +352,18 @@ class FirebaseCloudStorage {
             docStartDateTime.day == startDateTime.day &&
             docStartDateTime.hour == startDateTime.hour &&
             docStartDateTime.minute == startDateTime.minute &&
-            docStartDateTime.second == startDateTime.second) {
+            docStartDateTime.second == startDateTime.second &&
+            doc[isSuccessfulField] == true) {
           canCreate = false;
           throw CouldNotCreateException();
+        } else if (docStartDateTime.year == startDateTime.year &&
+            docStartDateTime.month == startDateTime.month &&
+            docStartDateTime.day == startDateTime.day &&
+            docStartDateTime.hour == startDateTime.hour &&
+            docStartDateTime.minute == startDateTime.minute &&
+            docStartDateTime.second == startDateTime.second &&
+            doc[isSuccessfulField] == false) {
+          needToUpdate = true;
         }
       }
 
@@ -353,13 +392,28 @@ class FirebaseCloudStorage {
       }
 
       // 5. Create a new reservation document
-      if (canCreate) {
-        await userRes.add({
-          'startDateTime': startDateTime,
-          'userId': userId,
-          'zoneId': zoneId,
-          // Add any other fields you want to store in the document
-        });
+      if (canCreate && !needToUpdate) {
+        await userRes.add(
+          {
+            'startDateTime': startDateTime,
+            'userId': userId,
+            'zoneId': zoneId,
+            'isSuccessful': true,
+            // Add any other fields you want to store in the document
+          },
+        );
+      } else if (canCreate && needToUpdate) {
+        final querySnapshot = await userRes
+            .where(userIdField, isEqualTo: userId)
+            .where(zoneIdField, isEqualTo: zoneId)
+            .where(startDateTimeField, isEqualTo: startDateTime)
+            .get();
+        if (querySnapshot.docs.isNotEmpty) {
+          final docRef = querySnapshot.docs.first.reference;
+          await docRef.update({'isSuccessful': true});
+        } else {
+          throw CouldNotCreateException();
+        }
       }
     } catch (e) {
       throw CouldNotCreateException();
@@ -376,6 +430,7 @@ class FirebaseCloudStorage {
       final querySnapshot = await userRes
           .where(userIdField, isEqualTo: userId)
           .where(zoneIdField, isEqualTo: zoneId)
+          .where(isSuccessfulField, isEqualTo: true)
           .get();
 
       for (var doc in querySnapshot.docs) {
@@ -422,6 +477,7 @@ class FirebaseCloudStorage {
       final querySnapshot = await userRes
           .where(userIdField, isEqualTo: userId)
           .where(zoneIdField, isEqualTo: zoneId)
+          .where(isSuccessfulField, isEqualTo: true)
           .get();
 
       final userReservationDataList = querySnapshot.docs
@@ -456,6 +512,88 @@ class FirebaseCloudStorage {
       }
 
       return 0;
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<List<ReservationData>> getEditReservation(
+      String zoneId, bool isDisableMenu, int selectedDateIndex) async {
+    try {
+      QuerySnapshot querySnapshot =
+          await res.where(zoneIdField, isEqualTo: zoneId).get();
+
+      final DateTime now =
+          DateTime.now().add(Duration(days: selectedDateIndex));
+
+      bool isTheSameDay(DateTime day) {
+        if (DateFormat('EEE').format(day).substring(0, 3) ==
+            DateFormat('EEE').format(now).substring(0, 3)) return true;
+        return false;
+      }
+
+      bool isTimeSlotExpired(DateTime endTime) {
+        final DateTime now = DateTime.now();
+        return now.isAfter(endTime);
+      }
+
+      final List<DisableData> disabledReservation =
+          await getDisableReservation(zoneId, selectedDateIndex);
+
+      bool isDisable(DateTime? startTime) {
+        for (int i = 0; i < disabledReservation.length; i++) {
+          if (disabledReservation[i].startDateTime.year == startTime!.year &&
+              disabledReservation[i].startDateTime.month == startTime.month &&
+              disabledReservation[i].startDateTime.day == startTime.day &&
+              disabledReservation[i].startDateTime.hour == startTime.hour &&
+              disabledReservation[i].startDateTime.minute == startTime.minute &&
+              disabledReservation[i].startDateTime.second == startTime.second) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      List<ReservationData> reservations = [];
+      for (var doc in querySnapshot.docs) {
+        int capacity = doc[capacityField];
+        DateTime startTime = (doc[startTimeField])?.toDate();
+        DateTime endTime = (doc[endTimeField])?.toDate();
+
+        if (!isTimeSlotExpired(DateTime(now.year, now.month, now.day,
+                endTime.hour, endTime.minute, endTime.second)) &&
+            isTheSameDay(startTime) &&
+            isDisable(DateTime(
+              now.year,
+              now.month,
+              now.day,
+              startTime.hour,
+              startTime.minute,
+              startTime.second,
+            ))) {
+          reservations.add(ReservationData(
+              reservationId: doc.id,
+              capacity: capacity,
+              startTime: DateTime(
+                now.year,
+                now.month,
+                now.day,
+                startTime.hour,
+                startTime.minute,
+                startTime.second,
+              ),
+              endTime: DateTime(
+                now.year,
+                now.month,
+                now.day,
+                endTime.hour,
+                endTime.minute,
+                endTime.second,
+              )));
+        }
+      }
+      reservations.sort((a, b) => a.startTime!.compareTo(b.startTime!));
+      return reservations;
     } catch (e) {
       throw CouldNotGetException();
     }

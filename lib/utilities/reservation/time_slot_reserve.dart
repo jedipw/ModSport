@@ -47,7 +47,7 @@ class TimeSlotReserve extends StatelessWidget {
         return Theme(
           data: theme,
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.white,
@@ -118,14 +118,15 @@ class TimeSlotReserve extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.people, color: primaryGray),
-                            const SizedBox(width: 8),
+                            const Icon(Icons.people,
+                                color: primaryGray, size: 30),
+                            const SizedBox(width: 4),
                             Text(
                               '$numOfReservation/${reservation[index].capacity}',
                               style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                                 fontSize: 22,
                                 height: 1.5,
                                 color: primaryGray,

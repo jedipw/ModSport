@@ -42,7 +42,8 @@ class DateList extends StatelessWidget {
 
     bool checkMonth(int index) {
       return (dateList[index].day == DateTime.now().day &&
-              dateList[index].month == DateTime.now().month && dateList[index].day != 1) ||
+              dateList[index].month == DateTime.now().month &&
+              dateList[index].day != 1) ||
           (dateList[index].day == 1 &&
               dateList[index].month == DateTime.now().month + 1);
     }
@@ -119,7 +120,7 @@ class DateList extends StatelessWidget {
                           fontFamily: 'Poppins',
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontSize: 14,
                           color: selectedIndex == index
                               ? Colors.white
                               : isError || !isEverythingLoaded
@@ -127,15 +128,15 @@ class DateList extends StatelessWidget {
                                   : primaryOrange,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 2),
                       Text(
                         DateFormat('d').format(dateList[
                             index]), // Display the day of the month for the date.
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 22,
                           color: selectedIndex == index
                               ? Colors.white
                               : isError || !isEverythingLoaded

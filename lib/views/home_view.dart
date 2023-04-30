@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -106,11 +105,12 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 22),
                     Container(
                         padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
                         height: 40,
                         child: TextField(
+                          maxLines: 1,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,

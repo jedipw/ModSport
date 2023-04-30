@@ -23,7 +23,7 @@ class NoReservationMessage extends StatelessWidget {
           ),
         ),
         Text(
-          'reservations available for this date.',
+          'reservations available for this day.',
           style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: 14,

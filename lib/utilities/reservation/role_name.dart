@@ -18,7 +18,7 @@ class RoleName extends StatelessWidget {
               Text(isDisableMenu ? 'Staff' : 'User',
                   style: const TextStyle(
                     fontSize: 14, fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                     height: 1.5, // 21/14 = 1.5
                     letterSpacing: 0,
                     color: Colors.black,
