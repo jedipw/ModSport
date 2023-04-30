@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:modsport/constants/routes.dart';
 import 'package:modsport/firebase_options.dart';
 import 'package:modsport/services/cloud/cloud_storage_constants.dart';
 import 'package:modsport/utilities/modal.dart';
+// import 'package:dio/dio.dart';
 
 class VerifyEmailView extends StatelessWidget {
   const VerifyEmailView(
@@ -21,8 +24,22 @@ class VerifyEmailView extends StatelessWidget {
         backgroundColor: primaryOrange,
       ), // app bar with a title
       body: FutureBuilder(
-          future: Firebase.initializeApp(
-              options: DefaultFirebaseOptions.currentPlatform),
+          future:
+              // Firebase.initializeApp(
+              //     options: DefaultFirebaseOptions.currentPlatform),
+              Firebase.initializeApp(
+              options: const FirebaseOptions(
+              apiKey: "AIzaSyCauS1xIFq7AjwY8VbyzdTlsY2_HX7yzDc",
+              appId: "AIzaSyDwYCWAgRuX_sWYhvNJGOFWFf-F9hNzlY0",
+              messagingSenderId: "692593899826",
+              projectId: "modsport-702fa",
+              storageBucket: "modsport-702fa.appspot.com",
+              // add the X-Firebase-Locale header here
+              // headers: <String, String>{
+              //   'X-Firebase-Locale': 'th', // replace 'en' with your desired locale
+              // },
+            ),
+          ),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
@@ -87,6 +104,7 @@ class _VerifyEmailViewComponentState extends State<VerifyEmailViewComponent> {
             ),
             onPressed: () async {
               final user = FirebaseAuth.instance.currentUser;
+              log(user.toString());
               showLoadModal(context);
               await user?.sendEmailVerification();
               Navigator.of(context).pop();
