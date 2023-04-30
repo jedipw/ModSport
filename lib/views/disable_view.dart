@@ -299,6 +299,14 @@ class _DisableViewState extends State<DisableView> {
                                           _textFieldWidth = constraint.maxWidth;
                                         });
                                       },
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 16.0,
+                                        height: 20.0 / 13.0,
+                                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                                      ),
                                     ),
                                   ],
                                 ),
