@@ -58,7 +58,7 @@ class DateList extends StatelessWidget {
               .length, // Generate a list of widgets for each date in the list.
           (index) => Container(
             margin: const EdgeInsets.symmetric(
-                horizontal: 8), // Add some spacing between the dates.
+                horizontal: 7), // Add some spacing between the dates.
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -78,7 +78,7 @@ class DateList extends StatelessWidget {
                         ),
                       )
                     : Container(),
-                SizedBox(height: checkMonth(index) ? 8 : 25),
+                SizedBox(height: checkMonth(index) ? 8 : 29),
                 TextButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
