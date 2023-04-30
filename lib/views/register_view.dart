@@ -3,11 +3,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/utilities/customTextFeild/EmailTextField.dart';
+import 'package:modsport/utilities/customTextFeild/FnameTextField.dart';
+import 'package:modsport/utilities/customTextFeild/LnameTextField.dart';
+import 'package:modsport/utilities/customTextFeild/PasswordTextField.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modsport/firebase_options.dart';
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
+  @override
+  _RegisterViewState createState() => _RegisterViewState();
+
   static final _formKey = GlobalKey<FormState>();
   static TextEditingController FnameController = TextEditingController();
   static TextEditingController LnameController = TextEditingController();
@@ -17,11 +25,9 @@ class RegisterView extends StatelessWidget {
       TextEditingController();
 
   // constructor for LoginView, takes an optional key parameter
-  const RegisterView({
-    Key? key,
-  }) : super(key: key);
-  // String get email => emailController.text.trim();
-  // String get password => passwordController.text.trim();
+  // const RegisterView({
+  //   Key? key,
+  // }) : super(key: key);
 
   // Confirm password validation method
   String? _validatePassword(String? value) {
@@ -83,6 +89,7 @@ class RegisterView extends StatelessWidget {
                         },
                       ),
                       //Email
+                      // EmailTextField(controller: emailController,isEmailValid: true,),
                       TextFormField(
                         controller: emailController,
                         decoration: const InputDecoration(
@@ -151,8 +158,9 @@ class RegisterView extends StatelessWidget {
                                   try {
                                     FirebaseFirestore firestore =
                                         FirebaseFirestore.instance;
-                                    final email = emailController.text;
-                                    final password = passwordController.text;
+                                    final email = emailController.text.trim();
+                                    final password =
+                                        passwordController.text.trim();
                                     Navigator.of(context).pop();
                                     showLoadModal(context);
                                     final userCredential = await FirebaseAuth
@@ -160,19 +168,7 @@ class RegisterView extends StatelessWidget {
                                         .createUserWithEmailAndPassword(
                                             email: email, password: password);
                                     userCredential.user?.updateDisplayName(
-                                      "${FnameController.text
-                                              .trim()
-                                              .toUpperCase()
-                                              .substring(0, 1)}${FnameController.text
-                                              .trim()
-                                              .toLowerCase()
-                                              .substring(1)} ${LnameController.text
-                                              .trim()
-                                              .toUpperCase()
-                                              .substring(0, 1)}${LnameController.text
-                                              .trim()
-                                              .toLowerCase()
-                                              .substring(1)}",
+                                      "${FnameController.text.trim().toUpperCase().substring(0, 1)}${FnameController.text.trim().toLowerCase().substring(1)} ${LnameController.text.trim().toUpperCase().substring(0, 1)}${LnameController.text.trim().toLowerCase().substring(1)}",
                                     );
                                     await firestore
                                         .collection('user')
@@ -249,6 +245,147 @@ class RegisterView extends StatelessWidget {
             }
           },
         ));
+  }
+}
+
+class _RegisterViewState extends State<RegisterView> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController FnameController = TextEditingController();
+  final TextEditingController LnameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  bool _isEmailValid = true;
+  bool _isFnameValid = true;
+  bool _isLnameValid = true;
+  bool _isPassword1Ok = true;
+  bool _isPassword2Ok = true;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(30, 70, 0, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Text(
+                        "CREATE ACCOUNT",
+                        style: TextStyle(
+                          color: primaryOrange,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Poppins",
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Text(
+                    "Please sign in to continue",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 16,
+                      height: 1.5,
+                      color: primaryGray,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
+                child: Column(
+                  children: [
+                    // Don't have verification yet
+                    FnameTextField(
+                        controller: FnameController,
+                        isFnameValid: _isFnameValid),
+                    LnameTextField(
+                        controller: LnameController,
+                        isLnameValid: _isLnameValid),
+                    EmailTextField(
+                        controller: emailController,
+                        isEmailValid: _isEmailValid),
+                    PasswordTextField(
+                        passwordController: passwordController,
+                        isPasswordOk: _isPassword1Ok),
+                    PasswordTextField(
+                        passwordController: confirmPasswordController,
+                        isPasswordOk: _isPassword2Ok),
+
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Already have an account?",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                height: 1.5,
+                                color: Color.fromRGBO(0, 0, 0, 0.45),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                        loginRoute,
+                                      );
+                                    },
+                                    child: const Text(
+                                      "Sign in",
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14,
+                                        height: 1.0,
+                                        decoration: TextDecoration.underline,
+                                        color: primaryOrange,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                )),
+          ],
+        ));
+  }
+
+  bool _isValidEmail(String email) {
+    // Validate the email using a regular expression
+    final emailRegex =
+        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$');
+    return emailRegex.hasMatch(email);
   }
 }
 

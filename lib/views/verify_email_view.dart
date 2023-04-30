@@ -24,22 +24,23 @@ class VerifyEmailView extends StatelessWidget {
         backgroundColor: primaryOrange,
       ), // app bar with a title
       body: FutureBuilder(
-          future:
-              // Firebase.initializeApp(
-              //     options: DefaultFirebaseOptions.currentPlatform),
-              Firebase.initializeApp(
-              options: const FirebaseOptions(
-              apiKey: "AIzaSyCauS1xIFq7AjwY8VbyzdTlsY2_HX7yzDc",
-              appId: "AIzaSyDwYCWAgRuX_sWYhvNJGOFWFf-F9hNzlY0",
-              messagingSenderId: "692593899826",
-              projectId: "modsport-702fa",
-              storageBucket: "modsport-702fa.appspot.com",
-              // add the X-Firebase-Locale header here
-              // headers: <String, String>{
-              //   'X-Firebase-Locale': 'th', // replace 'en' with your desired locale
-              // },
-            ),
-          ),
+          future: Firebase.initializeApp(
+              options: DefaultFirebaseOptions.currentPlatform),
+
+          //     Firebase.initializeApp(
+          //     options: const FirebaseOptions(
+          //     apiKey: "AIzaSyCauS1xIFq7AjwY8VbyzdTlsY2_HX7yzDc",
+          //     appId: "AIzaSyDwYCWAgRuX_sWYhvNJGOFWFf-F9hNzlY0",
+          //     messagingSenderId: "692593899826",
+          //     projectId: "modsport-702fa",
+          //     storageBucket: "modsport-702fa.appspot.com",
+          //     // add the X-Firebase-Locale header here
+          //     // headers: <String, String>{
+          //     //   'X-Firebase-Locale': 'th', // replace 'en' with your desired locale
+          //     // },
+          //   ),
+          // ),
+
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
@@ -106,8 +107,17 @@ class _VerifyEmailViewComponentState extends State<VerifyEmailViewComponent> {
               final user = FirebaseAuth.instance.currentUser;
               log(user.toString());
               showLoadModal(context);
-              await user?.sendEmailVerification();
-              Navigator.of(context).pop();
+              // await Dio().get(
+              //   'https://firebase.google.com',
+              //   options: Options(headers: {'X-Firebase-Locale': 'th'}),
+              // );
+              try {
+                await user!.sendEmailVerification()
+                .then((_) => {Navigator.of(context).pop()});
+              } on FirebaseAuthException catch (e) {
+                (_) => {Navigator.of(context).pop()};
+                rethrow;
+              }
             },
             child: const Text(
               "Resend email",
