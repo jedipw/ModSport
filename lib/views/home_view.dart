@@ -232,7 +232,7 @@ class _HomeViewState extends State<HomeView> {
                                                                   primaryOrange,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w700,
+                                                                      .w600,
                                                             ),
                                                           ),
                                                           GestureDetector(
