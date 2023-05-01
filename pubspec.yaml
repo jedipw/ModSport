@@ -20,6 +20,7 @@ dependencies:
   sqflite: ^2.2.6
   shimmer: ^2.0.0
   flutter_native_splash: ^2.2.19
+  dio: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -58,3 +59,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/badmintoncourt1.jpg
+    - assets/images/modsportlogoorange.png
