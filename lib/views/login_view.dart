@@ -182,7 +182,6 @@ class _LoginViewState extends State<LoginView> {
                                             if (userCredential
                                                     .user?.emailVerified ??
                                                 false) {
-                                              // ignore: use_build_context_synchronously
                                               Navigator.of(context)
                                                   .pushNamedAndRemoveUntil(
                                                 // navigates to homeRoute screen and removes previous routes

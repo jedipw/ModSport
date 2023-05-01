@@ -842,11 +842,9 @@ dynamic showLogoutConfirmationModal(BuildContext context,
                           await FirebaseAuth.instance
                               .signOut()
                               .then((value) => Navigator.of(context).pop())
-                              .then((value) =>
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                              .then((value) => Navigator.of(context).pushNamed(
                                     // navigates to homeRoute screen and removes previous routes
                                     loginRoute,
-                                    (route) => false,
                                   ));
                         },
                         style: ButtonStyle(
