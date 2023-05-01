@@ -178,32 +178,36 @@ class _LoginViewState extends State<LoginView> {
                                                 await FirebaseAuth.instance
                                                     .signInWithEmailAndPassword(
                                                         email: email,
-                                                        password: password);
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.of(context).pop();
-
-                                            if (userCredential
-                                                    .user?.emailVerified ??
-                                                false) {
-                                              Navigator.of(context)
-                                                  .pushNamedAndRemoveUntil(
-                                                // navigates to homeRoute screen and removes previous routes
-                                                homeRoute,
-                                                (route) => false,
-                                              );
-                                            } else {
-                                              /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
-                                              // ignore: use_build_context_synchronously
-                                              // Navigator.of(context).pushNamed(
-                                              //   verifyEmailRoute,
-                                              // );
-                                              Navigator.of(context)
-                                                  .pushNamedAndRemoveUntil(
-                                                // navigates to homeRoute screen and removes previous routes
-                                                homeRoute,
-                                                (route) => false,
-                                              );
-                                            }
+                                                        password: password)
+                                                    .then((value) =>
+                                                        Navigator.of(context)
+                                                            .pop())
+                                                    .then((value) {
+                                              if (FirebaseAuth
+                                                      .instance
+                                                      .currentUser
+                                                      ?.emailVerified ??
+                                                  false) {
+                                                Navigator.of(context)
+                                                    .pushNamedAndRemoveUntil(
+                                                  // navigates to homeRoute screen and removes previous routes
+                                                  homeRoute,
+                                                  (route) => false,
+                                                );
+                                              } else {
+                                                /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
+                                                // ignore: use_build_context_synchronously
+                                                // Navigator.of(context).pushNamed(
+                                                //   verifyEmailRoute,
+                                                // );
+                                                Navigator.of(context)
+                                                    .pushNamedAndRemoveUntil(
+                                                  // navigates to homeRoute screen and removes previous routes
+                                                  homeRoute,
+                                                  (route) => false,
+                                                );
+                                              }
+                                            });
                                           } on FirebaseAuthException catch (e) {
                                             if (mounted) {
                                               setState(() {
