@@ -351,7 +351,7 @@ dynamic showAccountConfirmationModal(BuildContext context,
                 Text(
                   'Do you want to use\n$Fname $Lname\nas your name and \n$email\nas email ?',
                   style: const TextStyle(
-                    fontSize: 25.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Poppins',
                     color: primaryRed,
