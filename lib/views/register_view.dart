@@ -217,7 +217,7 @@ class _RegisterViewState extends State<RegisterView> {
 
                   // Have account text
                   Padding(
-                    padding: const EdgeInsets.only(top: 108),
+                    padding: const EdgeInsets.only(top: 30, bottom: 50),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
