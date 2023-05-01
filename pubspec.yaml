@@ -1,10 +1,10 @@
 name: modsport
 description: A new Flutter project.
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=2.19.4 <3.0.0'
+  sdk: ">=2.19.4 <3.0.0"
 
 dependencies:
   cloud_firestore: ^4.4.5
@@ -47,7 +47,7 @@ flutter:
         - asset: assets/fonts/Poppins-ExtraLightItalic.ttf
         - asset: assets/fonts/Poppins-Italic.ttf
         - asset: assets/fonts/Poppins-Light.ttf
-        - asset: assets/fonts/Poppins-LightItalic.ttf       
+        - asset: assets/fonts/Poppins-LightItalic.ttf
         - asset: assets/fonts/Poppins-Medium.ttf
         - asset: assets/fonts/Poppins-MediumItalic.ttf
         - asset: assets/fonts/Poppins-Regular.ttf
