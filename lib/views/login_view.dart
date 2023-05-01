@@ -161,13 +161,16 @@ class _LoginViewState extends State<LoginView> {
                                       // Do something if the form is valid
                                       // For example, check if the email is valid
                                       if (_isValidEmail(emailController.text) &&
-                                          passwordController.value.text.length >=
+                                          passwordController
+                                                  .value.text.length >=
                                               6) {
-                                        setState(() {
-                                          _isEmailValid = true;
-                                          _isPasswordOk = true;
-                                          _isSomeThingWrong = false;
-                                        });
+                                        if (mounted) {
+                                          setState(() {
+                                            _isEmailValid = true;
+                                            _isPasswordOk = true;
+                                            _isSomeThingWrong = false;
+                                          });
+                                        }
                                         try {
                                           showLoadModal(context);
                                           try {
@@ -178,7 +181,7 @@ class _LoginViewState extends State<LoginView> {
                                                         password: password);
                                             // ignore: use_build_context_synchronously
                                             Navigator.of(context).pop();
-            
+
                                             if (userCredential
                                                     .user?.emailVerified ??
                                                 false) {
@@ -202,15 +205,19 @@ class _LoginViewState extends State<LoginView> {
                                               );
                                             }
                                           } on FirebaseAuthException catch (e) {
-                                            setState(() {
-                                              _isSomeThingWrong = true;
-                                            });
+                                            if (mounted) {
+                                              setState(() {
+                                                _isSomeThingWrong = true;
+                                              });
+                                            }
                                             Navigator.of(context).pop();
                                           }
                                         } on FirebaseAuthException catch (e) {
-                                          setState(() {
-                                            _isSomeThingWrong = true;
-                                          });
+                                          if (mounted) {
+                                            setState(() {
+                                              _isSomeThingWrong = true;
+                                            });
+                                          }
                                           if (e.code == 'user-not-found') {
                                             print('User not found');
                                           } else {
@@ -222,35 +229,46 @@ class _LoginViewState extends State<LoginView> {
                                         if (emailController.text == "" ||
                                             !_isValidEmail(
                                                 emailController.text)) {
-                                          setState(() {
-                                            _isEmailValid = false;
-                                          });
+                                          if (mounted) {
+                                            setState(() {
+                                              _isEmailValid = false;
+                                            });
+                                          }
                                         } else {
-                                          setState(() {
-                                            _isEmailValid = true;
-                                          });
+                                          if (mounted) {
+                                            setState(() {
+                                              _isEmailValid = true;
+                                            });
+                                          }
                                         }
-                                        if (passwordController.value.text.length <
+                                        if (passwordController
+                                                .value.text.length <
                                             6) {
-                                          setState(() {
-                                            _isPasswordOk = false;
-                                          });
+                                          if (mounted) {
+                                            setState(() {
+                                              _isPasswordOk = false;
+                                            });
+                                          }
                                         } else {
-                                          setState(() {
-                                            _isPasswordOk = true;
-                                          });
+                                          if (mounted) {
+                                            setState(() {
+                                              _isPasswordOk = true;
+                                            });
+                                          }
                                         }
                                         if (_isPasswordOk && _isEmailValid) {
-                                          setState(() {
-                                            _isSomeThingWrong = true;
-                                          });
+                                          if (mounted) {
+                                            setState(() {
+                                              _isSomeThingWrong = true;
+                                            });
+                                          }
                                         }
                                       }
                                     }
                                   },
                                   style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all(primaryOrange),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        primaryOrange),
                                     shape: MaterialStateProperty.all(
                                         RoundedRectangleBorder(
                                             borderRadius:
@@ -298,8 +316,7 @@ class _LoginViewState extends State<LoginView> {
             Positioned(
                 // left: ,
                 bottom: isKeyboardVisible ? 12 : 12,
-                child: 
-                Padding(
+                child: Padding(
                   padding: const EdgeInsets.fromLTRB(90, 30, 16, 16),
                   child:
                       //  Column(
@@ -373,9 +390,11 @@ class _LoginViewState extends State<LoginView> {
     // add listener to track keyboard visibility
     WidgetsBinding.instance.addObserver(
       KeyboardVisibilityObserver((bool visible) {
-        setState(() {
-          isKeyboardVisible = visible;
-        });
+        if (mounted) {
+          setState(() {
+            isKeyboardVisible = visible;
+          });
+        }
       }),
     );
   }
