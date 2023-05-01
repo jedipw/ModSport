@@ -1,33 +1,122 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
+import 'package:modsport/utilities/drawer.dart';
+import 'package:modsport/views/detail_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
-// This class represents the Detail view of the app
-class DetailView extends StatelessWidget {
-  const DetailView(
-      {super.key, required this.zoneId, required this.startDateTime});
-
+class DetailView extends StatefulWidget {
   final String zoneId;
   final DateTime startDateTime;
 
-  // This method builds the UI for the Detail view
+  const DetailView({Key? key, required this.zoneId, required this.startDateTime})
+      : super(key: key);
+
+  @override
+  _DetaiViewState createState() => _DetaiViewState();
+}
+
+class _DetaiViewState extends State<DetailView> {
+  final int _currentDrawerIndex = 1;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
+    final String userId = FirebaseAuth.instance.currentUser!.uid;
+
     return Scaffold(
-      // This widget is the body of the screen, which displays the text 'Detail Page' at the center of the screen
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 150),
-                // Start writing your code here
-                Center(
-                    child:
-                        Text('Zone ID: $zoneId \n Start time: $startDateTime'))
-              ],
-            ),
-          ),
-          Stack(
+      key: _scaffoldKey,
+      drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('userreservation')
+            .where('userId', isEqualTo: userId)
+            .where('zoneId', isEqualTo: widget.zoneId)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          final data = snapshot.data!.docs.first.data() as Map<String, dynamic>;
+          final startDateTime = widget.startDateTime;
+          final formattedDate =
+              DateFormat('d MMM y').format(startDateTime); // Example date format
+          final formattedTime =
+              DateFormat('HH:mm').format(startDateTime); // Example time format
+          final bool isSuccessful = data['isSuccessful'] ?? true;
+          final String? disableReason = data['disableReason'];
+
+          return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                    .collection('zone')
+                    .doc(widget.zoneId)
+                    .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    final zoneData = snapshot.data!.data() as Map<String, dynamic>;
+                    final String zoneName = zoneData['zoneName'];
+
+          return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(Icons.check_circle,color: Colors.green,size: 150.0,),
+                              Text('Successful', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24.0,
+                                    height: 1.5,
+                                    color: Colors.green,),),
+                              Text('Your reservation has been successful!', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+                              Text('Facility: $zoneName', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+                              Text('Date: $formattedDate', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+                              Text('Time: $formattedTime', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+              if (!isSuccessful && disableReason != null)
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('disable')
+                      .where('userId', isEqualTo: userId)
+                      .where('zoneId', isEqualTo: widget.zoneId)
+                      .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    final disableData = snapshot.data!.docs.first.data() as Map<String, dynamic>;
+                    final String disableReason = disableData['disableReason'];
+
+                    return Text('due to $disableReason');
+                  },
+                ),
+            Stack(
             children: [
               Container(
                 height: 125,
@@ -72,12 +161,15 @@ class DetailView extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                ),
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
-      ),
-    );
+            
+          );
+        },
+      );
+    }));
   }
 }
