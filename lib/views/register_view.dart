@@ -43,176 +43,182 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
         // resizeToAvoidBottomInset: false,
-        body: 
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(30, 70, 0, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: const [
-                      Text(
-                        "CREATE ACCOUNT",
-                        style: TextStyle(
-                          color: primaryOrange,
-                          fontSize: 30,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "Poppins",
-                        ),
+        body: SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 114, 0, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Text(
+                      "CREATE ACCOUNT",
+                      style: TextStyle(
+                        color: primaryOrange,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: "Poppins",
                       ),
-                    ],
-                  ),
-                  const Text(
-                    "Please sign in to continue",
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 16,
-                      height: 1.5,
-                      color: primaryGray,
                     ),
-                    textAlign: TextAlign.center,
+                  ],
+                ),
+                const Text(
+                  "Please sign in to continue",
+                  style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontSize: 16,
+                    height: 1.5,
+                    color: primaryGray,
                   ),
-                ],
-              ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
-                child: Column(
-                  children: [
-                    // Don't have verification yet
-                    FnameTextField(
-                        controller: FnameController,
-                        isFnameValid: _isFnameValid),
-                    LnameTextField(
-                        controller: LnameController,
-                        isLnameValid: _isLnameValid),
-                    EmailTextField(
-                        controller: emailController,
-                        isEmailValid: _isEmailValid),
-                    RegPasswordField(
-                      passwordController: passwordController,
-                      passwordStat: _isValidPassword(
-                          passwordController.text.toString(),
-                          confirmPasswordController.text.toString(),
-                          "password"
-                          ),
-                      isPasswordOk: _isPasswordOk,
-                    ),
-                    RegConPasswordField(
-                      passwordController: confirmPasswordController,
-                      passwordStat: _isValidPassword(
-                          confirmPasswordController.text.toString(),
-                          passwordController.text.toString(),
-                          "confirm password"
-                          ),
-                      isPasswordOk: _isPasswordOk,
-                    ),
+          ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
+              child: Column(
+                children: [
+                  // Don't have verification yet
+                  FnameTextField(
+                      controller: FnameController, isFnameValid: _isFnameValid),
+                  LnameTextField(
+                      controller: LnameController, isLnameValid: _isLnameValid),
+                  EmailTextField(
+                      controller: emailController, isEmailValid: _isEmailValid),
+                  RegPasswordField(
+                    passwordController: passwordController,
+                    passwordStat: _isValidPassword(
+                        passwordController.text.toString(),
+                        confirmPasswordController.text.toString(),
+                        "password"),
+                    isPasswordOk: _isPasswordOk,
+                  ),
+                  RegConPasswordField(
+                    passwordController: confirmPasswordController,
+                    passwordStat: _isValidPassword(
+                        confirmPasswordController.text.toString(),
+                        passwordController.text.toString(),
+                        "confirm password"),
+                    isPasswordOk: _isPasswordOk,
+                  ),
 
-                    Center(
-                      // centers child widget in the screen
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(primaryOrange),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40))),
-                          minimumSize:
-                              MaterialStateProperty.all(const Size(173.42, 64)),
+                  Center(
+                    // centers child widget in the screen
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(primaryOrange),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40))),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(173.42, 64)),
+                      ),
+                      onPressed: () async {
+                        // if (_formKey.currentState!.validate()) {
+                        if (_isEverythingOk(
+                            FnameController.text.trim(),
+                            LnameController.text.trim(),
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                            confirmPasswordController.text.trim())) {
+                          showAccountConfirmationModal(
+                            context,
+                            () async {
+                              try {
+                                FirebaseFirestore firestore =
+                                    FirebaseFirestore.instance;
+                                final email = emailController.text.trim();
+                                final password = passwordController.text.trim();
+                                Navigator.of(context).pop();
+                                showLoadModal(context);
+                                final userCredential = await FirebaseAuth
+                                    .instance
+                                    .createUserWithEmailAndPassword(
+                                        email: email, password: password);
+                                userCredential.user?.updateDisplayName(
+                                  "${FnameController.text.trim().toUpperCase().substring(0, 1)}${FnameController.text.trim().toLowerCase().substring(1)} ${LnameController.text.trim().toUpperCase().substring(0, 1)}${LnameController.text.trim().toLowerCase().substring(1)}",
+                                );
+                                await firestore
+                                    .collection('user')
+                                    .doc(userCredential.user!.uid)
+                                    .set({
+                                  'firstName':
+                                      FnameController.text.trim().toLowerCase(),
+                                  'lastName':
+                                      LnameController.text.trim().toLowerCase(),
+                                  'hasRole': false,
+                                }).then((value) {
+                                  print('User added to Firestore');
+                                }).catchError((error) {
+                                  print(
+                                      'Error adding user to Firestore: $error');
+                                });
+                                // ignore: use_build_context_synchronously
+                                Navigator.of(context).pop();
+                                // Navigator.of(context).pushNamed(
+                                //   //navigates to homeRoute screen and removes previous routes
+                                //   verifyEmailRoute,
+                                // );
+/////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
+                                // ignore: use_build_context_synchronously
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                  // navigates to homeRoute screen and removes previous routes
+                                  loginRoute,
+                                  (route) => false,
+                                );
+                              } catch (e) {
+                                showErrorModal(
+                                  context,
+                                  () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                                // throw(e);
+                              }
+                            },
+                            FnameController.text
+                                    .trim()
+                                    .toUpperCase()
+                                    .substring(0, 1) +
+                                FnameController.text
+                                    .trim()
+                                    .toLowerCase()
+                                    .substring(1),
+                            LnameController.text
+                                    .trim()
+                                    .toUpperCase()
+                                    .substring(0, 1) +
+                                LnameController.text
+                                    .trim()
+                                    .toLowerCase()
+                                    .substring(1),
+                            emailController.text,
+                          );
+                        }
+                      },
+                      child: const Text(
+                        // label text for the button
+                        "Sign up",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 24.0,
+                          height: 1.0,
+                          color: Colors.white,
                         ),
-                        onPressed: () async {
-                          // if (_formKey.currentState!.validate()) {
-                          if (_isEverythingOk(FnameController.text.trim(), LnameController.text.trim() , emailController.text.trim(), passwordController.text.trim(), confirmPasswordController.text.trim())) {
-                            showAccountConfirmationModal(
-                              context,
-                              () async {
-                                try {
-                                  FirebaseFirestore firestore =
-                                      FirebaseFirestore.instance;
-                                  final email = emailController.text.trim();
-                                  final password =
-                                      passwordController.text.trim();
-                                  Navigator.of(context).pop();
-                                  showLoadModal(context);
-                                  final userCredential = await FirebaseAuth
-                                      .instance
-                                      .createUserWithEmailAndPassword(
-                                          email: email, password: password);
-                                  userCredential.user?.updateDisplayName(
-                                    "${FnameController.text.trim().toUpperCase().substring(0, 1)}${FnameController.text.trim().toLowerCase().substring(1)} ${LnameController.text.trim().toUpperCase().substring(0, 1)}${LnameController.text.trim().toLowerCase().substring(1)}",
-                                  );
-                                  await firestore
-                                      .collection('user')
-                                      .doc(userCredential.user!.uid)
-                                      .set({
-                                    'firstName': FnameController.text
-                                        .trim()
-                                        .toLowerCase(),
-                                    'lastName': LnameController.text
-                                        .trim()
-                                        .toLowerCase(),
-                                    'hasRole': false,
-                                  }).then((value) {
-                                    print('User added to Firestore');
-                                  }).catchError((error) {
-                                    print(
-                                        'Error adding user to Firestore: $error');
-                                  });
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pushNamed(
-                                    //navigates to homeRoute screen and removes previous routes
-                                    verifyEmailRoute,
-                                  );
-                                } catch (e) {
-                                  showErrorModal(
-                                    context,
-                                    () {
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                    },
-                                  );
-                                  // throw(e);
-                                }
-                              },
-                              FnameController.text
-                                      .trim()
-                                      .toUpperCase()
-                                      .substring(0, 1) +
-                                  FnameController.text
-                                      .trim()
-                                      .toLowerCase()
-                                      .substring(1),
-                              LnameController.text
-                                      .trim()
-                                      .toUpperCase()
-                                      .substring(0, 1) +
-                                  LnameController.text
-                                      .trim()
-                                      .toLowerCase()
-                                      .substring(1),
-                              emailController.text,
-                            );
-                          }
-                        },
-                        child: const Text(
-                          // label text for the button
-                          "Sign up",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 24.0,
-                            height: 1.0,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
+                  ),
 
-                    // Have account text
-                    Column(
+                  // Have account text
+                  Padding(
+                    padding: const EdgeInsets.only(top: 108),
+                    child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Row(
@@ -259,11 +265,13 @@ class _RegisterViewState extends State<RegisterView> {
                           ],
                         ),
                       ],
-                    )
-                  ],
-                )),
-          ],
-        ));
+                    ),
+                  )
+                ],
+              )),
+        ],
+      ),
+    ));
   }
 
   bool _isValidEmail(String email) {

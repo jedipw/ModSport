@@ -103,24 +103,30 @@ class _VerifyEmailViewComponentState extends State<VerifyEmailViewComponent> {
               shadowColor: MaterialStateProperty.all(const Color(0x3D000000)),
               elevation: MaterialStateProperty.all(4),
             ),
-            onPressed: () async {
-              final user = FirebaseAuth.instance.currentUser;
-              log(user.toString());
-              showLoadModal(context);
-              // await Dio().get(
-              //   'https://firebase.google.com',
-              //   options: Options(headers: {'X-Firebase-Locale': 'th'}),
-              // );
-              try {
-                await user!.sendEmailVerification()
-                .then((_) => {Navigator.of(context).pop()});
-              } on FirebaseAuthException catch (e) {
-                (_) => {Navigator.of(context).pop()};
-                rethrow;
-              }
-            },
+            onPressed: () => (_) => Navigator.of(context).pushNamedAndRemoveUntil(
+              // navigates to homeRoute screen and removes previous routes
+              loginRoute,
+              (route) => false,
+            ),
+            // onPressed: () async {
+            //   final user = FirebaseAuth.instance.currentUser;
+            //   log(user.toString());
+            //   showLoadModal(context);
+            //   // await Dio().get(
+            //   //   'https://firebase.google.com',
+            //   //   options: Options(headers: {'X-Firebase-Locale': 'th'}),
+            //   // );
+            //   try {
+            //     await user!.sendEmailVerification()
+            //     .then((_) => {Navigator.of(context).pop()});
+            //   } on FirebaseAuthException catch (e) {
+            //     (_) => {Navigator.of(context).pop()};
+            //     rethrow;
+            //   }
+            // },
             child: const Text(
-              "Resend email",
+              // "Resend email",
+              "Click to go next",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Poppins',

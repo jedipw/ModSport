@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
-class RegConPasswordField extends StatelessWidget {
-  const RegConPasswordField({
+class EmailTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final bool isObscure;
+  final bool isEmailValid;
+  final FocusNode? focusNode;
+  
+  const EmailTextField({
     Key? key,
-    required this.passwordController,
-    required this.passwordStat,
-    required this.isPasswordOk,
+    required this.controller,
+    this.isObscure = false,
+    required this.isEmailValid,
+    this.focusNode,
   }) : super(key: key);
-
-  final TextEditingController passwordController;
-  final String passwordStat;
-  final bool isPasswordOk;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class RegConPasswordField extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            'Confirm Password',
+            "Email",
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
@@ -44,25 +46,32 @@ class RegConPasswordField extends StatelessWidget {
             ],
           ),
           child: TextField(
-            controller: passwordController,
+            controller: controller,
+            autofocus: true,
+            keyboardType: isEmailValid ? TextInputType.emailAddress : null,
+            obscureText: isObscure,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
             decoration: const InputDecoration(
+              hintText: "user12345@kmutt.ac.th" ,
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
-            obscureText: true,
+            focusNode: focusNode,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(13.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isPasswordOk && passwordStat != "OK")
-                Text(
-                  passwordStat,
-                  style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
+              if (!isEmailValid)
+                const Text(
+                  "Please enter a valid email.",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontFamily: 'Poppins',
+                  ),
                 ),
             ],
           ),
