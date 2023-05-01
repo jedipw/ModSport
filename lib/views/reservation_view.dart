@@ -1,6 +1,7 @@
 // Import a neccesary package from Flutter.
 import 'dart:math';
 import 'dart:developer' as dev;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 
@@ -37,9 +38,7 @@ import 'package:modsport/utilities/types.dart';
 import 'package:modsport/views/disable_view.dart';
 import 'package:modsport/views/edit_view.dart';
 
-// Imaginary user database (will be removed later)
-const bool hasRole = true;
-const String userId = 'Dgi6rfj8wyDMuZ8WagFT';
+final String userId = FirebaseAuth.instance.currentUser!.uid;
 
 // Number of Dates that will appear in the date list for normal user
 const int numOfUserDay = 7;
@@ -59,6 +58,7 @@ class ReservationView extends StatefulWidget {
 // Creating a State object called _ReservationViewState
 class _ReservationViewState extends State<ReservationView> {
   // Variables that determine whether the data has been successfully retrieve from database
+  bool _hasRole = false;
   bool _isReservationLoaded = false;
   bool _isZoneLoaded = false;
   bool _isLocationLoaded = false;
@@ -67,6 +67,7 @@ class _ReservationViewState extends State<ReservationView> {
   bool _isReservedLoaded = false;
   bool _isReservationIndexLoaded = false;
   bool _isReservationIdLoaded = true;
+  bool _isHasRoleLoaded = false;
 
   // All boolean variables
   bool _isReserved = false;
@@ -156,6 +157,28 @@ class _ReservationViewState extends State<ReservationView> {
     }
 
     return group.every((data) => data.disableReason == disableReason);
+  }
+
+  Future<void> _getUserHasRoleData() async {
+    try {
+      bool userData = await FirebaseCloudStorage().getUserHasRole(userId);
+
+      bool userHasRole = userData;
+
+      // Update the state
+      if (mounted) {
+        setState(
+          () {
+            _hasRole = userHasRole;
+            _isHasRoleLoaded = true;
+          },
+        );
+      }
+    } catch (e) {
+      dev.log("_getLocationData()");
+      dev.log(e.toString());
+      handleError();
+    }
   }
 
   Future<void> _getZoneData() async {
@@ -424,7 +447,10 @@ class _ReservationViewState extends State<ReservationView> {
     switch (mode) {
       // When enter the page
       case enterMode:
-        await _getZoneData()
+        await _getUserHasRoleData()
+            .then(
+              (_) => _getZoneData(),
+            )
             .then(
               (_) => _getLocationData(),
             )
@@ -500,7 +526,8 @@ class _ReservationViewState extends State<ReservationView> {
   Widget build(BuildContext context) {
     // Check if every data has been retrieved from the database
     bool isEverythingLoaded() {
-      return _isReservationLoaded &&
+      return _isHasRoleLoaded &&
+          _isReservationLoaded &&
           _isZoneLoaded &&
           _isLocationLoaded &&
           _isDisableReservationLoaded &&
@@ -609,7 +636,7 @@ class _ReservationViewState extends State<ReservationView> {
                                   // Container(),
                                 ),
                                 // If user has staff role, show toggle role button.
-                                if (hasRole && !_isSwipingUp) ...[
+                                if (_hasRole && !_isSwipingUp) ...[
                                   Positioned(
                                     right: 10,
                                     top: 15,
@@ -741,7 +768,7 @@ class _ReservationViewState extends State<ReservationView> {
                               numOfUserDay: numOfUserDay,
                               isDisableMenu: _isDisableMenu,
                               selectedIndex: _selectedDateIndex,
-                              hasRole: hasRole,
+                              hasRole: _hasRole,
                               onSelected: (index) {
                                 if (index != _selectedDateIndex &&
                                     !_isError &&
@@ -1388,7 +1415,7 @@ class _ReservationViewState extends State<ReservationView> {
             //   child:
             // ),
             // If user has staff role, show toggle role button.
-            if (hasRole && _isSwipingUp) ...[
+            if (_hasRole && _isSwipingUp) ...[
               Positioned(
                 right: 10,
                 top: 65,
