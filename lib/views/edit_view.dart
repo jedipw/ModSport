@@ -720,9 +720,9 @@ class _EditViewState extends State<EditView> {
                           ),
                         ), // Set the button background color to grey
                         onPressed: () {
+                          _disableIds = [];
                           _selectedTimeSlots.asMap().forEach(
                             (index, isSelected) {
-                              _disableIds = [];
                               if (isSelected) {
                                 _disableIds.add(
                                   _disabledReservation[index].disableId,
@@ -743,17 +743,6 @@ class _EditViewState extends State<EditView> {
                                     )
                                     .then(
                                       (_) => Navigator.of(context).pop(),
-                                    )
-                                    .then(
-                                      (_) => showSuccessModal(context, false),
-                                    )
-                                    .then(
-                                      (_) => Future.delayed(
-                                        const Duration(seconds: 1),
-                                        () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
                                     )
                                     .then(
                                       (_) => setState(
