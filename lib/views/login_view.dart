@@ -220,12 +220,12 @@ class _LoginViewState extends State<LoginView> {
                                               _isSomeThingWrong = true;
                                             });
                                           }
-                                          if (e.code == 'user-not-found') {
-                                            print('User not found');
-                                          } else {
-                                            print('SOMETHING ELSE HAPPEND');
-                                            print(e.code);
-                                          }
+                                          // if (e.code == 'user-not-found') {
+                                          //   print('User not found');
+                                          // } else {
+                                          //   print('SOMETHING ELSE HAPPEND');
+                                          //   print(e.code);
+                                          // }
                                         }
                                       } else {
                                         if (emailController.text == "" ||
@@ -315,10 +315,11 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
             ),
-            Positioned(
-                // left: ,
-                bottom: isKeyboardVisible ? 12 : 12,
-                child: Padding(
+            // Positioned(
+            //     // left: ,
+            //     bottom: isKeyboardVisible ? 12 : 12,
+            //     child: 
+                Padding(
                   padding: const EdgeInsets.fromLTRB(90, 30, 16, 16),
                   child:
                       //  Column(
@@ -370,8 +371,8 @@ class _LoginViewState extends State<LoginView> {
                     ],
                   ),
                   //   ],
-                  // )
-                ))
+                  )
+                // ))
           ],
         ),
       );
@@ -386,36 +387,36 @@ class _LoginViewState extends State<LoginView> {
     return emailRegex.hasMatch(email);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // add listener to track keyboard visibility
-    WidgetsBinding.instance.addObserver(
-      KeyboardVisibilityObserver((bool visible) {
-        if (mounted) {
-          setState(() {
-            isKeyboardVisible = visible;
-          });
-        }
-      }),
-    );
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // add listener to track keyboard visibility
+  //   WidgetsBinding.instance.addObserver(
+  //     KeyboardVisibilityObserver((bool visible) {
+  //       if (mounted) {
+  //         setState(() {
+  //           isKeyboardVisible = visible;
+  //         });
+  //       }
+  //     }),
+  //   );
+  // }
 }
 
 // a class to observe keyboard visibility changes
-class KeyboardVisibilityObserver extends WidgetsBindingObserver {
-  final Function(bool) onVisibilityChanged;
+// class KeyboardVisibilityObserver extends WidgetsBindingObserver {
+//   final Function(bool) onVisibilityChanged;
 
-  KeyboardVisibilityObserver(this.onVisibilityChanged);
+//   KeyboardVisibilityObserver(this.onVisibilityChanged);
 
-  @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
-    // determine keyboard visibility based on height
-    final bool visible = WidgetsBinding.instance.window.viewInsets.bottom > 0;
-    onVisibilityChanged(visible);
-  }
-}
+//   @override
+//   void didChangeMetrics() {
+//     super.didChangeMetrics();
+//     // determine keyboard visibility based on height
+//     final bool visible = WidgetsBinding.instance.window.viewInsets.bottom > 0;
+//     onVisibilityChanged(visible);
+//   }
+// }
 
    // Navigation to other 4 pages
     // Row(
