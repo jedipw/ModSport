@@ -38,11 +38,13 @@ class _LoginViewState extends State<LoginView> {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       // User is already signed in
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        // navigates to homeRoute screen and removes previous routes
-        homeRoute,
-        (route) => false,
-      );
+      Future.delayed(Duration.zero, () async {
+        await Navigator.of(context).pushNamedAndRemoveUntil(
+          // navigates to homeRoute screen and removes previous routes
+          homeRoute,
+          (route) => false,
+        );
+      });
     } else {
       return Scaffold(
         // resizeToAvoidBottomInset: false,
@@ -193,7 +195,6 @@ class _LoginViewState extends State<LoginView> {
                                                 );
                                               } else {
                                                 /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
-                                                // ignore: use_build_context_synchronously
                                                 // Navigator.of(context).pushNamed(
                                                 //   verifyEmailRoute,
                                                 // );
