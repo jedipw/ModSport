@@ -59,7 +59,7 @@ class PasswordTextField extends StatelessWidget {
             children: [
               if (!isPasswordOk)
                 const Text(
-                  "Please enter the correct password",
+                  "Please enter the correct password.",
                   style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
                 ),
             ],

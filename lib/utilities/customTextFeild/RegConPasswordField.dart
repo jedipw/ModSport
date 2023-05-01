@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
-class FnameTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final bool isFnameValid;
-  const FnameTextField({
+class RegConPasswordField extends StatelessWidget {
+  const RegConPasswordField({
     Key? key,
-    required this.controller,
-    required this.isFnameValid,
+    required this.passwordController,
+    required this.passwordStat,
+    required this.isPasswordOk,
   }) : super(key: key);
+
+  final TextEditingController passwordController;
+  final String passwordStat;
+  final bool isPasswordOk;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class FnameTextField extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            "Name",
+            'Confirm Password',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
@@ -41,8 +44,7 @@ class FnameTextField extends StatelessWidget {
             ],
           ),
           child: TextField(
-            controller: controller,
-            keyboardType: isFnameValid ? TextInputType.name : null,
+            controller: passwordController,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
@@ -50,19 +52,17 @@ class FnameTextField extends StatelessWidget {
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
+            obscureText: true,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              if (!isFnameValid)
-                const Text(
-                  "Please enter your surname using only letters and hyphens (-)",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontFamily: 'Poppins',
-                  ),
+              if (!isPasswordOk && passwordStat != "OK")
+                Text(
+                  passwordStat,
+                  style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
                 ),
             ],
           ),

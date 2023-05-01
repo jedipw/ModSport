@@ -58,7 +58,7 @@ class LnameTextField extends StatelessWidget {
             children: [
               if (!isLnameValid)
                 const Text(
-                  "Please enter your surname (only as a character and - allowed)",
+                  "Please enter your surname using only letters and hyphens (-)",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',

@@ -6,246 +6,17 @@ import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/customTextFeild/EmailTextField.dart';
 import 'package:modsport/utilities/customTextFeild/FnameTextField.dart';
 import 'package:modsport/utilities/customTextFeild/LnameTextField.dart';
-import 'package:modsport/utilities/customTextFeild/PasswordTextField.dart';
+import 'package:modsport/utilities/customTextFeild/RegPasswordField.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modsport/firebase_options.dart';
+
+import '../utilities/customTextFeild/RegConPasswordField.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
   @override
   _RegisterViewState createState() => _RegisterViewState();
-
-  static final _formKey = GlobalKey<FormState>();
-  static TextEditingController FnameController = TextEditingController();
-  static TextEditingController LnameController = TextEditingController();
-  static TextEditingController emailController = TextEditingController();
-  static TextEditingController passwordController = TextEditingController();
-  static TextEditingController confirmPasswordController =
-      TextEditingController();
-
-  // constructor for LoginView, takes an optional key parameter
-  // const RegisterView({
-  //   Key? key,
-  // }) : super(key: key);
-
-  // Confirm password validation method
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your confirm password';
-    }
-    if (value.length < 6) {
-      return 'Password should be at least 6 characters';
-    }
-    if (value != passwordController.text) {
-      return 'Passwords do not match';
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // required method to build the UI
-    return Scaffold(
-        // scaffold widget provides a basic app bar, drawer and body
-        appBar: AppBar(
-          title: const Text('Register'),
-          backgroundColor: primaryOrange,
-        ), // app bar with a title
-        body: FutureBuilder(
-          future: Firebase.initializeApp(
-              options: DefaultFirebaseOptions.currentPlatform),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      //Name
-                      TextFormField(
-                        controller: FnameController,
-                        decoration: const InputDecoration(labelText: "Name"),
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              !RegExp(r'^[a-zA-Z- ]+$').hasMatch(value)) {
-                            return 'Please enter your name (only as a character and - allowed).';
-                          }
-                          return null;
-                        },
-                      ),
-                      //Surname
-                      TextFormField(
-                        controller: LnameController,
-                        decoration: const InputDecoration(labelText: "Surname"),
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              !RegExp(r'^[a-zA-Z- ]+$').hasMatch(value)) {
-                            return 'Please enter your Surname (only as a character and - allowed).';
-                          }
-                          return null;
-                        },
-                      ),
-                      //Email
-                      // EmailTextField(controller: emailController,isEmailValid: true,),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                            labelText: "Email",
-                            hintText: "user12345@kmutt.ac.th"),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your email address';
-                          }
-                          if (!RegExp(
-                                  r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$')
-                              .hasMatch(value)) {
-                            return 'Please enter a valid KMUTT email address';
-                          }
-                          return null;
-                        },
-                      ),
-
-                      //Password
-                      TextFormField(
-                        controller: passwordController,
-                        decoration:
-                            const InputDecoration(labelText: "Password"),
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (value.length < 6) {
-                            return 'Password should be at least 6 characters';
-                          }
-                          return null;
-                        },
-                      ),
-                      //Confirm Password
-                      TextFormField(
-                        controller: confirmPasswordController,
-                        decoration: const InputDecoration(
-                            labelText: "Confirm Password"),
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        validator: _validatePassword,
-                      ),
-                      const SizedBox(height: 25),
-                      Center(
-                        // centers child widget in the screen
-                        child: TextButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(primaryOrange),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40))),
-                            minimumSize: MaterialStateProperty.all(
-                                const Size(173.42, 64)),
-                          ),
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showAccountConfirmationModal(
-                                context,
-                                () async {
-                                  try {
-                                    FirebaseFirestore firestore =
-                                        FirebaseFirestore.instance;
-                                    final email = emailController.text.trim();
-                                    final password =
-                                        passwordController.text.trim();
-                                    Navigator.of(context).pop();
-                                    showLoadModal(context);
-                                    final userCredential = await FirebaseAuth
-                                        .instance
-                                        .createUserWithEmailAndPassword(
-                                            email: email, password: password);
-                                    userCredential.user?.updateDisplayName(
-                                      "${FnameController.text.trim().toUpperCase().substring(0, 1)}${FnameController.text.trim().toLowerCase().substring(1)} ${LnameController.text.trim().toUpperCase().substring(0, 1)}${LnameController.text.trim().toLowerCase().substring(1)}",
-                                    );
-                                    await firestore
-                                        .collection('user')
-                                        .doc(userCredential.user!.uid)
-                                        .set({
-                                      'firstName': FnameController.text
-                                          .trim()
-                                          .toLowerCase(),
-                                      'lastName': LnameController.text
-                                          .trim()
-                                          .toLowerCase(),
-                                      'hasRole': false,
-                                    }).then((value) {
-                                      print('User added to Firestore');
-                                    }).catchError((error) {
-                                      print(
-                                          'Error adding user to Firestore: $error');
-                                    });
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pushNamed(
-                                      //navigates to homeRoute screen and removes previous routes
-                                      verifyEmailRoute,
-                                    );
-                                  } catch (e) {
-                                    showErrorModal(
-                                      context,
-                                      () {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                      },
-                                    );
-                                    // throw(e);
-                                  }
-                                },
-                                FnameController.text
-                                        .trim()
-                                        .toUpperCase()
-                                        .substring(0, 1) +
-                                    FnameController.text
-                                        .trim()
-                                        .toLowerCase()
-                                        .substring(1),
-                                LnameController.text
-                                        .trim()
-                                        .toUpperCase()
-                                        .substring(0, 1) +
-                                    LnameController.text
-                                        .trim()
-                                        .toLowerCase()
-                                        .substring(1),
-                                emailController.text,
-                              );
-                            }
-                          },
-                          child: const Text(
-                            // label text for the button
-                            "Sign up",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 24.0,
-                              height: 1.0,
-                              color: Colors.white,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              default:
-                return const Text("Loading...");
-            }
-          },
-        ));
-  }
 }
 
 class _RegisterViewState extends State<RegisterView> {
@@ -260,8 +31,7 @@ class _RegisterViewState extends State<RegisterView> {
   bool _isEmailValid = true;
   bool _isFnameValid = true;
   bool _isLnameValid = true;
-  bool _isPassword1Ok = true;
-  bool _isPassword2Ok = true;
+  bool _isPasswordOk = true;
 
   @override
   void dispose() {
@@ -272,8 +42,9 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(
+        // resizeToAvoidBottomInset: false,
+        body: 
+        Column(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(30, 70, 0, 0),
@@ -287,7 +58,7 @@ class _RegisterViewState extends State<RegisterView> {
                         style: TextStyle(
                           color: primaryOrange,
                           fontSize: 30,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           fontFamily: "Poppins",
                         ),
                       ),
@@ -320,13 +91,127 @@ class _RegisterViewState extends State<RegisterView> {
                     EmailTextField(
                         controller: emailController,
                         isEmailValid: _isEmailValid),
-                    PasswordTextField(
-                        passwordController: passwordController,
-                        isPasswordOk: _isPassword1Ok),
-                    PasswordTextField(
-                        passwordController: confirmPasswordController,
-                        isPasswordOk: _isPassword2Ok),
+                    RegPasswordField(
+                      passwordController: passwordController,
+                      passwordStat: _isValidPassword(
+                          passwordController.text.toString(),
+                          confirmPasswordController.text.toString(),
+                          "password"
+                          ),
+                      isPasswordOk: _isPasswordOk,
+                    ),
+                    RegConPasswordField(
+                      passwordController: confirmPasswordController,
+                      passwordStat: _isValidPassword(
+                          confirmPasswordController.text.toString(),
+                          passwordController.text.toString(),
+                          "confirm password"
+                          ),
+                      isPasswordOk: _isPasswordOk,
+                    ),
 
+                    Center(
+                      // centers child widget in the screen
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(primaryOrange),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40))),
+                          minimumSize:
+                              MaterialStateProperty.all(const Size(173.42, 64)),
+                        ),
+                        onPressed: () async {
+                          // if (_formKey.currentState!.validate()) {
+                          if (_isEverythingOk(FnameController.text.trim(), LnameController.text.trim() , emailController.text.trim(), passwordController.text.trim(), confirmPasswordController.text.trim())) {
+                            showAccountConfirmationModal(
+                              context,
+                              () async {
+                                try {
+                                  FirebaseFirestore firestore =
+                                      FirebaseFirestore.instance;
+                                  final email = emailController.text.trim();
+                                  final password =
+                                      passwordController.text.trim();
+                                  Navigator.of(context).pop();
+                                  showLoadModal(context);
+                                  final userCredential = await FirebaseAuth
+                                      .instance
+                                      .createUserWithEmailAndPassword(
+                                          email: email, password: password);
+                                  userCredential.user?.updateDisplayName(
+                                    "${FnameController.text.trim().toUpperCase().substring(0, 1)}${FnameController.text.trim().toLowerCase().substring(1)} ${LnameController.text.trim().toUpperCase().substring(0, 1)}${LnameController.text.trim().toLowerCase().substring(1)}",
+                                  );
+                                  await firestore
+                                      .collection('user')
+                                      .doc(userCredential.user!.uid)
+                                      .set({
+                                    'firstName': FnameController.text
+                                        .trim()
+                                        .toLowerCase(),
+                                    'lastName': LnameController.text
+                                        .trim()
+                                        .toLowerCase(),
+                                    'hasRole': false,
+                                  }).then((value) {
+                                    print('User added to Firestore');
+                                  }).catchError((error) {
+                                    print(
+                                        'Error adding user to Firestore: $error');
+                                  });
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pushNamed(
+                                    //navigates to homeRoute screen and removes previous routes
+                                    verifyEmailRoute,
+                                  );
+                                } catch (e) {
+                                  showErrorModal(
+                                    context,
+                                    () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                  // throw(e);
+                                }
+                              },
+                              FnameController.text
+                                      .trim()
+                                      .toUpperCase()
+                                      .substring(0, 1) +
+                                  FnameController.text
+                                      .trim()
+                                      .toLowerCase()
+                                      .substring(1),
+                              LnameController.text
+                                      .trim()
+                                      .toUpperCase()
+                                      .substring(0, 1) +
+                                  LnameController.text
+                                      .trim()
+                                      .toLowerCase()
+                                      .substring(1),
+                              emailController.text,
+                            );
+                          }
+                        },
+                        child: const Text(
+                          // label text for the button
+                          "Sign up",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 24.0,
+                            height: 1.0,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+
+                    // Have account text
                     Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -386,6 +271,54 @@ class _RegisterViewState extends State<RegisterView> {
     final emailRegex =
         RegExp(r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
+  }
+
+  bool _isValidName(String name) {
+    final nameRegex = RegExp(r'^[a-zA-Z- ]+$');
+    return (name != null && name != "" && nameRegex.hasMatch(name));
+  }
+
+  String _isValidPassword(String password1, String password2, String p) {
+    if (password1 == null || password1.isEmpty) {
+      return 'Please enter your ${p}.';
+    }
+    if (password1.length < 6) {
+      return 'Password should be at least 6 characters.';
+    }
+    if (password1 != password2) {
+      return 'Passwords do not match.';
+    }
+    return "OK";
+  }
+
+  bool _isEverythingOk(String Fname, String Lname, String email,
+      String password1, String password2) {
+    bool isOk = true;
+    if (!_isValidName(Fname)) {
+      setState(() {
+        _isFnameValid = false;
+      });
+      isOk = false;
+    }
+    if (!_isValidName(Lname)) {
+      setState(() {
+        _isLnameValid = false;
+      });
+      isOk = false;
+    }
+    if (!_isValidEmail(email)) {
+      setState(() {
+        _isEmailValid = false;
+      });
+      isOk = false;
+    }
+    if (_isValidPassword(password1, password2, "") != "OK") {
+      setState(() {
+        _isPasswordOk = false;
+      });
+      isOk = false;
+    }
+    return isOk;
   }
 }
 

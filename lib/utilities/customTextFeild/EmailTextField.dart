@@ -62,7 +62,7 @@ class EmailTextField extends StatelessWidget {
             children: [
               if (!isEmailValid)
                 const Text(
-                  "Please enter a valid email",
+                  "Please enter a valid email.",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',

@@ -356,8 +356,6 @@ class _LoginViewState extends State<LoginView> {
   }
 }
 
-
-
    // Navigation to other 4 pages
     // Row(
     //   mainAxisAlignment: MainAxisAlignment.center,
