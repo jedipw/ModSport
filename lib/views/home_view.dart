@@ -32,21 +32,18 @@ class _HomeViewState extends State<HomeView> {
   List<ZoneData> _zoneList = [];
   bool isPushPinClicked = false;
   bool _isZoneLoaded = false;
+  int count = 0;
 
   @override
   void initState() {
     super.initState();
-    if(_isZoneLoaded ==false)  {
-      fetchData();
-    }
+    fetchData();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-   if(_isZoneLoaded ==false)  {
-      fetchData();
-    }
+    fetchData();
   }
 
   Future<void> _getZonesData() async {
@@ -143,8 +140,13 @@ class _HomeViewState extends State<HomeView> {
                                                       decoration: BoxDecoration(
                                                         color: primaryGray,
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .only(topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+                                                            BorderRadius.only(
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        30),
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        30)),
                                                       ),
                                                       width: double.infinity,
                                                       height: 164,
@@ -247,7 +249,8 @@ class _HomeViewState extends State<HomeView> {
                                                                   3.14 /
                                                                   180,
                                                               child: Icon(
-                                                                Icons.push_pin_outlined,
+                                                                Icons
+                                                                    .push_pin_outlined,
                                                                 size: 24,
                                                                 color: isPushPinClicked
                                                                     ? primaryOrange
@@ -261,7 +264,8 @@ class _HomeViewState extends State<HomeView> {
                                                       Row(
                                                         children: [
                                                           const Icon(
-                                                            Icons.location_on_outlined,
+                                                            Icons
+                                                                .location_on_outlined,
                                                             size: 16,
                                                             color: primaryGray,
                                                           ),
@@ -285,25 +289,33 @@ class _HomeViewState extends State<HomeView> {
                                                                         .connectionState ==
                                                                     ConnectionState
                                                                         .waiting) {
-                                                                  return Shimmer.fromColors(
-                                                    baseColor:
-                                                        const Color.fromARGB(
-                                                            255, 216, 216, 216),
-                                                    highlightColor:
-                                                        const Color.fromRGBO(
-                                                            173,
-                                                            173,
-                                                            173,
-                                                            0.824),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: primaryGray,
-                                                        
-                                                      ),
-                                                      width: double.infinity,
-                                                      height: 24,
-                                                    ),
-                                                  );
+                                                                  return Shimmer
+                                                                      .fromColors(
+                                                                    baseColor:
+                                                                        const Color.fromARGB(
+                                                                            255,
+                                                                            216,
+                                                                            216,
+                                                                            216),
+                                                                    highlightColor:
+                                                                        const Color.fromRGBO(
+                                                                            173,
+                                                                            173,
+                                                                            173,
+                                                                            0.824),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color:
+                                                                            primaryGray,
+                                                                      ),
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height:
+                                                                          24,
+                                                                    ),
+                                                                  );
                                                                 } else if (snapshot
                                                                     .hasError) {
                                                                   return const Text(
@@ -321,7 +333,8 @@ class _HomeViewState extends State<HomeView> {
                                                                               .normal,
                                                                       fontSize:
                                                                           11.5,
-                                                                      color: primaryGray,
+                                                                      color:
+                                                                          primaryGray,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w500,
@@ -609,7 +622,6 @@ class _HomeViewState extends State<HomeView> {
                         child: TextField(
                           decoration: InputDecoration(
                             filled: true,
-                            
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 12),
                             prefixIcon: const Icon(
