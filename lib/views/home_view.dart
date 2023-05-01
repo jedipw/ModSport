@@ -105,7 +105,7 @@ class _HomeViewState extends State<HomeView> {
                                         );
                                       },
                                       child: Container(
-                                        height: 257,
+                                        height: 293,
                                         padding: const EdgeInsets.fromLTRB(
                                             35, 0, 35, 20),
                                         child: Container(
@@ -140,7 +140,7 @@ class _HomeViewState extends State<HomeView> {
                                                         color: primaryGray,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(30),
+                                                                .only(topRight: Radius.circular(30), topLeft: Radius.circular(30)),
                                                       ),
                                                       width: double.infinity,
                                                       height: 164,
@@ -229,10 +229,10 @@ class _HomeViewState extends State<HomeView> {
                                                                       .normal,
                                                               fontSize: 22.0,
                                                               color:
-                                                                  Colors.orange,
+                                                                  primaryOrange,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold,
+                                                                      .w700,
                                                             ),
                                                           ),
                                                           GestureDetector(
@@ -243,13 +243,11 @@ class _HomeViewState extends State<HomeView> {
                                                                   3.14 /
                                                                   180,
                                                               child: Icon(
-                                                                Icons.push_pin,
+                                                                Icons.push_pin_outlined,
                                                                 size: 24,
                                                                 color: isPushPinClicked
-                                                                    ? Colors
-                                                                        .orange
-                                                                    : Colors
-                                                                        .grey,
+                                                                    ? primaryOrange
+                                                                    : primaryGray,
                                                               ),
                                                             ),
                                                           ),
@@ -259,9 +257,9 @@ class _HomeViewState extends State<HomeView> {
                                                       Row(
                                                         children: [
                                                           const Icon(
-                                                            Icons.location_on,
+                                                            Icons.location_on_outlined,
                                                             size: 16,
-                                                            color: Colors.grey,
+                                                            color: primaryGray,
                                                           ),
                                                           const SizedBox(
                                                               width: 4),
@@ -283,12 +281,27 @@ class _HomeViewState extends State<HomeView> {
                                                                         .connectionState ==
                                                                     ConnectionState
                                                                         .waiting) {
-                                                                  return const SizedBox(
-                                                                    width: 80,
-                                                                    height: 16,
-                                                                    child:
-                                                                        CircularProgressIndicator(),
-                                                                  );
+                                                                  return Shimmer.fromColors(
+                                                    baseColor:
+                                                        const Color.fromARGB(
+                                                            255, 216, 216, 216),
+                                                    highlightColor:
+                                                        const Color.fromRGBO(
+                                                            173,
+                                                            173,
+                                                            173,
+                                                            0.824),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: primaryGray,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                                                      ),
+                                                      width: double.infinity,
+                                                      height: 164,
+                                                    ),
+                                                  );
                                                                 } else if (snapshot
                                                                     .hasError) {
                                                                   return const Text(
@@ -305,16 +318,11 @@ class _HomeViewState extends State<HomeView> {
                                                                           FontStyle
                                                                               .normal,
                                                                       fontSize:
-                                                                          12.0,
-                                                                      color: Color
-                                                                          .fromARGB(
-                                                                              132,
-                                                                              0,
-                                                                              0,
-                                                                              0),
+                                                                          11.5,
+                                                                      color: primaryGray,
                                                                       fontWeight:
                                                                           FontWeight
-                                                                              .w300,
+                                                                              .w500,
                                                                     ),
                                                                   );
                                                                 }
@@ -550,7 +558,7 @@ class _HomeViewState extends State<HomeView> {
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
                                     fontSize: 16.0,
-                                    color: Color.fromARGB(124, 0, 0, 0),
+                                    color: primaryGray,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -599,13 +607,7 @@ class _HomeViewState extends State<HomeView> {
                         child: TextField(
                           decoration: InputDecoration(
                             filled: true,
-                            hintText: 'Search',
-                            hintStyle: const TextStyle(
-                              color: Colors.grey,
-                              fontFamily: 'Poppins',
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w400,
-                            ),
+                            
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 12),
                             prefixIcon: const Icon(
