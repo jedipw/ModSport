@@ -36,7 +36,8 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       // resizeToAvoidBottomInset: false,
-      body: Stack(
+      body: 
+      Stack(
         fit: StackFit.expand,
         children: <Widget>[
           SingleChildScrollView(
@@ -284,7 +285,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           Positioned(
               // left: ,
-              bottom: isKeyboardVisible ? 0 : 0,
+              bottom: isKeyboardVisible ? 12 : 12,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(90, 0, 16, 16),
                 child:
@@ -375,7 +376,7 @@ class KeyboardVisibilityObserver extends WidgetsBindingObserver {
   void didChangeMetrics() {
     super.didChangeMetrics();
     // determine keyboard visibility based on height
-    final bool visible = WidgetsBinding.instance!.window.viewInsets.bottom > 0;
+    final bool visible = WidgetsBinding.instance.window.viewInsets.bottom > 0;
     onVisibilityChanged(visible);
   }
 }
