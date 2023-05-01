@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ModSportDrawer extends StatelessWidget {
   const ModSportDrawer({super.key, required this.currentDrawerIndex});
@@ -13,6 +15,17 @@ class ModSportDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String userId = FirebaseAuth.instance.currentUser!.uid.toString();
+    final String userName =
+        FirebaseAuth.instance.currentUser!.displayName.toString();
+    final String mail = FirebaseAuth.instance.currentUser!.email.toString();
+    List<String> nameParts = userName.split(' ');
+    String firstName = nameParts[0]; 
+    String lastName = nameParts[1];
+    String userFirstName = firstName.substring(0,1);
+    String userLastName = lastName.substring(0,1);
+    String name = userFirstName+userLastName;
+
     return Drawer(
       backgroundColor: Colors.white,
       child: Column(
@@ -23,12 +36,12 @@ class ModSportDrawer extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   backgroundColor: primaryOrange,
                   maxRadius: 25,
                   child: Text(
-                    'FL',
-                    style: TextStyle(
+                    name,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontFamily: 'Poppins',
                       fontStyle: FontStyle.normal,
@@ -40,10 +53,10 @@ class ModSportDrawer extends StatelessWidget {
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'FIRSTNAME LASTNAME',
-                      style: TextStyle(
+                      userName,
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w600,
@@ -53,8 +66,8 @@ class ModSportDrawer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'firstname.lastn@kmutt.ac.th',
-                      style: TextStyle(
+                      mail,
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w400,
@@ -93,6 +106,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(homeRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.light.copyWith(
@@ -100,8 +115,6 @@ class ModSportDrawer extends StatelessWidget {
                               .white, // set to Colors.black for black color
                         ))
                       : null;
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(homeRoute, (route) => false);
                 },
               ),
               ListTile(
@@ -126,6 +139,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(statusRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.light.copyWith(
@@ -133,8 +148,6 @@ class ModSportDrawer extends StatelessWidget {
                               .white, // set to Colors.black for black color
                         ))
                       : null;
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(statusRoute, (route) => false);
                 },
               ),
               ListTile(
@@ -159,6 +172,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      helpCenterRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.light.copyWith(
@@ -167,8 +182,6 @@ class ModSportDrawer extends StatelessWidget {
                           ),
                         )
                       : null;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      helpCenterRoute, (route) => false);
                 },
               ),
               ListTile(
@@ -193,6 +206,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      changePasswordRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.dark.copyWith(
@@ -201,8 +216,6 @@ class ModSportDrawer extends StatelessWidget {
                           ),
                         )
                       : null;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      changePasswordRoute, (route) => false);
                 },
               ),
             ],
@@ -230,12 +243,12 @@ class ModSportDrawer extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        showConfirmationModal(context, () {
-                          Navigator.of(context).pop();
-                          showLoadModal(context);
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              loginRoute, (route) => false);
+                        showLogoutConfirmationModal(context, () {
+                          // Navigator.of(context).pop();
+                          // showLoadModal(context);
+                          // Navigator.of(context).pop();
+                          // Navigator.of(context).pushNamedAndRemoveUntil(
+                          //     loginRoute, (route) => false);
                         }, false, logOutMode);
                       },
                       child: Row(

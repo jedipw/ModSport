@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -38,12 +40,23 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  late final TextEditingController email;
+  late final TextEditingController password;
   @override
   void initState() {
+    email = TextEditingController();
+    password = TextEditingController();
     super.initState();
 
     Future.delayed(const Duration(seconds: 1))
         .then((value) => {FlutterNativeSplash.remove()});
+  }
+
+  @override
+  void dispose(){
+    email.dispose();
+    password.dispose();
+    super.dispose();
   }
 
   @override
