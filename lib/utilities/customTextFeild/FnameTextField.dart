@@ -58,7 +58,7 @@ class FnameTextField extends StatelessWidget {
             children: [
               if (!isFnameValid)
                 const Text(
-                  "Please enter your surname using only letters and hyphens (-)",
+                  "Please enter your name using only letters and hyphens (-)",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',

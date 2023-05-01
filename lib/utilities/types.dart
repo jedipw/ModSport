@@ -23,11 +23,13 @@ class UserReservationData {
 }
 
 class ZoneData {
+  final String zoneId;
   final String locationId;
   final String zoneName;
   final String imgUrl;
 
   ZoneData({
+    required this.zoneId,
     required this.locationId,
     required this.zoneName,
     required this.imgUrl,

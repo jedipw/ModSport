@@ -303,27 +303,31 @@ class _RegisterViewState extends State<RegisterView> {
       String password1, String password2) {
     bool isOk = true;
     if (!_isValidName(Fname)) {
+      if(mounted){
       setState(() {
         _isFnameValid = false;
-      });
+      });}
       isOk = false;
     }
     if (!_isValidName(Lname)) {
+      if(mounted){
       setState(() {
         _isLnameValid = false;
-      });
+      });}
       isOk = false;
     }
     if (!_isValidEmail(email)) {
+      if(mounted){
       setState(() {
         _isEmailValid = false;
-      });
+      });}
       isOk = false;
     }
     if (_isValidPassword(password1, password2, "") != "OK") {
+      if(mounted){
       setState(() {
         _isPasswordOk = false;
-      });
+      });}
       isOk = false;
     }
     return isOk;
@@ -351,7 +355,7 @@ dynamic showAccountConfirmationModal(BuildContext context,
                 Text(
                   'Do you want to use\n$Fname $Lname\nas your name and \n$email\nas email ?',
                   style: const TextStyle(
-                    fontSize: 25.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Poppins',
                     color: primaryRed,
