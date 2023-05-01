@@ -36,13 +36,17 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    if(_isZoneLoaded ==false)  {
+      fetchData();
+    }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    fetchData();
+   if(_isZoneLoaded ==false)  {
+      fetchData();
+    }
   }
 
   Future<void> _getZonesData() async {
