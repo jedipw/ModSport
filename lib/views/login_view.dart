@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
@@ -13,7 +12,7 @@ class LoginView extends StatefulWidget {
       {super.key}); // constructor for LoginView, takes an optional key parameter
 
   @override
-  _LoginViewState createState() => _LoginViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
@@ -29,6 +28,8 @@ class _LoginViewState extends State<LoginView> {
   @override
   void dispose() {
     emailController.dispose();
+    passwordController.dispose();
+    emailFocusNode.dispose();
     super.dispose();
   }
 
@@ -174,38 +175,42 @@ class _LoginViewState extends State<LoginView> {
                                         try {
                                           showLoadModal(context);
                                           try {
-                                            final userCredential =
-                                                await FirebaseAuth.instance
-                                                    .signInWithEmailAndPassword(
-                                                        email: email,
-                                                        password: password)
-                                                    .then((value) =>
-                                                        Navigator.of(context)
-                                                            .pop())
-                                                    .then((value) {
+                                            await FirebaseAuth.instance
+                                                .signInWithEmailAndPassword(
+                                                    email: email,
+                                                    password: password)
+                                                .then((value) =>
+                                                    Navigator.of(context).pop())
+                                                .then((value) {
                                               if (FirebaseAuth
                                                       .instance
                                                       .currentUser
                                                       ?.emailVerified ??
                                                   false) {
-                                                Navigator.of(context)
-                                                    .pushNamedAndRemoveUntil(
-                                                  // navigates to homeRoute screen and removes previous routes
-                                                  homeRoute,
-                                                  (route) => false,
-                                                );
+                                                Future.delayed(Duration.zero,
+                                                    () async {
+                                                  await Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    // navigates to homeRoute screen and removes previous routes
+                                                    homeRoute,
+                                                    (route) => false,
+                                                  );
+                                                });
                                               } else {
                                                 /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
                                                 // ignore: use_build_context_synchronously
                                                 // Navigator.of(context).pushNamed(
                                                 //   verifyEmailRoute,
                                                 // );
-                                                Navigator.of(context)
-                                                    .pushNamedAndRemoveUntil(
-                                                  // navigates to homeRoute screen and removes previous routes
-                                                  homeRoute,
-                                                  (route) => false,
-                                                );
+                                                Future.delayed(Duration.zero,
+                                                    () async {
+                                                  await Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    // navigates to homeRoute screen and removes previous routes
+                                                    homeRoute,
+                                                    (route) => false,
+                                                  );
+                                                });
                                               }
                                             });
                                           } on FirebaseAuthException catch (e) {
