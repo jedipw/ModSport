@@ -32,7 +32,7 @@ class MainApp extends StatelessWidget {
         disableRoute: (context) => const DisableView(),
         homeRoute: (context) => const HomeView(),
         reservationRoute: (context) => const ReservationView(),
-        statusRoute: (context) => const StatusView(),
+        statusRoute: (context) =>  StatusView(),
         helpCenterRoute: (context) => const HelpCenterView(),
         menuRoute: (context) => const MenuView(),
       },
