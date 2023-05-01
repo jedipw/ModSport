@@ -63,7 +63,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> fetchData() async {
-    await _getZonesData().then((_) => _getZonesData());
+    await _getZonesData();
   }
 
   // List<Faciliy> facilities = [
@@ -294,12 +294,10 @@ class _HomeViewState extends State<HomeView> {
                                                     child: Container(
                                                       decoration: BoxDecoration(
                                                         color: primaryGray,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                                                        
                                                       ),
                                                       width: double.infinity,
-                                                      height: 164,
+                                                      height: 24,
                                                     ),
                                                   );
                                                                 } else if (snapshot
