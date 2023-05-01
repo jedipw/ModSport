@@ -50,255 +50,258 @@ class _LoginViewState extends State<LoginView> {
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 90, 0, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Image.asset(
-                              'assets/images/modsportlogoorange.png',
-                              scale: 25,
-                            ),
-                            const Text(
-                              "LOG IN",
-                              style: TextStyle(
-                                color: primaryOrange,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Poppins",
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Text(
-                          "Please sign in to continue",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 16,
-                            height: 1.5,
-                            color: primaryGray,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Form(
-                      key: _formKey,
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(40, 90, 0, 0),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Email form
-                          EmailTextField(
-                            controller: emailController,
-                            isEmailValid: _isEmailValid,
-                            focusNode: emailFocusNode,
-                          ),
-                          // Password form
-                          PasswordTextField(
-                              passwordController: passwordController,
-                              isPasswordOk: _isPasswordOk),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                if (_isSomeThingWrong)
-                                  const Text(
-                                    "Please make sure that you log in with the correct email and password",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                      forgetPasswordRoute,
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Forget password?",
-                                    style: TextStyle(
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14,
-                                      height: 1.0,
-                                      decoration: TextDecoration.underline,
-                                      color: Color(0xFFCC0019),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ElevatedButton(
-                                onPressed: () async {
-                                  final email = emailController.text;
-                                  final password = passwordController.text;
-                                  if (_formKey.currentState!.validate()) {
-                                    // Do something if the form is valid
-                                    // For example, check if the email is valid
-                                    if (_isValidEmail(emailController.text) &&
-                                        passwordController.value.text.length >=
-                                            6) {
-                                      setState(() {
-                                        _isEmailValid = true;
-                                        _isPasswordOk = true;
-                                        _isSomeThingWrong = false;
-                                      });
-                                      try {
-                                        showLoadModal(context);
+                              Image.asset(
+                                'assets/images/modsportlogoorange.png',
+                                scale: 25,
+                              ),
+                              const Text(
+                                "LOG IN",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Poppins",
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Text(
+                            "Please sign in to continue",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 16,
+                              height: 1.5,
+                              color: primaryGray,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Email form
+                            EmailTextField(
+                              controller: emailController,
+                              isEmailValid: _isEmailValid,
+                              focusNode: emailFocusNode,
+                            ),
+                            // Password form
+                            PasswordTextField(
+                                passwordController: passwordController,
+                                isPasswordOk: _isPasswordOk),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  if (_isSomeThingWrong)
+                                    const Text(
+                                      "Please make sure that you log in with the correct email and password",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                        forgetPasswordRoute,
+                                      );
+                                    },
+                                    child: const Text(
+                                      "Forget password?",
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14,
+                                        height: 1.0,
+                                        decoration: TextDecoration.underline,
+                                        color: Color(0xFFCC0019),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    final email = emailController.text;
+                                    final password = passwordController.text;
+                                    if (_formKey.currentState!.validate()) {
+                                      // Do something if the form is valid
+                                      // For example, check if the email is valid
+                                      if (_isValidEmail(emailController.text) &&
+                                          passwordController.value.text.length >=
+                                              6) {
+                                        setState(() {
+                                          _isEmailValid = true;
+                                          _isPasswordOk = true;
+                                          _isSomeThingWrong = false;
+                                        });
                                         try {
-                                          final userCredential =
-                                              await FirebaseAuth.instance
-                                                  .signInWithEmailAndPassword(
-                                                      email: email,
-                                                      password: password);
-                                          // ignore: use_build_context_synchronously
-                                          Navigator.of(context).pop();
-
-                                          if (userCredential
-                                                  .user?.emailVerified ??
-                                              false) {
+                                          showLoadModal(context);
+                                          try {
+                                            final userCredential =
+                                                await FirebaseAuth.instance
+                                                    .signInWithEmailAndPassword(
+                                                        email: email,
+                                                        password: password);
                                             // ignore: use_build_context_synchronously
-                                            Navigator.of(context)
-                                                .pushNamedAndRemoveUntil(
-                                              // navigates to homeRoute screen and removes previous routes
-                                              homeRoute,
-                                              (route) => false,
-                                            );
-                                          } else {
-                                            /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
-                                            // ignore: use_build_context_synchronously
-                                            // Navigator.of(context).pushNamed(
-                                            //   verifyEmailRoute,
-                                            // );
-                                            Navigator.of(context)
-                                                .pushNamedAndRemoveUntil(
-                                              // navigates to homeRoute screen and removes previous routes
-                                              homeRoute,
-                                              (route) => false,
-                                            );
+                                            Navigator.of(context).pop();
+            
+                                            if (userCredential
+                                                    .user?.emailVerified ??
+                                                false) {
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context)
+                                                  .pushNamedAndRemoveUntil(
+                                                // navigates to homeRoute screen and removes previous routes
+                                                homeRoute,
+                                                (route) => false,
+                                              );
+                                            } else {
+                                              /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
+                                              // ignore: use_build_context_synchronously
+                                              // Navigator.of(context).pushNamed(
+                                              //   verifyEmailRoute,
+                                              // );
+                                              Navigator.of(context)
+                                                  .pushNamedAndRemoveUntil(
+                                                // navigates to homeRoute screen and removes previous routes
+                                                homeRoute,
+                                                (route) => false,
+                                              );
+                                            }
+                                          } on FirebaseAuthException catch (e) {
+                                            setState(() {
+                                              _isSomeThingWrong = true;
+                                            });
+                                            Navigator.of(context).pop();
                                           }
                                         } on FirebaseAuthException catch (e) {
                                           setState(() {
                                             _isSomeThingWrong = true;
                                           });
-                                          Navigator.of(context).pop();
+                                          if (e.code == 'user-not-found') {
+                                            print('User not found');
+                                          } else {
+                                            print('SOMETHING ELSE HAPPEND');
+                                            print(e.code);
+                                          }
                                         }
-                                      } on FirebaseAuthException catch (e) {
-                                        setState(() {
-                                          _isSomeThingWrong = true;
-                                        });
-                                        if (e.code == 'user-not-found') {
-                                          print('User not found');
+                                      } else {
+                                        if (emailController.text == "" ||
+                                            !_isValidEmail(
+                                                emailController.text)) {
+                                          setState(() {
+                                            _isEmailValid = false;
+                                          });
                                         } else {
-                                          print('SOMETHING ELSE HAPPEND');
-                                          print(e.code);
+                                          setState(() {
+                                            _isEmailValid = true;
+                                          });
                                         }
-                                      }
-                                    } else {
-                                      if (emailController.text == "" ||
-                                          !_isValidEmail(
-                                              emailController.text)) {
-                                        setState(() {
-                                          _isEmailValid = false;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          _isEmailValid = true;
-                                        });
-                                      }
-                                      if (passwordController.value.text.length <
-                                          6) {
-                                        setState(() {
-                                          _isPasswordOk = false;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          _isPasswordOk = true;
-                                        });
-                                      }
-                                      if (_isPasswordOk && _isEmailValid) {
-                                        setState(() {
-                                          _isSomeThingWrong = true;
-                                        });
+                                        if (passwordController.value.text.length <
+                                            6) {
+                                          setState(() {
+                                            _isPasswordOk = false;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _isPasswordOk = true;
+                                          });
+                                        }
+                                        if (_isPasswordOk && _isEmailValid) {
+                                          setState(() {
+                                            _isSomeThingWrong = true;
+                                          });
+                                        }
                                       }
                                     }
-                                  }
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(primaryOrange),
-                                  shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(40))),
-                                  fixedSize: MaterialStateProperty.all(
-                                      const Size(173.42, 64)),
-                                  side: MaterialStateProperty.all(
-                                      const BorderSide(
-                                    color: primaryOrange,
-                                    width: 2,
-                                  )),
-                                  overlayColor: MaterialStateProperty.all(
-                                      const Color.fromRGBO(0, 0, 0,
-                                          0.25)), // for the drop shadow effect
-                                  elevation: MaterialStateProperty.all(
-                                      4), // for the drop shadow effect
-                                  shadowColor: MaterialStateProperty.all(
-                                      const Color.fromRGBO(0, 0, 0, 0.25)),
-                                ),
-                                child: Container(
-                                  width: 173.42,
-                                  height: 64,
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    "Log in",
-                                    style: TextStyle(
-                                      fontSize: 21,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontFamily: 'Poppins',
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all(primaryOrange),
+                                    shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(40))),
+                                    fixedSize: MaterialStateProperty.all(
+                                        const Size(173.42, 64)),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(
+                                      color: primaryOrange,
+                                      width: 2,
+                                    )),
+                                    overlayColor: MaterialStateProperty.all(
+                                        const Color.fromRGBO(0, 0, 0,
+                                            0.25)), // for the drop shadow effect
+                                    elevation: MaterialStateProperty.all(
+                                        4), // for the drop shadow effect
+                                    shadowColor: MaterialStateProperty.all(
+                                        const Color.fromRGBO(0, 0, 0, 0.25)),
+                                  ),
+                                  child: Container(
+                                    width: 173.42,
+                                    height: 64,
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      "Log in",
+                                      style: TextStyle(
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins',
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
             Positioned(
                 // left: ,
                 bottom: isKeyboardVisible ? 12 : 12,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(90, 0, 16, 16),
+                child: 
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(90, 30, 16, 16),
                   child:
                       //  Column(
                       //   mainAxisSize: MainAxisSize.max,
