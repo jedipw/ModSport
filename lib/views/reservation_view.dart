@@ -1,5 +1,6 @@
 // Import a neccesary package from Flutter.
 import 'dart:math';
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 
@@ -177,6 +178,8 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
+      dev.log("_getZoneData");
+      dev.log(e.toString());
       handleError();
     }
   }
@@ -200,6 +203,8 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
+      dev.log("_getLocationData()");
+      dev.log(e.toString());
       handleError();
     }
   }
@@ -248,6 +253,8 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
+      dev.log("_getReservationData()");
+      dev.log(e.toString());
       handleError();
     }
   }
@@ -268,6 +275,8 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
+      dev.log("_getUserReservationData()");
+      dev.log(e.toString());
       handleError();
     }
   }
@@ -301,6 +310,8 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
+      dev.log("_getDisableReservationData()");
+      dev.log(e.toString());
       handleError();
     }
   }
@@ -334,6 +345,8 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
+      dev.log("_getReservationIds()");
+      dev.log(e.toString());
       handleError();
     }
   }
@@ -364,6 +377,8 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
+      dev.log("_getReservationIndexData()");
+      dev.log(e.toString());
       handleError();
     }
   }
@@ -398,6 +413,8 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
+      dev.log("_getIsReservedData()");
+      dev.log(e.toString());
       handleError();
     }
   }
