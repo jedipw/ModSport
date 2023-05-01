@@ -93,6 +93,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(homeRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.light.copyWith(
@@ -100,8 +102,6 @@ class ModSportDrawer extends StatelessWidget {
                               .white, // set to Colors.black for black color
                         ))
                       : null;
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(homeRoute, (route) => false);
                 },
               ),
               ListTile(
@@ -126,6 +126,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(statusRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.light.copyWith(
@@ -133,8 +135,6 @@ class ModSportDrawer extends StatelessWidget {
                               .white, // set to Colors.black for black color
                         ))
                       : null;
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(statusRoute, (route) => false);
                 },
               ),
               ListTile(
@@ -159,6 +159,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      helpCenterRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.light.copyWith(
@@ -167,8 +169,6 @@ class ModSportDrawer extends StatelessWidget {
                           ),
                         )
                       : null;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      helpCenterRoute, (route) => false);
                 },
               ),
               ListTile(
@@ -193,6 +193,8 @@ class ModSportDrawer extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      changePasswordRoute, (route) => false);
                   Platform.isIOS
                       ? SystemChrome.setSystemUIOverlayStyle(
                           SystemUiOverlayStyle.dark.copyWith(
@@ -201,8 +203,6 @@ class ModSportDrawer extends StatelessWidget {
                           ),
                         )
                       : null;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      changePasswordRoute, (route) => false);
                 },
               ),
             ],

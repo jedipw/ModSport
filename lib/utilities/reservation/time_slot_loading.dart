@@ -20,13 +20,13 @@ class TimeSlotLoading extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
       shrinkWrap: true,
-      itemCount: 5, // increment by 1
+      itemCount: 8, // increment by 1
       itemBuilder: (context, index) {
         // Builds a RadioListTile widget for each item in the list
         return Theme(
           data: theme,
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.white,
@@ -75,24 +75,26 @@ class TimeSlotLoading extends StatelessWidget {
                             )),
                         Row(
                           children: [
-                            const Icon(Icons.people),
-                            const SizedBox(width: 8),
+                            const Icon(Icons.people,
+                                color: primaryGray, size: 30),
+                            const SizedBox(width: 4),
                             Shimmer.fromColors(
-                                baseColor:
-                                    const Color.fromARGB(255, 216, 216, 216),
-                                highlightColor:
-                                    const Color.fromRGBO(173, 173, 173, 0.824),
-                                child: Container(
-                                  width: 60,
-                                  height: 30.0,
-                                  color: Colors.white,
-                                ))
+                              baseColor:
+                                  const Color.fromARGB(255, 216, 216, 216),
+                              highlightColor:
+                                  const Color.fromRGBO(173, 173, 173, 0.824),
+                              child: Container(
+                                width: 40,
+                                height: 30.0,
+                                color: Colors.white,
+                              ),
+                            )
                           ],
                         ),
                       ],
                     ),
                     value: index,
-                    groupValue: const [1, 2, 3, 4, 5],
+                    groupValue: const [1, 2, 3, 4, 5, 6, 7, 8],
                     onChanged: null,
                     activeColor: Colors.white,
                     selectedTileColor: primaryOrange,
