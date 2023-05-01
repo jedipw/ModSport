@@ -44,6 +44,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
               children: [
                 const SizedBox(height: 150),
                 // Start writing your code here
+
+                //1
                 Card(
                   elevation: 4,
                   margin: const EdgeInsets.all(8),
@@ -51,14 +53,35 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const ExpansionTile(
-                    title: Text('Tutorials and Guides'),
+                    title: Text(
+                      'Tutorials and Guides',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
                     //subtitle: Text('Trailing expansion arrow icon'),
                     children: <Widget>[
-                      ListTile(title: Text('This is tile number 1')),
+                      ListTile(
+                        title: Text(
+                          "This is tile number 1",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
 
+                //2
                 Card(
                   elevation: 4,
                   margin: const EdgeInsets.all(8),
@@ -66,19 +89,48 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const ExpansionTile(
-                    title: Text('Frequently Asked Questions (FAQs)'),
+                    title: Text(
+                      'Frequently Asked Questions (FAQs)',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
                     children: <Widget>[
                       ListTile(
-                          title: Text(
-                              'Q: Can I make a reservation for someone else?\nA: Yes, you can.')),
+                        title: Text(
+                          "Q: Can I make a reservation for someone else?\n"
+                          "A: Yes, you can.",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
                       ListTile(
-                          title: Text(
-                              "Q: Can I modify or cancel my reservation once it's been made?\n"
-                              "A:  Yes, you can cancel your reservation.")),
+                        title: Text(
+                          "Q: Can I modify or cancel my reservation once it's been made?\n"
+                          "A:  Yes, you can cancel your reservation.",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
 
+                //3
                 Card(
                   elevation: 4,
                   margin: const EdgeInsets.all(8),
@@ -86,13 +138,87 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const ExpansionTile(
-                    title: Text('Troubleshooting Tips'),
+                    title: Text(
+                      'Troubleshooting Tips',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
                     children: <Widget>[
-                      ListTile(title: Text('This is tile number 3')),
+                      ListTile(
+                        //1
+                        title: Text(
+                          "This is tile number 3.1",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //2
+                        title: Text(
+                          "This is tile number 3.2",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //3
+                        title: Text(
+                          "This is tile number 3.3",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //4
+                        title: Text(
+                          "This is tile number 3.4",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //5
+                        title: Text(
+                          "This is tile number 3.5",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
 
+                //4
                 Card(
                   elevation: 4,
                   margin: const EdgeInsets.all(8),
@@ -100,13 +226,31 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const ExpansionTile(
-                    title: Text('Contact Information'),
+                    title: Text(
+                      'Contact Information',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
                     children: <Widget>[
                       ListTile(
-                          title: Text(
-                              "Phone number: 02-212-2510\nEmail address: pawin.nakv@kmutt.ac.th\n"
-                              "Mailing address: 126 Pracha Uthit Rd, Bang Mot, Thung Khru, Bangkok 10140\n"
-                              "Hours of operation: 8:00 a.m.-4:00 p.m.")),
+                        title: Text(
+                          "Phone number: 02-212-2510\nEmail address: pawin.nakv@kmutt.ac.th\n"
+                          "Mailing address: 126 Pracha Uthit Rd, Bang Mot, Thung Khru, Bangkok 10140\n"
+                          "Hours of operation: 8:00 a.m.-4:00 p.m.",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
