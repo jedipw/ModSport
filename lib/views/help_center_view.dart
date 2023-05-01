@@ -15,6 +15,7 @@ class HelpCenterView extends StatefulWidget {
 class _HelpCenterViewState extends State<HelpCenterView> {
   final int _currentDrawerIndex = 2;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _customTileExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +41,75 @@ class _HelpCenterViewState extends State<HelpCenterView> {
         children: [
           SingleChildScrollView(
             child: Column(
-              children: const [
-                SizedBox(height: 150),
+              children: [
+                const SizedBox(height: 150),
                 // Start writing your code here
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const ExpansionTile(
+                    title: Text('Tutorials and Guides'),
+                    //subtitle: Text('Trailing expansion arrow icon'),
+                    children: <Widget>[
+                      ListTile(title: Text('This is tile number 1')),
+                    ],
+                  ),
+                ),
+
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const ExpansionTile(
+                    title: Text('Frequently Asked Questions (FAQs)'),
+                    children: <Widget>[
+                      ListTile(
+                          title: Text(
+                              'Q: Can I make a reservation for someone else?\nA: Yes, you can.')),
+                      ListTile(
+                          title: Text(
+                              "Q: Can I modify or cancel my reservation once it's been made?\n"
+                              "A:  Yes, you can cancel your reservation.")),
+                    ],
+                  ),
+                ),
+
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const ExpansionTile(
+                    title: Text('Troubleshooting Tips'),
+                    children: <Widget>[
+                      ListTile(title: Text('This is tile number 3')),
+                    ],
+                  ),
+                ),
+
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const ExpansionTile(
+                    title: Text('Contact Information'),
+                    children: <Widget>[
+                      ListTile(
+                          title: Text(
+                              "Phone number: 02-212-2510\nEmail address: pawin.nakv@kmutt.ac.th\n"
+                              "Mailing address: 126 Pracha Uthit Rd, Bang Mot, Thung Khru, Bangkok 10140\n"
+                              "Hours of operation: 8:00 a.m.-4:00 p.m.")),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
