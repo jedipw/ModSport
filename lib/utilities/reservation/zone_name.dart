@@ -39,15 +39,22 @@ class ZoneName extends StatelessWidget {
                 ))
             : Opacity(
                 opacity: isSwipingUp ? 0.33 : 1,
-                child: Text(
-                  zoneName,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 26,
-                    height: 1.5, // 39/26 = 1.5
-                    color: primaryOrange,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      zoneName.length > 17
+                          ? '${zoneName.substring(0, 15)}...'
+                          : zoneName,
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 26,
+                        height: 1.5, // 39/26 = 1.5
+                        color: primaryOrange,
+                      ),
+                    ),
+                  ],
                 ),
               );
   }

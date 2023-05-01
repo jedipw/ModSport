@@ -36,7 +36,7 @@ class TimeSlotDisable extends StatelessWidget {
             }
           },
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
             padding: const EdgeInsets.fromLTRB(5, 18, 5, 14),
             decoration: BoxDecoration(
               color: Colors.white,

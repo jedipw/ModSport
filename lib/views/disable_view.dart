@@ -299,6 +299,14 @@ class _DisableViewState extends State<DisableView> {
                                           _textFieldWidth = constraint.maxWidth;
                                         });
                                       },
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 16.0,
+                                        height: 20.0 / 13.0,
+                                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -351,10 +359,10 @@ class _DisableViewState extends State<DisableView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: const [
+                  children: [
                     Text(
-                      'DISABLE',
-                      style: TextStyle(
+                      widget.mode == editMode ? 'EDIT REASON' : 'DISABLE',
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w600,
@@ -392,7 +400,10 @@ class _DisableViewState extends State<DisableView> {
                   child: TextButton(
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
-                        numOfCharacter < 10 || numOfCharacter > 250
+                        numOfCharacter < 10 ||
+                                numOfCharacter > 250 ||
+                                (widget.mode == editMode &&
+                                    reasonController.text == widget.reason)
                             ? const Color.fromRGBO(241, 185, 146, 0.5)
                             : const Color.fromRGBO(241, 185, 146, 1),
                       ),
@@ -402,53 +413,80 @@ class _DisableViewState extends State<DisableView> {
                         ),
                       ),
                     ), // Set the button background color to grey
-                    onPressed: numOfCharacter < 10 || numOfCharacter > 250
+                    onPressed: numOfCharacter < 10 ||
+                            numOfCharacter > 250 ||
+                            (widget.mode == editMode &&
+                                reasonController.text == widget.reason)
                         ? null
                         : () {
-                            showDoneConfirmationModal(
-                              context,
-                              () async {
-                                Navigator.of(context).pop();
-                                showLoadModal(context);
-                                try {
-                                  // Call createDisableReservation to disable the selected time slots
-                                  widget.mode == disableMode
-                                      ? await FirebaseCloudStorage()
-                                          .createDisableReservation(
-                                            widget.zoneId,
-                                            reasonController.text,
-                                            startTimes,
-                                          )
-                                          .then((_) =>
-                                              Navigator.of(context).pop())
-                                          .then((_) =>
-                                              Navigator.of(context).pop())
-                                      : await FirebaseCloudStorage()
-                                          .updateDisableReason(
-                                            widget.disableIds,
-                                            reasonController.text,
-                                          )
-                                          .then((_) =>
-                                              Navigator.of(context).pop())
-                                          .then((_) =>
-                                              Navigator.of(context).pop());
-                                } catch (e) {
-                                  // Handle error
-                                  showErrorModal(
+                            widget.mode == disableMode
+                                ? showDoneConfirmationModal(
                                     context,
-                                    () {
+                                    () async {
                                       Navigator.of(context).pop();
+                                      showLoadModal(context);
+                                      try {
+                                        // Call createDisableReservation to disable the selected time slots
+
+                                        await FirebaseCloudStorage()
+                                            .createDisableReservation(
+                                              widget.zoneId,
+                                              reasonController.text,
+                                              startTimes,
+                                            )
+                                            .then((_) =>
+                                                Navigator.of(context).pop())
+                                            .then((_) =>
+                                                Navigator.of(context).pop());
+                                      } catch (e) {
+                                        // Handle error
+                                        showErrorModal(
+                                          context,
+                                          () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        );
+                                      }
+                                    },
+                                  )
+                                : showSaveConfirmationModal(
+                                    context,
+                                    () async {
                                       Navigator.of(context).pop();
+                                      showLoadModal(context);
+                                      try {
+                                        await FirebaseCloudStorage()
+                                            .updateDisableReason(
+                                              widget.disableIds,
+                                              reasonController.text,
+                                            )
+                                            .then((_) =>
+                                                Navigator.of(context).pop())
+                                            .then((_) =>
+                                                Navigator.of(context).pop());
+                                      } catch (e) {
+                                        // Handle error
+                                        showErrorModal(
+                                          context,
+                                          () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                        );
+                                      }
                                     },
                                   );
-                                }
-                              },
-                            );
                           },
                     child: Text(
-                      "DONE", // Set the button text to "Disable"
+                      widget.mode == editMode
+                          ? "SAVE"
+                          : "DONE", // Set the button text to "Disable"
                       style: TextStyle(
-                        color: numOfCharacter < 10 || numOfCharacter > 250
+                        color: numOfCharacter < 10 ||
+                                numOfCharacter > 250 ||
+                                (widget.mode == editMode &&
+                                    reasonController.text == widget.reason)
                             ? const Color.fromRGBO(0, 0, 0, 0.2)
                             : Colors.black,
                         fontSize: 16,
