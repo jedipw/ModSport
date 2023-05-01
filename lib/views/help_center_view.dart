@@ -88,8 +88,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const ExpansionTile(
-                    title: Text(
+                  child: ExpansionTile(
+                    title: const Text(
                       'Frequently Asked Questions (FAQs)',
                       style: TextStyle(
                         fontFamily: 'Poppins',
@@ -100,29 +100,66 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       ),
                     ),
                     children: <Widget>[
+                      //1
                       ListTile(
-                        title: Text(
-                          "Q: Can I make a reservation for someone else?\n"
-                          "A: Yes, you can.",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14.0,
-                            color: primaryGray,
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    'Q: Can I make a reservation for someone else?\n',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color:
+                                      primaryOrange, // change color to orange
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'A: Yes, you can.',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color: primaryGray,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                      //2
                       ListTile(
-                        title: Text(
-                          "Q: Can I modify or cancel my reservation once it's been made?\n"
-                          "A:  Yes, you can cancel your reservation.",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14.0,
-                            color: primaryGray,
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    "Q: Can I modify or cancel my reservation once it's been made?\n",
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color:
+                                      primaryOrange, // change color to orange
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    'A: Yes, you can cancel your reservation.',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color: primaryGray,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -225,8 +262,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const ExpansionTile(
-                    title: Text(
+                  child: ExpansionTile(
+                    title: const Text(
                       'Contact Information',
                       style: TextStyle(
                         fontFamily: 'Poppins',
@@ -238,16 +275,58 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     ),
                     children: <Widget>[
                       ListTile(
-                        title: Text(
-                          "Phone number: 02-212-2510\nEmail address: pawin.nakv@kmutt.ac.th\n"
-                          "Mailing address: 126 Pracha Uthit Rd, Bang Mot, Thung Khru, Bangkok 10140\n"
-                          "Hours of operation: 8:00 a.m.-4:00 p.m.",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14.0,
-                            color: primaryGray,
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Phone number: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "02-212-2510\n",
+                              ),
+                              TextSpan(
+                                text: "Email address: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "pawin.nakv@kmutt.ac.th\n",
+                              ),
+                              TextSpan(
+                                text: "Mailing address: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "126 Pracha Uthit Rd, Bang Mot, Thung Khru, Bangkok 10140\n",
+                              ),
+                              TextSpan(
+                                text: "Hours of operation: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "8:00 a.m.-4:00 p.m.",
+                              ),
+                            ],
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: primaryGray,
+                            ),
                           ),
                         ),
                       ),
