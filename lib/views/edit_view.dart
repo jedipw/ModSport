@@ -720,9 +720,9 @@ class _EditViewState extends State<EditView> {
                           ),
                         ), // Set the button background color to grey
                         onPressed: () {
+                          _disableIds = [];
                           _selectedTimeSlots.asMap().forEach(
                             (index, isSelected) {
-                              _disableIds = [];
                               if (isSelected) {
                                 _disableIds.add(
                                   _disabledReservation[index].disableId,
