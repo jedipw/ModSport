@@ -5,12 +5,22 @@ import 'package:modsport/services/cloud/cloud_storage_exceptions.dart';
 import 'package:modsport/utilities/types.dart';
 
 class FirebaseCloudStorage {
+  final user = FirebaseFirestore.instance.collection(userCollection);
   final location = FirebaseFirestore.instance.collection(locationCollection);
   final zone = FirebaseFirestore.instance.collection(zoneCollection);
   final userRes =
       FirebaseFirestore.instance.collection(userReservationCollection);
   final res = FirebaseFirestore.instance.collection(reservationCollection);
   final disable = FirebaseFirestore.instance.collection(disableCollection);
+
+  Future<bool> getUserHasRole(String userId) async {
+    try {
+      DocumentSnapshot documentSnapshot = await user.doc(userId).get();
+      return documentSnapshot[hasRoleField];
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
 
   Future<String> getLocation(String locationId) async {
     try {
