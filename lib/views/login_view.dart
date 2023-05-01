@@ -125,7 +125,7 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
+                              padding: const EdgeInsets.only(bottom: 15),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -310,7 +310,60 @@ class _LoginViewState extends State<LoginView> {
                           ],
                         ),
                       ),
-                    )
+                    ),
+                      Padding(
+                padding: const EdgeInsets.fromLTRB(0, 30, 16, 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Don’t have an account?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            height: 1.5,
+                            color: Color.fromRGBO(0, 0, 0, 0.45),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                    registerRoute,
+                                  );
+                                },
+                                child: const Text(
+                                  "Sign up",
+                                  style: TextStyle(
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    height: 1.0,
+                                    decoration: TextDecoration.underline,
+                                    color: primaryOrange,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                  // )
+                ))
                   ],
                 ),
               ),
@@ -318,61 +371,60 @@ class _LoginViewState extends State<LoginView> {
             // Positioned(
             //     // left: ,
             //     bottom: isKeyboardVisible ? 12 : 12,
-            //     child: 
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(90, 30, 16, 16),
-                  child:
-                      //  Column(
-                      //   mainAxisSize: MainAxisSize.max,
-                      //   children: [
-                      Row(
-                    // mainAxisSize: MainAxisSize.max,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don’t have an account?",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                          height: 1.5,
-                          color: Color.fromRGBO(0, 0, 0, 0.45),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                  registerRoute,
-                                );
-                              },
-                              child: const Text(
-                                "Sign up",
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  height: 1.0,
-                                  decoration: TextDecoration.underline,
-                                  color: primaryOrange,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  //   ],
-                  )
-                // ))
+            //     child:
+            // Padding(
+            //     padding: const EdgeInsets.fromLTRB(90, 30, 16, 16),
+            //     child: Column(
+            //       mainAxisSize: MainAxisSize.max,
+            //       children: [
+            //         Row(
+            //           mainAxisSize: MainAxisSize.max,
+            //           crossAxisAlignment: CrossAxisAlignment.center,
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             const Text(
+            //               "Don’t have an account?",
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                 fontFamily: 'Poppins',
+            //                 fontWeight: FontWeight.w500,
+            //                 fontSize: 15,
+            //                 height: 1.5,
+            //                 color: Color.fromRGBO(0, 0, 0, 0.45),
+            //               ),
+            //             ),
+            //             Padding(
+            //               padding: const EdgeInsets.only(left: 10),
+            //               child: Column(
+            //                 mainAxisAlignment: MainAxisAlignment.end,
+            //                 children: [
+            //                   GestureDetector(
+            //                     onTap: () {
+            //                       Navigator.of(context).pushNamed(
+            //                         registerRoute,
+            //                       );
+            //                     },
+            //                     child: const Text(
+            //                       "Sign up",
+            //                       style: TextStyle(
+            //                         fontFamily: "Poppins",
+            //                         fontWeight: FontWeight.w400,
+            //                         fontSize: 14,
+            //                         height: 1.0,
+            //                         decoration: TextDecoration.underline,
+            //                         color: primaryOrange,
+            //                       ),
+            //                       textAlign: TextAlign.center,
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             )
+            //           ],
+            //         ),
+            //       ],
+            //       // )
+            //     ))
           ],
         ),
       );
@@ -418,97 +470,97 @@ class _LoginViewState extends State<LoginView> {
 //   }
 // }
 
-   // Navigation to other 4 pages
-    // Row(
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: [
-    //         TextButton(
-    //           // a flat button with a text label
-    //           style: ButtonStyle(
-    //               // style the button
-    //               backgroundColor: MaterialStateProperty.all(
-    //                   primaryOrange)), // set button background color
-    //           onPressed: () {
-    //             // method called when button is pressed
-    //             Navigator.of(context).pushNamed(
-    //               registerRoute,
-    //             );
-    //           },
-    //           child: const Text(
-    //             // label text for the button
-    //             "Register",
-    //             style: TextStyle(
-    //               color: Colors.white,
-    //             ),
-    //           ),
-    //         ),
-    //         TextButton(
-    //           // a flat button with a text label
-    //           style: ButtonStyle(
-    //               // style the button
-    //               backgroundColor: MaterialStateProperty.all(
-    //                   primaryOrange)), // set button background color
-    //           onPressed: () {
-    //             // method called when button is pressed
-    //             Navigator.of(context).pushNamed(
-    //               forgetPasswordRoute,
-    //             );
-    //           },
-    //           child: const Text(
-    //             // label text for the button
-    //             "Forget Password",
-    //             style: TextStyle(
-    //               color: Colors.white,
-    //             ),
-    //           ),
-    //         ),
-    //         TextButton(
-    //           // a flat button with a text label
-    //           style: ButtonStyle(
-    //               // style the button
-    //               backgroundColor: MaterialStateProperty.all(
-    //                   primaryOrange)), // set button background color
-    //           onPressed: () {
-    //             // method called when button is pressed
-    //             Navigator.of(context).pushNamed(
-    //               verifyEmailRoute,
-    //             );
-    //           },
-    //           child: const Text(
-    //             // label text for the button
-    //             "Login with unverified email!",
-    //             style: TextStyle(
-    //               color: Colors.white,
-    //             ),
-    //           ),
-    //         ),
-    //         TextButton(
-    //           // a flat button with a text label
-    //           style: ButtonStyle(
-    //               // style the button
-    //               backgroundColor: MaterialStateProperty.all(
-    //                   primaryOrange)), // set button background color
-    //           onPressed: () {
-    //             // method called when button is pressed
-    //             Navigator.of(context).pushNamedAndRemoveUntil(
-    //               // navigates to homeRoute screen and removes previous routes
-    //               homeRoute,
-    //               (route) => false,
-    //             );
-    //           },
-    //           child: const Text(
-    //             // label text for the button
-    //             "Login with verified email!",
-    //             style: TextStyle(
-    //               color: Colors.white,
-    //             ),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ],
+// Navigation to other 4 pages
+// Row(
+//   mainAxisAlignment: MainAxisAlignment.center,
+//   children: [
+//     Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: [
+//         TextButton(
+//           // a flat button with a text label
+//           style: ButtonStyle(
+//               // style the button
+//               backgroundColor: MaterialStateProperty.all(
+//                   primaryOrange)), // set button background color
+//           onPressed: () {
+//             // method called when button is pressed
+//             Navigator.of(context).pushNamed(
+//               registerRoute,
+//             );
+//           },
+//           child: const Text(
+//             // label text for the button
+//             "Register",
+//             style: TextStyle(
+//               color: Colors.white,
+//             ),
+//           ),
+//         ),
+//         TextButton(
+//           // a flat button with a text label
+//           style: ButtonStyle(
+//               // style the button
+//               backgroundColor: MaterialStateProperty.all(
+//                   primaryOrange)), // set button background color
+//           onPressed: () {
+//             // method called when button is pressed
+//             Navigator.of(context).pushNamed(
+//               forgetPasswordRoute,
+//             );
+//           },
+//           child: const Text(
+//             // label text for the button
+//             "Forget Password",
+//             style: TextStyle(
+//               color: Colors.white,
+//             ),
+//           ),
+//         ),
+//         TextButton(
+//           // a flat button with a text label
+//           style: ButtonStyle(
+//               // style the button
+//               backgroundColor: MaterialStateProperty.all(
+//                   primaryOrange)), // set button background color
+//           onPressed: () {
+//             // method called when button is pressed
+//             Navigator.of(context).pushNamed(
+//               verifyEmailRoute,
+//             );
+//           },
+//           child: const Text(
+//             // label text for the button
+//             "Login with unverified email!",
+//             style: TextStyle(
+//               color: Colors.white,
+//             ),
+//           ),
+//         ),
+//         TextButton(
+//           // a flat button with a text label
+//           style: ButtonStyle(
+//               // style the button
+//               backgroundColor: MaterialStateProperty.all(
+//                   primaryOrange)), // set button background color
+//           onPressed: () {
+//             // method called when button is pressed
+//             Navigator.of(context).pushNamedAndRemoveUntil(
+//               // navigates to homeRoute screen and removes previous routes
+//               homeRoute,
+//               (route) => false,
+//             );
+//           },
+//           child: const Text(
+//             // label text for the button
+//             "Login with verified email!",
+//             style: TextStyle(
+//               color: Colors.white,
+//             ),
+//           ),
+//         ),
+//       ],
+//     ),
+//   ],
 
-    // ])
+// ])
