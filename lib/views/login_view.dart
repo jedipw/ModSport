@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-import 'package:modsport/utilities/customTextFeild/FemailTextField.dart';
-import 'package:modsport/utilities/customTextFeild/PasswordTextField.dart';
+import 'package:modsport/utilities/custom_text_field/lemail_text_field.dart';
+import 'package:modsport/utilities/custom_text_field/password_text_field.dart';
 
 import '../utilities/modal.dart';
 
@@ -38,6 +40,8 @@ class _LoginViewState extends State<LoginView> {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       // User is already signed in
+      //////////////////////CHANGE !user.emailVerified to user.emailVerified when do mail message
+      if(!user.emailVerified){
       Future.delayed(Duration.zero, () async {
         await Navigator.of(context).pushNamedAndRemoveUntil(
           // navigates to homeRoute screen and removes previous routes
@@ -45,6 +49,14 @@ class _LoginViewState extends State<LoginView> {
           (route) => false,
         );
       });
+      }
+      else{
+        Future.delayed(Duration.zero, () async {
+        await Navigator.of(context).pushNamed(
+          verifyEmailRoute,
+        );
+      });
+      }
     } else {
       return Scaffold(
         // resizeToAvoidBottomInset: false,
@@ -207,6 +219,7 @@ class _LoginViewState extends State<LoginView> {
                                               }
                                             });
                                           } on FirebaseAuthException catch (e) {
+                                            log(e.toString());
                                             if (mounted) {
                                               setState(() {
                                                 _isSomeThingWrong = true;
@@ -215,17 +228,18 @@ class _LoginViewState extends State<LoginView> {
                                             Navigator.of(context).pop();
                                           }
                                         } on FirebaseAuthException catch (e) {
+                                          log(e.toString());
                                           if (mounted) {
                                             setState(() {
                                               _isSomeThingWrong = true;
                                             });
                                           }
-                                          // if (e.code == 'user-not-found') {
-                                          //   print('User not found');
-                                          // } else {
-                                          //   print('SOMETHING ELSE HAPPEND');
-                                          //   print(e.code);
-                                          // }
+                                          if (e.code == 'user-not-found') {
+                                            log('User not found');
+                                          } else {
+                                            log('SOMETHING ELSE HAPPENED');
+                                            log(e.code);
+                                          }
                                         }
                                       } else {
                                         if (emailController.text == "" ||
@@ -339,8 +353,9 @@ class _LoginViewState extends State<LoginView> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.of(context).pushNamed(
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
                                     registerRoute,
+                                    (route) => false,
                                   );
                                 },
                                 child: const Text(
@@ -429,7 +444,7 @@ class _LoginViewState extends State<LoginView> {
         ),
       );
     }
-    return const Text("Loading...");
+    return Container( color: Colors.white,child: const Text(""));
   }
 
   bool _isValidEmail(String email) {

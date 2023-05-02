@@ -1,28 +1,27 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-import 'package:modsport/utilities/customTextFeild/EmailTextField.dart';
-import 'package:modsport/utilities/customTextFeild/FnameTextField.dart';
-import 'package:modsport/utilities/customTextFeild/LnameTextField.dart';
-import 'package:modsport/utilities/customTextFeild/RegPasswordField.dart';
+import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
+import 'package:modsport/utilities/custom_text_field/fname_text_field.dart';
+import 'package:modsport/utilities/custom_text_field/lname_text_field.dart';
+import 'package:modsport/utilities/custom_text_field/reg_password_field.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:modsport/firebase_options.dart';
 
-import '../utilities/customTextFeild/RegConPasswordField.dart';
+import '../utilities/custom_text_field/reg_con_password_field.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
   @override
-  _RegisterViewState createState() => _RegisterViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
 class _RegisterViewState extends State<RegisterView> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController FnameController = TextEditingController();
-  final TextEditingController LnameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -83,9 +82,9 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   // Don't have verification yet
                   FnameTextField(
-                      controller: FnameController, isFnameValid: _isFnameValid),
+                      controller: firstNameController, isFnameValid: _isFnameValid),
                   LnameTextField(
-                      controller: LnameController, isLnameValid: _isLnameValid),
+                      controller: lastNameController, isLnameValid: _isLnameValid),
                   EmailTextField(
                       controller: emailController, isEmailValid: _isEmailValid),
                   RegPasswordField(
@@ -119,8 +118,8 @@ class _RegisterViewState extends State<RegisterView> {
                       onPressed: () async {
                         // if (_formKey.currentState!.validate()) {
                         if (_isEverythingOk(
-                            FnameController.text.trim(),
-                            LnameController.text.trim(),
+                            firstNameController.text.trim(),
+                            lastNameController.text.trim(),
                             emailController.text.trim(),
                             passwordController.text.trim(),
                             confirmPasswordController.text.trim())) {
@@ -139,36 +138,43 @@ class _RegisterViewState extends State<RegisterView> {
                                     .createUserWithEmailAndPassword(
                                         email: email, password: password);
                                 userCredential.user?.updateDisplayName(
-                                  "${FnameController.text.trim().toUpperCase().substring(0, 1)}${FnameController.text.trim().toLowerCase().substring(1)} ${LnameController.text.trim().toUpperCase().substring(0, 1)}${LnameController.text.trim().toLowerCase().substring(1)}",
+                                  "${firstNameController.text.trim().toUpperCase().substring(0, 1)}${firstNameController.text.trim().toLowerCase().substring(1)} ${lastNameController.text.trim().toUpperCase().substring(0, 1)}${lastNameController.text.trim().toLowerCase().substring(1)}",
                                 );
                                 await firestore
                                     .collection('user')
                                     .doc(userCredential.user!.uid)
                                     .set({
-                                  'firstName':
-                                      FnameController.text.trim().toLowerCase(),
-                                  'lastName':
-                                      LnameController.text.trim().toLowerCase(),
-                                  'hasRole': false,
-                                }).then((value) {
-                                  print('User added to Firestore');
-                                }).catchError((error) {
-                                  print(
-                                      'Error adding user to Firestore: $error');
-                                });
-                                // ignore: use_build_context_synchronously
-                                Navigator.of(context).pop();
-                                // Navigator.of(context).pushNamed(
-                                //   //navigates to homeRoute screen and removes previous routes
-                                //   verifyEmailRoute,
-                                // );
+                                      'firstName': firstNameController.text
+                                          .trim()
+                                          .toLowerCase(),
+                                      'lastName': lastNameController.text
+                                          .trim()
+                                          .toLowerCase(),
+                                      'hasRole': false,
+                                    })
+                                    .then((value) {
+                                      log('User added to Firestore');
+                                    })
+                                    .catchError((error) {
+                                      log(
+                                          'Error adding user to Firestore: $error');
+                                    })
+                                    .then(
+                                        (value) => Navigator.of(context).pop())
+                                    // .then((value) =>
+                                    //     Navigator.of(context).pushNamedAndRemoveUntil(
+                                    //       //navigates to homeRoute screen and removes previous routes
+                                    //       verifyEmailRoute,
+                                    //       (route) => false,
+                                    //     ));
+
 /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
-                                // ignore: use_build_context_synchronously
-                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                .then((value) => Navigator.of(context).pushNamedAndRemoveUntil(
                                   // navigates to homeRoute screen and removes previous routes
                                   loginRoute,
                                   (route) => false,
-                                );
+                                ));
+                                
                               } catch (e) {
                                 showErrorModal(
                                   context,
@@ -180,19 +186,19 @@ class _RegisterViewState extends State<RegisterView> {
                                 // throw(e);
                               }
                             },
-                            FnameController.text
+                            firstNameController.text
                                     .trim()
                                     .toUpperCase()
                                     .substring(0, 1) +
-                                FnameController.text
+                                firstNameController.text
                                     .trim()
                                     .toLowerCase()
                                     .substring(1),
-                            LnameController.text
+                            lastNameController.text
                                     .trim()
                                     .toUpperCase()
                                     .substring(0, 1) +
-                                LnameController.text
+                                lastNameController.text
                                     .trim()
                                     .toLowerCase()
                                     .substring(1),
@@ -283,12 +289,12 @@ class _RegisterViewState extends State<RegisterView> {
 
   bool _isValidName(String name) {
     final nameRegex = RegExp(r'^[a-zA-Z- ]+$');
-    return (name != null && name != "" && nameRegex.hasMatch(name));
+    return (name != "" && nameRegex.hasMatch(name));
   }
 
   String _isValidPassword(String password1, String password2, String p) {
-    if (password1 == null || password1.isEmpty) {
-      return 'Please enter your ${p}.';
+    if (password1 == "" || password1.isEmpty) {
+      return 'Please enter your $p.';
     }
     if (password1.length < 6) {
       return 'Password should be at least 6 characters.';
@@ -299,35 +305,39 @@ class _RegisterViewState extends State<RegisterView> {
     return "OK";
   }
 
-  bool _isEverythingOk(String Fname, String Lname, String email,
+  bool _isEverythingOk(String fName, String lName, String email,
       String password1, String password2) {
     bool isOk = true;
-    if (!_isValidName(Fname)) {
-      if(mounted){
-      setState(() {
-        _isFnameValid = false;
-      });}
+    if (!_isValidName(fName)) {
+      if (mounted) {
+        setState(() {
+          _isFnameValid = false;
+        });
+      }
       isOk = false;
     }
-    if (!_isValidName(Lname)) {
-      if(mounted){
-      setState(() {
-        _isLnameValid = false;
-      });}
+    if (!_isValidName(lName)) {
+      if (mounted) {
+        setState(() {
+          _isLnameValid = false;
+        });
+      }
       isOk = false;
     }
     if (!_isValidEmail(email)) {
-      if(mounted){
-      setState(() {
-        _isEmailValid = false;
-      });}
+      if (mounted) {
+        setState(() {
+          _isEmailValid = false;
+        });
+      }
       isOk = false;
     }
     if (_isValidPassword(password1, password2, "") != "OK") {
-      if(mounted){
-      setState(() {
-        _isPasswordOk = false;
-      });}
+      if (mounted) {
+        setState(() {
+          _isPasswordOk = false;
+        });
+      }
       isOk = false;
     }
     return isOk;
@@ -336,7 +346,7 @@ class _RegisterViewState extends State<RegisterView> {
 
 // Custom Modal
 dynamic showAccountConfirmationModal(BuildContext context,
-    OnPressedCallBack onPressed, String Fname, String Lname, String email) {
+    OnPressedCallBack onPressed, String fName, String lName, String email) {
   showDialog(
     context: context,
     barrierColor: Colors.white.withOpacity(0.5),
@@ -353,12 +363,12 @@ dynamic showAccountConfirmationModal(BuildContext context,
               children: [
                 const SizedBox(height: 40),
                 Text(
-                  'Do you want to use\n$Fname $Lname\nas your name and \n$email\nas email ?',
+                  'Do you want to use\n$fName $lName\nas your name and \n$email\nas email ?',
                   style: const TextStyle(
-                    fontSize: 14.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Poppins',
-                    color: primaryRed,
+                    color: primaryOrange,
                     height: 1.3,
                     letterSpacing: 0.0,
                   ),
@@ -379,10 +389,16 @@ dynamic showAccountConfirmationModal(BuildContext context,
                         onPressed: onPressed,
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryGreen,
+                            primaryOrange,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
                           ),
                         ),
                         child: const Text(
@@ -409,10 +425,16 @@ dynamic showAccountConfirmationModal(BuildContext context,
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryRed,
+                            primaryGray,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
                           ),
                         ),
                         child: const Text(

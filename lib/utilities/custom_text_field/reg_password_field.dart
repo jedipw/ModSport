@@ -26,7 +26,7 @@ class RegPasswordField extends StatelessWidget {
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: Colors.black,
             ),
             textAlign: TextAlign.center,
           ),
@@ -62,7 +62,7 @@ class RegPasswordField extends StatelessWidget {
               if (!isPasswordOk && passwordStat != "OK")
                 Text(
                   passwordStat,
-                  style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
+                  style: const TextStyle(color: Colors.red, fontFamily: 'Poppins'),
                 ),
             ],
           ),
