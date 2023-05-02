@@ -15,6 +15,7 @@ class HelpCenterView extends StatefulWidget {
 class _HelpCenterViewState extends State<HelpCenterView> {
   final int _currentDrawerIndex = 2;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _customTileExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +41,298 @@ class _HelpCenterViewState extends State<HelpCenterView> {
         children: [
           SingleChildScrollView(
             child: Column(
-              children: const [
-                SizedBox(height: 150),
+              children: [
+                const SizedBox(height: 150),
                 // Start writing your code here
+
+                //1
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const ExpansionTile(
+                    title: Text(
+                      'Tutorials and Guides',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
+                    //subtitle: Text('Trailing expansion arrow icon'),
+                    children: <Widget>[
+                      ListTile(
+                        title: Text(
+                          "This is tile number 1",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                //2
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ExpansionTile(
+                    title: const Text(
+                      'Frequently Asked Questions (FAQs)',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
+                    children: <Widget>[
+                      //1
+                      ListTile(
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    'Q: Can I make a reservation for someone else?\n',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color:
+                                      primaryOrange, // change color to orange
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'A: Yes, you can.',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color: primaryGray,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      //2
+                      ListTile(
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    "Q: Can I modify or cancel my reservation once it's been made?\n",
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color:
+                                      primaryOrange, // change color to orange
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    'A: Yes, you can cancel your reservation.',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color: primaryGray,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                //3
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const ExpansionTile(
+                    title: Text(
+                      'Troubleshooting Tips',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
+                    children: <Widget>[
+                      ListTile(
+                        //1
+                        title: Text(
+                          "This is tile number 3.1",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //2
+                        title: Text(
+                          "This is tile number 3.2",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //3
+                        title: Text(
+                          "This is tile number 3.3",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //4
+                        title: Text(
+                          "This is tile number 3.4",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        //5
+                        title: Text(
+                          "This is tile number 3.5",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.0,
+                            color: primaryGray,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                //4
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ExpansionTile(
+                    title: const Text(
+                      'Contact Information',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
+                      ),
+                    ),
+                    children: <Widget>[
+                      ListTile(
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Phone number: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "02-212-2510\n",
+                              ),
+                              TextSpan(
+                                text: "Email address: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "pawin.nakv@kmutt.ac.th\n",
+                              ),
+                              TextSpan(
+                                text: "Mailing address: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "126 Pracha Uthit Rd, Bang Mot, Thung Khru, Bangkok 10140\n",
+                              ),
+                              TextSpan(
+                                text: "Hours of operation: ",
+                                style: TextStyle(
+                                  color: primaryOrange,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "8:00 a.m.-4:00 p.m.",
+                              ),
+                            ],
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: primaryGray,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
