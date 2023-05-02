@@ -73,7 +73,9 @@ class DateList extends StatelessWidget {
                           fontSize: 14,
                           color: isError || !isEverythingLoaded
                               ? primaryGray
-                              : primaryOrange,
+                              : isDisableMenu
+                                  ? staffOrange
+                                  : primaryOrange,
                         ),
                       )
                     : Container(),
@@ -84,14 +86,18 @@ class DateList extends StatelessWidget {
                       selectedIndex == index
                           ? isError || !isEverythingLoaded
                               ? primaryGray
-                              : primaryOrange
+                              : isDisableMenu
+                                  ? staffOrange
+                                  : primaryOrange
                           : Colors.white, // Highlight the selected date.
                     ),
                     side: MaterialStateProperty.all(
                       BorderSide(
                         color: isError || !isEverythingLoaded
                             ? primaryGray
-                            : primaryOrange, // Set the border color here.
+                            : isDisableMenu
+                                ? staffOrange
+                                : primaryOrange, // Set the border color here.
                         width: 1, // Set the border width here.
                       ),
                     ),
@@ -124,7 +130,9 @@ class DateList extends StatelessWidget {
                               ? Colors.white
                               : isError || !isEverythingLoaded
                                   ? primaryGray
-                                  : primaryOrange,
+                                  : isDisableMenu
+                                      ? staffOrange
+                                      : primaryOrange,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -140,7 +148,9 @@ class DateList extends StatelessWidget {
                               ? Colors.white
                               : isError || !isEverythingLoaded
                                   ? primaryGray
-                                  : primaryOrange,
+                                  : isDisableMenu
+                                      ? staffOrange
+                                      : primaryOrange,
                         ),
                       ),
                     ],

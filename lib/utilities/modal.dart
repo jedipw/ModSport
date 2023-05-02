@@ -301,7 +301,7 @@ dynamic showDoneConfirmationModal(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
-                    color: primaryOrange,
+                    color: staffOrange,
                     height: 1.3,
                     letterSpacing: 0.0,
                   ),
@@ -313,7 +313,7 @@ dynamic showDoneConfirmationModal(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
-                    color: primaryOrange,
+                    color: staffOrange,
                     height: 1.3,
                     letterSpacing: 0.0,
                   ),
@@ -333,7 +333,7 @@ dynamic showDoneConfirmationModal(
                         onPressed: onPressed,
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryOrange,
+                            staffOrange,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
@@ -688,7 +688,7 @@ dynamic showSaveConfirmationModal(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
-                    color: primaryOrange,
+                    color: staffOrange,
                     height: 1.3,
                     letterSpacing: 0.0,
                   ),
@@ -700,7 +700,7 @@ dynamic showSaveConfirmationModal(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
-                    color: primaryOrange,
+                    color: staffOrange,
                     height: 1.3,
                     letterSpacing: 0.0,
                   ),
@@ -720,7 +720,7 @@ dynamic showSaveConfirmationModal(
                         onPressed: onPressed,
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryOrange,
+                            staffOrange,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
