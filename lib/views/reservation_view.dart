@@ -1357,7 +1357,7 @@ class _ReservationViewState extends State<ReservationView> {
                           color: _isError || !isEverythingLoaded()
                               ? primaryGray
                               : _isDisableMenu
-                                  ? primaryRed
+                                  ? staffOrange
                                   : primaryOrange,
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(20.0),

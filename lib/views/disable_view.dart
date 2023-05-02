@@ -348,9 +348,9 @@ class _DisableViewState extends State<DisableView> {
             children: [
               Container(
                 height: 125,
-                decoration: const BoxDecoration(
-                  color: primaryOrange,
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: widget.mode == editMode ? Colors.white : staffOrange,
+                  borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(20.0),
                     bottomRight: Radius.circular(20.0),
                   ),
@@ -362,13 +362,15 @@ class _DisableViewState extends State<DisableView> {
                   children: [
                     Text(
                       widget.mode == editMode ? 'EDIT REASON' : 'DISABLE',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Poppins',
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w600,
                         fontSize: 24.0,
                         height: 1.5,
-                        color: Colors.white,
+                        color: widget.mode == editMode
+                            ? staffOrange
+                            : Colors.white,
                       ),
                     ),
                   ],
@@ -382,13 +384,17 @@ class _DisableViewState extends State<DisableView> {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryOrange,
+                    backgroundColor:
+                        widget.mode == editMode ? Colors.white : staffOrange,
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     shape: const CircleBorder(),
                     fixedSize: const Size.fromRadius(25),
                     elevation: 0,
                   ),
-                  child: const Icon(Icons.close, color: Colors.white, size: 40),
+                  child: Icon(Icons.close,
+                      color:
+                          widget.mode == editMode ? staffOrange : Colors.white,
+                      size: 40),
                 ),
               ),
               Positioned(
