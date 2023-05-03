@@ -25,7 +25,7 @@ class GoBackButton extends StatelessWidget {
             ? isError || !isEverythingLoaded
                 ? primaryGray
                 : isDisableMenu
-                    ? primaryRed
+                    ? staffOrange
                     : primaryOrange
             : primaryOrange,
         shape: const CircleBorder(),

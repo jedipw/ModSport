@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
@@ -25,8 +27,10 @@ class _EditViewState extends State<EditView> {
   bool _isError = false;
   bool _isDisableReservationLoaded = false;
   bool _isReservationIdLoaded = false;
+  bool _isZoneNameLoaded = false;
 
   String _firstDisableReason = '';
+  String _zoneName = '';
 
   List<ReservationData> _reservations = [];
   List<DisableData> _disabledReservation = [];
@@ -37,14 +41,14 @@ class _EditViewState extends State<EditView> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetchData(enterMode);
   }
 
   // Ensure that the data is fetched when entered this page for the second time and onward.
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    fetchData();
+    fetchData(enterMode);
   }
 
   // Handle the error when data cannot be fetched from database
@@ -55,6 +59,21 @@ class _EditViewState extends State<EditView> {
           _isError = true;
         },
       );
+    }
+  }
+
+  Future<void> _getZoneName() async {
+    try {
+      // Get the zone data
+      ZoneData zoneData = await FirebaseCloudStorage().getZone(widget.zoneId);
+      String zoneName = zoneData.zoneName;
+      // Update the state
+      setState(() {
+        _zoneName = zoneName;
+        _isZoneNameLoaded = true;
+      });
+    } catch (e) {
+      log('Error fetching zone name: $e');
     }
   }
 
@@ -119,17 +138,27 @@ class _EditViewState extends State<EditView> {
   }
 
   // Fetch the data from the database
-  Future<void> fetchData() async {
-    setState(
-      () {
-        _isReservationLoaded = false;
-        _isDisableReservationLoaded = false;
-        _isReservationIdLoaded = false;
-      },
-    );
-    await _getReservationData()
-        .then((_) => _getDisableReservationData())
-        .then((_) => _getReservationIds());
+  Future<void> fetchData(String mode) async {
+    switch (mode) {
+      case enterMode:
+        await _getZoneName()
+            .then((_) => _getReservationData())
+            .then((_) => _getDisableReservationData())
+            .then((_) => _getReservationIds());
+        break;
+      case adminMode:
+        setState(
+          () {
+            _isReservationLoaded = false;
+            _isDisableReservationLoaded = false;
+            _isReservationIdLoaded = false;
+          },
+        );
+        await _getReservationData()
+            .then((_) => _getDisableReservationData())
+            .then((_) => _getReservationIds());
+        break;
+    }
   }
 
   Future<void> _getReservationIds() async {
@@ -224,7 +253,8 @@ class _EditViewState extends State<EditView> {
     bool isEverythingLoaded() {
       return _isReservationLoaded &&
           _isDisableReservationLoaded &&
-          _isReservationIdLoaded;
+          _isReservationIdLoaded &&
+          _isZoneNameLoaded;
     }
 
     DateTime currentDate =
@@ -238,57 +268,50 @@ class _EditViewState extends State<EditView> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const SizedBox(height: 140),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const SizedBox(width: 20),
-                        Text(
-                          '${_getDayOrdinal(currentDate.day)} ${DateFormat('MMMM').format(currentDate)} ${currentDate.year}',
-                          style: const TextStyle(
-                            color: primaryOrange,
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18.0,
-                            height:
-                                1.5, // adjust line height with the line-height CSS property
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            if (_isReasonShow) {
-                              setState(() {
-                                _isReasonShow = false;
-                              });
-                            } else {
-                              setState(() {
-                                _isReasonShow = true;
-                              });
-                            }
-                          },
-                          child: Text(
-                            _isReasonShow ? 'Hide Reasons' : 'Show Reasons',
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16.0,
-                              height:
-                                  1.5, // adjust line height with the line-height CSS property
-                              decoration: TextDecoration.underline,
-                              color: primaryGray,
+                        Row(
+                          children: [
+                            const SizedBox(width: 20),
+                            Text(
+                              '${_getDayOrdinal(currentDate.day)} ${DateFormat('MMMM').format(currentDate)} ${currentDate.year}',
+                              style: const TextStyle(
+                                color: staffOrange,
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18.0,
+                                height:
+                                    1.5, // adjust line height with the line-height CSS property
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(width: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              _zoneName,
+                              style: const TextStyle(
+                                color: staffOrange,
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18.0,
+                                height:
+                                    1.5, // adjust line height with the line-height CSS property
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                       ],
                     ),
                   ],
@@ -607,7 +630,7 @@ class _EditViewState extends State<EditView> {
                           style: ButtonStyle(
                             side: MaterialStateProperty.all(
                               const BorderSide(
-                                color: primaryOrange,
+                                color: staffOrange,
                                 width: 3,
                               ),
                             ),
@@ -665,7 +688,7 @@ class _EditViewState extends State<EditView> {
                                   ),
                                 )
                                 .then(
-                                  (_) => fetchData(),
+                                  (_) => fetchData(adminMode),
                                 );
                           },
 
@@ -675,7 +698,7 @@ class _EditViewState extends State<EditView> {
                               const Text(
                                 "EDIT ", // Set the button text to "Disable"
                                 style: TextStyle(
-                                  color: primaryOrange,
+                                  color: staffOrange,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: 'Poppins',
@@ -752,7 +775,7 @@ class _EditViewState extends State<EditView> {
                                       ),
                                     )
                                     .then(
-                                      (_) => fetchData(),
+                                      (_) => fetchData(adminMode),
                                     );
                               } catch (e) {
                                 showErrorModal(
@@ -760,7 +783,7 @@ class _EditViewState extends State<EditView> {
                                   () {
                                     Navigator.of(context).pop();
                                     Navigator.of(context).pop();
-                                    fetchData();
+                                    fetchData(adminMode);
                                   },
                                 );
                               }
@@ -803,10 +826,40 @@ class _EditViewState extends State<EditView> {
               ),
             )
           ],
+          Positioned(
+            top: 130,
+            right: 20,
+            child: TextButton(
+              onPressed: () {
+                if (_isReasonShow) {
+                  setState(() {
+                    _isReasonShow = false;
+                  });
+                } else {
+                  setState(() {
+                    _isReasonShow = true;
+                  });
+                }
+              },
+              child: Text(
+                _isReasonShow ? 'Hide Reasons' : 'Show Reasons',
+                style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16.0,
+                  height:
+                      1.5, // adjust line height with the line-height CSS property
+                  decoration: TextDecoration.underline,
+                  color: primaryGray,
+                ),
+              ),
+            ),
+          ),
           Container(
             height: 125,
             decoration: const BoxDecoration(
-              color: primaryOrange,
+              color: staffOrange,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
                 bottomRight: Radius.circular(20.0),
@@ -839,7 +892,7 @@ class _EditViewState extends State<EditView> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryOrange,
+                backgroundColor: staffOrange,
                 padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
                 shape: const CircleBorder(),
                 fixedSize: const Size.fromRadius(25),
