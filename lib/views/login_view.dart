@@ -40,8 +40,6 @@ class _LoginViewState extends State<LoginView> {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       // User is already signed in
-      //////////////////////CHANGE !user.emailVerified to user.emailVerified when do mail message
-      if(!user.emailVerified){
       Future.delayed(Duration.zero, () async {
         await Navigator.of(context).pushNamedAndRemoveUntil(
           // navigates to homeRoute screen and removes previous routes
@@ -49,14 +47,6 @@ class _LoginViewState extends State<LoginView> {
           (route) => false,
         );
       });
-      }
-      else{
-        Future.delayed(Duration.zero, () async {
-        await Navigator.of(context).pushNamed(
-          verifyEmailRoute,
-        );
-      });
-      }
     } else {
       return Scaffold(
         // resizeToAvoidBottomInset: false,
@@ -83,7 +73,7 @@ class _LoginViewState extends State<LoginView> {
                                 style: TextStyle(
                                   color: primaryOrange,
                                   fontSize: 30,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w600,
                                   fontFamily: "Poppins",
                                 ),
                               ),
@@ -325,60 +315,62 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                      Padding(
-                padding: const EdgeInsets.fromLTRB(0, 30, 16, 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Don’t have an account?",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                            height: 1.5,
-                            color: Color.fromRGBO(0, 0, 0, 0.45),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                    registerRoute,
-                                    (route) => false,
-                                  );
-                                },
-                                child: const Text(
-                                  "Sign up",
-                                  style: TextStyle(
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 14,
-                                    height: 1.0,
-                                    decoration: TextDecoration.underline,
-                                    color: primaryOrange,
-                                  ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 30, 16, 16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Don’t have an account?",
                                   textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    height: 1.5,
+                                    color: Color.fromRGBO(0, 0, 0, 0.45),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                  // )
-                ))
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                            registerRoute,
+                                            (route) => false,
+                                          );
+                                        },
+                                        child: const Text(
+                                          "Sign up",
+                                          style: TextStyle(
+                                            fontFamily: "Poppins",
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14,
+                                            height: 1.0,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            color: primaryOrange,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                          // )
+                        ))
                   ],
                 ),
               ),
@@ -444,7 +436,7 @@ class _LoginViewState extends State<LoginView> {
         ),
       );
     }
-    return Container( color: Colors.white,child: const Text(""));
+    return Container(color: Colors.white, child: const Text(""));
   }
 
   bool _isValidEmail(String email) {

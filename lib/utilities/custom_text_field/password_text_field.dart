@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/color.dart';
+
 class PasswordTextField extends StatelessWidget {
   const PasswordTextField({
     Key? key,
@@ -24,7 +26,7 @@ class PasswordTextField extends StatelessWidget {
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),

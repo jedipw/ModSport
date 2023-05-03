@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../constants/color.dart';
 
-class FnameTextField extends StatelessWidget {
+class QuestionTextField extends StatelessWidget {
   final TextEditingController controller;
-  final bool isFnameValid;
-  const FnameTextField({
+  final bool isQuestionValid;
+  const QuestionTextField({
     Key? key,
     required this.controller,
-    required this.isFnameValid,
+    required this.isQuestionValid,
   }) : super(key: key);
 
   @override
@@ -16,18 +16,27 @@ class FnameTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
-          child: Text(
-            "Name",
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-              fontSize: 17,
-              height: 1.5,
-              color: primaryGray,
-            ),
-            textAlign: TextAlign.center,
+          child: Row(
+            children: const [
+              Text(
+                "Security Question",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 17,
+                  height: 1.5,
+                  color: primaryGray,
+                ),
+                textAlign: TextAlign.start,
+              ),
+              Tooltip(
+                message: 'In case you forget your password',
+                preferBelow: false,
+                child: Icon(Icons.info_outline,color: primaryGray,size: 18,),
+              )
+            ],
           ),
         ),
         Container(
@@ -44,7 +53,7 @@ class FnameTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            keyboardType: isFnameValid ? TextInputType.name : null,
+            keyboardType: isQuestionValid ? TextInputType.name : null,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
@@ -58,9 +67,9 @@ class FnameTextField extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isFnameValid)
+              if (!isQuestionValid)
                 const Text(
-                  "Please enter your name using only letters and hyphens (-)",
+                  "Please enter your secure question with at least 10 characters.",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',

@@ -13,11 +13,11 @@ class ChangePasswordView extends StatefulWidget {
 class _ChangePasswordViewState extends State<ChangePasswordView> {
   final int _currentDrawerIndex = 3;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  // final TextEditingController _currentPasswordController =
+ // final TextEditingController _currentPasswordController =
   //     TextEditingController();
   // final TextEditingController _newPasswordController = TextEditingController();
   // final TextEditingController _confirmPasswordController =
-  //     TextEditingController();
+  //     TextEditingController(); 
 
   @override
   Widget build(BuildContext context) {

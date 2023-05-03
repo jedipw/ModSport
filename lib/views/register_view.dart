@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/utilities/custom_text_field/answer_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/fname_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/lname_text_field.dart';
+import 'package:modsport/utilities/custom_text_field/question_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/reg_password_field.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,15 +28,25 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController questionController = TextEditingController();
+  final TextEditingController answerController = TextEditingController();
 
-  bool _isEmailValid = true;
   bool _isFnameValid = true;
   bool _isLnameValid = true;
+  bool _isEmailValid = true;
   bool _isPasswordOk = true;
+  bool _isQuestionValid = true;
+  bool _isAnswerValid = true;
 
   @override
   void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
     emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    questionController.dispose();
+    answerController.dispose();
     super.dispose();
   }
 
@@ -82,11 +94,17 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   // Don't have verification yet
                   FnameTextField(
-                      controller: firstNameController, isFnameValid: _isFnameValid),
+                      controller: firstNameController,
+                      isFnameValid:
+                          _isValidName(firstNameController.text.toString())),
                   LnameTextField(
-                      controller: lastNameController, isLnameValid: _isLnameValid),
+                      controller: lastNameController,
+                      isLnameValid:
+                          _isValidName(lastNameController.text.toString())),
                   EmailTextField(
-                      controller: emailController, isEmailValid: _isEmailValid),
+                      controller: emailController,
+                      isEmailValid:
+                          _isValidEmail(emailController.text.toString())),
                   RegPasswordField(
                     passwordController: passwordController,
                     passwordStat: _isValidPassword(
@@ -103,6 +121,14 @@ class _RegisterViewState extends State<RegisterView> {
                         "confirm password"),
                     isPasswordOk: _isPasswordOk,
                   ),
+                  QuestionTextField(
+                      controller: questionController,
+                      isQuestionValid:
+                          _isValidQuestion(questionController.text.toString())),
+                  AnswerTextField(
+                      controller: answerController,
+                      isAnswerValid:
+                          _isValidAnswer(answerController.text.toString())),
 
                   Center(
                     // centers child widget in the screen
@@ -122,7 +148,9 @@ class _RegisterViewState extends State<RegisterView> {
                             lastNameController.text.trim(),
                             emailController.text.trim(),
                             passwordController.text.trim(),
-                            confirmPasswordController.text.trim())) {
+                            confirmPasswordController.text.trim(),
+                            questionController.text.trim(),
+                            answerController.text.trim())) {
                           showAccountConfirmationModal(
                             context,
                             () async {
@@ -151,13 +179,15 @@ class _RegisterViewState extends State<RegisterView> {
                                           .trim()
                                           .toLowerCase(),
                                       'hasRole': false,
+                                      'question':
+                                          questionController.text.trim(),
+                                      'answer': answerController.text.trim(),
                                     })
                                     .then((value) {
                                       log('User added to Firestore');
                                     })
                                     .catchError((error) {
-                                      log(
-                                          'Error adding user to Firestore: $error');
+                                      log('Error adding user to Firestore: $error');
                                     })
                                     .then(
                                         (value) => Navigator.of(context).pop())
@@ -169,12 +199,12 @@ class _RegisterViewState extends State<RegisterView> {
                                     //     ));
 
 /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
-                                .then((value) => Navigator.of(context).pushNamedAndRemoveUntil(
-                                  // navigates to homeRoute screen and removes previous routes
-                                  loginRoute,
-                                  (route) => false,
-                                ));
-                                
+                                    .then((value) => Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                          // navigates to homeRoute screen and removes previous routes
+                                          loginRoute,
+                                          (route) => false,
+                                        ));
                               } catch (e) {
                                 showErrorModal(
                                   context,
@@ -289,7 +319,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   bool _isValidName(String name) {
     final nameRegex = RegExp(r'^[a-zA-Z- ]+$');
-    return (name != "" && nameRegex.hasMatch(name));
+    return (name != "" && name.length < 30 && nameRegex.hasMatch(name));
   }
 
   String _isValidPassword(String password1, String password2, String p) {
@@ -305,8 +335,16 @@ class _RegisterViewState extends State<RegisterView> {
     return "OK";
   }
 
+  bool _isValidQuestion(String question) {
+    return (question != "" && question.length > 10);
+  }
+
+  bool _isValidAnswer(String answer) {
+    return (answer != "" && answer.length > 3);
+  }
+
   bool _isEverythingOk(String fName, String lName, String email,
-      String password1, String password2) {
+      String password1, String password2, String question, String answer) {
     bool isOk = true;
     if (!_isValidName(fName)) {
       if (mounted) {
@@ -315,6 +353,12 @@ class _RegisterViewState extends State<RegisterView> {
         });
       }
       isOk = false;
+    } else {
+      if (mounted) {
+        setState(() {
+          _isFnameValid = true;
+        });
+      }
     }
     if (!_isValidName(lName)) {
       if (mounted) {
@@ -323,6 +367,12 @@ class _RegisterViewState extends State<RegisterView> {
         });
       }
       isOk = false;
+    } else {
+      if (mounted) {
+        setState(() {
+          _isLnameValid = true;
+        });
+      }
     }
     if (!_isValidEmail(email)) {
       if (mounted) {
@@ -331,6 +381,12 @@ class _RegisterViewState extends State<RegisterView> {
         });
       }
       isOk = false;
+    } else {
+      if (mounted) {
+        setState(() {
+          _isEmailValid = true;
+        });
+      }
     }
     if (_isValidPassword(password1, password2, "") != "OK") {
       if (mounted) {
@@ -339,6 +395,40 @@ class _RegisterViewState extends State<RegisterView> {
         });
       }
       isOk = false;
+    } else {
+      if (mounted) {
+        setState(() {
+          _isPasswordOk = true;
+        });
+      }
+    }
+    if (!_isValidQuestion(question)) {
+      if (mounted) {
+        setState(() {
+          _isQuestionValid = false;
+        });
+      }
+      isOk = false;
+    } else {
+      if (mounted) {
+        setState(() {
+          _isQuestionValid = true;
+        });
+      }
+    }
+    if (!_isValidAnswer(answer)) {
+      if (mounted) {
+        setState(() {
+          _isAnswerValid = false;
+        });
+      }
+      isOk = false;
+    } else {
+      if (mounted) {
+        setState(() {
+          _isAnswerValid = true;
+        });
+      }
     }
     return isOk;
   }

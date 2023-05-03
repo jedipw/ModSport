@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 
 class RegConPasswordField extends StatelessWidget {
   const RegConPasswordField({
@@ -26,7 +27,7 @@ class RegConPasswordField extends StatelessWidget {
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Colors.black,
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -56,7 +57,7 @@ class RegConPasswordField extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(13.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               if (!isPasswordOk && passwordStat != "OK")

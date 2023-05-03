@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/color.dart';
+
 class LnameTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool isLnameValid;
@@ -23,7 +25,7 @@ class LnameTextField extends StatelessWidget {
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
