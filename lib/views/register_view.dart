@@ -95,16 +95,12 @@ class _RegisterViewState extends State<RegisterView> {
                   // Don't have verification yet
                   FnameTextField(
                       controller: firstNameController,
-                      isFnameValid:
-                          _isValidName(firstNameController.text.toString())),
+                      isFnameValid: _isFnameValid),
                   LnameTextField(
                       controller: lastNameController,
-                      isLnameValid:
-                          _isValidName(lastNameController.text.toString())),
+                      isLnameValid: _isLnameValid),
                   EmailTextField(
-                      controller: emailController,
-                      isEmailValid:
-                          _isValidEmail(emailController.text.toString())),
+                      controller: emailController, isEmailValid: _isEmailValid),
                   RegPasswordField(
                     passwordController: passwordController,
                     passwordStat: _isValidPassword(
@@ -123,12 +119,10 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                   QuestionTextField(
                       controller: questionController,
-                      isQuestionValid:
-                          _isValidQuestion(questionController.text.toString())),
+                      isQuestionValid: _isQuestionValid),
                   AnswerTextField(
                       controller: answerController,
-                      isAnswerValid:
-                          _isValidAnswer(answerController.text.toString())),
+                      isAnswerValid: _isAnswerValid),
 
                   Center(
                     // centers child widget in the screen
