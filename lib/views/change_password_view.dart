@@ -82,71 +82,47 @@ class _CustomPageViewState extends State<CustomPageView> {
 
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      physics: NeverScrollableScrollPhysics(),
-      controller: _controller,
+    return Row(
       children: [
-        // First page
-        Row(
+        Column(
           children: [
-            Column(
-              children: [
-                Container(
-                  width: 200,
-                  height: 200,
-                  margin: const EdgeInsets.only(
-                    top: 136,
-                    left: 113,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: primaryOrange,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Transform.rotate(
-                    angle: 38.67 * ((22 / 7) / 180),
-                    child: const Icon(
-                      Icons.key,
-                      size: 97.86,
-                      color: Colors.white,
-                    ),
-                  ),
+            Container(
+              width: 200,
+              height: 200,
+              margin: const EdgeInsets.only(
+                top: 136,
+                left: 113,
+              ),
+              decoration: const BoxDecoration(
+                color: primaryOrange,
+                shape: BoxShape.circle,
+              ),
+              child: Transform.rotate(
+                angle: 38.67 * ((22 / 7) / 180),
+                child: const Icon(
+                  Icons.key,
+                  size: 97.86,
+                  color: Colors.white,
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        _controller.animateToPage(
-                          1,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.ease,
-                        );
-                      },
-                      child: const Text("Next"),
-                    ),
-                  ],
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.animateToPage(
+                      1,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.ease,
+                    );
+                  },
+                  child: const Text("Next"),
                 ),
               ],
             ),
           ],
         ),
-
-        // Second page
-        Container(
-          color: Colors.red,
-          child: Center(
-            child: ElevatedButton(
-              onPressed: () {
-                _controller.animateToPage(
-                  0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.ease,
-                );
-              },
-              child: const Text("Back"),
-            ),
-          ),
-        )
       ],
     );
   }

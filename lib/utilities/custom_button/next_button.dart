@@ -38,7 +38,7 @@ class CustomPageViewButton extends StatelessWidget {
         shadowColor: Colors.black.withOpacity(0.25),
       ),
       child: const Text(
-        "Next",
+        "Send",
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,

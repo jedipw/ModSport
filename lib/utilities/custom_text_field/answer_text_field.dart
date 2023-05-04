@@ -17,7 +17,7 @@ class AnswerTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
+          padding: const EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Row(
             children: const [
               Text(

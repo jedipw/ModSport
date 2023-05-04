@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-import 'package:modsport/utilities/custom_text_field/answer_text_field.dart';
+// import 'package:modsport/utilities/custom_text_field/answer_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/fname_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/lname_text_field.dart';
-import 'package:modsport/utilities/custom_text_field/question_text_field.dart';
+// import 'package:modsport/utilities/custom_text_field/question_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/reg_password_field.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,8 +35,8 @@ class _RegisterViewState extends State<RegisterView> {
   bool _isLnameValid = true;
   bool _isEmailValid = true;
   bool _isPasswordOk = true;
-  bool _isQuestionValid = true;
-  bool _isAnswerValid = true;
+  // bool _isQuestionValid = true;
+  // bool _isAnswerValid = true;
 
   @override
   void dispose() {
@@ -117,12 +117,12 @@ class _RegisterViewState extends State<RegisterView> {
                         "confirm password"),
                     isPasswordOk: _isPasswordOk,
                   ),
-                  QuestionTextField(
-                      controller: questionController,
-                      isQuestionValid: _isQuestionValid),
-                  AnswerTextField(
-                      controller: answerController,
-                      isAnswerValid: _isAnswerValid),
+                  // QuestionTextField(
+                  //     controller: questionController,
+                  //     isQuestionValid: _isQuestionValid),
+                  // AnswerTextField(
+                  //     controller: answerController,
+                  //     isAnswerValid: _isAnswerValid),
 
                   Center(
                     // centers child widget in the screen
@@ -173,9 +173,9 @@ class _RegisterViewState extends State<RegisterView> {
                                           .trim()
                                           .toLowerCase(),
                                       'hasRole': false,
-                                      'question':
-                                          questionController.text.trim(),
-                                      'answer': answerController.text.trim(),
+                                      // 'question':
+                                      //     questionController.text.trim(),
+                                      // 'answer': answerController.text.trim(),
                                     })
                                     .then((value) {
                                       log('User added to Firestore');
@@ -329,13 +329,13 @@ class _RegisterViewState extends State<RegisterView> {
     return "OK";
   }
 
-  bool _isValidQuestion(String question) {
-    return (question != "" && question.length > 10);
-  }
+  // bool _isValidQuestion(String question) {
+  //   return (question != "" && question.length > 10);
+  // }
 
-  bool _isValidAnswer(String answer) {
-    return (answer != "" && answer.length > 3);
-  }
+  // bool _isValidAnswer(String answer) {
+  //   return (answer != "" && answer.length > 3);
+  // }
 
   bool _isEverythingOk(String fName, String lName, String email,
       String password1, String password2, String question, String answer) {
@@ -396,34 +396,34 @@ class _RegisterViewState extends State<RegisterView> {
         });
       }
     }
-    if (!_isValidQuestion(question)) {
-      if (mounted) {
-        setState(() {
-          _isQuestionValid = false;
-        });
-      }
-      isOk = false;
-    } else {
-      if (mounted) {
-        setState(() {
-          _isQuestionValid = true;
-        });
-      }
-    }
-    if (!_isValidAnswer(answer)) {
-      if (mounted) {
-        setState(() {
-          _isAnswerValid = false;
-        });
-      }
-      isOk = false;
-    } else {
-      if (mounted) {
-        setState(() {
-          _isAnswerValid = true;
-        });
-      }
-    }
+    // if (!_isValidQuestion(question)) {
+    //   if (mounted) {
+    //     setState(() {
+    //       _isQuestionValid = false;
+    //     });
+    //   }
+    //   isOk = false;
+    // } else {
+    //   if (mounted) {
+    //     setState(() {
+    //       _isQuestionValid = true;
+    //     });
+    //   }
+    // }
+    // if (!_isValidAnswer(answer)) {
+    //   if (mounted) {
+    //     setState(() {
+    //       _isAnswerValid = false;
+    //     });
+    //   }
+    //   isOk = false;
+    // } else {
+    //   if (mounted) {
+    //     setState(() {
+    //       _isAnswerValid = true;
+    //     });
+    //   }
+    // }
     return isOk;
   }
 }

@@ -40,13 +40,23 @@ class _LoginViewState extends State<LoginView> {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       // User is already signed in
-      Future.delayed(Duration.zero, () async {
-        await Navigator.of(context).pushNamedAndRemoveUntil(
-          // navigates to homeRoute screen and removes previous routes
-          homeRoute,
-          (route) => false,
-        );
-      });
+      if (user.emailVerified) {
+        Future.delayed(Duration.zero, () async {
+          await Navigator.of(context).pushNamedAndRemoveUntil(
+            // navigates to homeRoute screen and removes previous routes
+            homeRoute,
+            (route) => false,
+          );
+        });
+      } else {
+        Future.delayed(Duration.zero, () async {
+          await Navigator.of(context).pushNamedAndRemoveUntil(
+            // navigates to homeRoute screen and removes previous routes
+            verifyEmailRoute,
+            (route) => false,
+          );
+        });
+      }
     } else {
       return Scaffold(
         // resizeToAvoidBottomInset: false,
