@@ -275,9 +275,10 @@ class _EditViewState extends State<EditView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             const SizedBox(width: 20),
                             Text(
@@ -297,6 +298,7 @@ class _EditViewState extends State<EditView> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
+                            const SizedBox(width: 20),
                             Text(
                               _zoneName,
                               style: const TextStyle(
