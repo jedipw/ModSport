@@ -187,6 +187,7 @@ class _LoginViewState extends State<LoginView> {
                                         try {
                                           showLoadModal(context);
                                           try {
+                                            // This is sign in with firebase
                                             await FirebaseAuth.instance
                                                 .signInWithEmailAndPassword(
                                                     email: email,
