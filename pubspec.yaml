@@ -21,6 +21,7 @@ dependencies:
   shimmer: ^2.0.0
   flutter_native_splash: ^2.2.19
   dio: ^4.0.0
+  flutter_local_notifications: ^14.0.0+1
 
 dev_dependencies:
   flutter_test:
