@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 
-class FnameTextField extends StatelessWidget {
+import '../../constants/color.dart';
+
+class EmailTextField extends StatelessWidget {
   final TextEditingController controller;
-  final bool isFnameValid;
-  const FnameTextField({
+  final bool isObscure;
+  final bool isEmailValid;
+  final FocusNode? focusNode;
+  
+  const EmailTextField({
     Key? key,
     required this.controller,
-    required this.isFnameValid,
+    this.isObscure = false,
+    required this.isEmailValid,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -17,13 +24,13 @@ class FnameTextField extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            "Name",
+            "Email",
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -42,23 +49,27 @@ class FnameTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            keyboardType: isFnameValid ? TextInputType.name : null,
+            autofocus: true,
+            keyboardType: isEmailValid ? TextInputType.emailAddress : null,
+            obscureText: isObscure,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
             decoration: const InputDecoration(
+              hintText: "user12345@kmutt.ac.th" ,
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
+            focusNode: focusNode,
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isFnameValid)
+              if (!isEmailValid)
                 const Text(
-                  "Please enter your name using only letters and hyphens (-)",
+                  "Please enter a valid email.",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',

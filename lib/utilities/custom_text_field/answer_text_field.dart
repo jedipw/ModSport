@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 
-class EmailTextField extends StatelessWidget {
+import '../../constants/color.dart';
+
+class AnswerTextField extends StatelessWidget {
   final TextEditingController controller;
-  final bool isObscure;
-  final bool isEmailValid;
-  final FocusNode? focusNode;
-  
-  const EmailTextField({
+  final bool isAnswerValid;
+  const AnswerTextField({
     Key? key,
     required this.controller,
-    this.isObscure = false,
-    required this.isEmailValid,
-    this.focusNode,
+    required this.isAnswerValid,
   }) : super(key: key);
 
   @override
@@ -19,18 +16,22 @@ class EmailTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
-          child: Text(
-            "Email",
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-              fontSize: 17,
-              height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
-            ),
-            textAlign: TextAlign.center,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 0, 3),
+          child: Row(
+            children: const [
+              Text(
+                "Security Answer",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 17,
+                  height: 1.5,
+                  color: primaryGray,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ],
           ),
         ),
         Container(
@@ -47,27 +48,23 @@ class EmailTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            autofocus: true,
-            keyboardType: isEmailValid ? TextInputType.emailAddress : null,
-            obscureText: isObscure,
+            keyboardType: isAnswerValid ? TextInputType.name : null,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
             decoration: const InputDecoration(
-              hintText: "user12345@kmutt.ac.th" ,
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
-            focusNode: focusNode,
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isEmailValid)
+              if (!isAnswerValid)
                 const Text(
-                  "Please enter a valid email.",
+                  "Please enter your secure answer with at least 3 characters.",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',
