@@ -407,6 +407,330 @@ dynamic showDoneConfirmationModal(
   );
 }
 
+dynamic showDisableExitConfirmationModal(
+    BuildContext context, OnPressedCallBack onPressed) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.white.withOpacity(0.5),
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        contentPadding: EdgeInsets.zero,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Column(
+              children: const [
+                SizedBox(height: 40),
+                Text(
+                  'Do you want',
+                  style: TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                    color: staffOrange,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'to exit the page?',
+                  style: TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                    color: staffOrange,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                SizedBox(height: 17),
+                Text(
+                  'Your information will not',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'be saved and your reservation',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                Text(
+                  ' will not be disabled.',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                SizedBox(height: 50),
+              ],
+            ),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 84,
+                      height: 43,
+                      child: TextButton(
+                        onPressed: onPressed,
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            staffOrange,
+                          ),
+                          foregroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20.0,
+                            height: 1.2,
+                            letterSpacing: 0.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 34.0),
+                    SizedBox(
+                      width: 94,
+                      height: 43,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            primaryGray,
+                          ),
+                          foregroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'No',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20.0,
+                            height: 1.2,
+                            letterSpacing: 0.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+dynamic showEditExitConfirmationModal(
+    BuildContext context, OnPressedCallBack onPressed, OnPressedCallBack dontSaveOnPressed) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.white.withOpacity(0.5),
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        contentPadding: EdgeInsets.zero,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Column(
+              children: const [
+                SizedBox(height: 40),
+                Text(
+                  'Do you want',
+                  style: TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                    color: staffOrange,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'to save the edit?',
+                  style: TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                    color: staffOrange,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                SizedBox(height: 17),
+              ],
+            ),
+            const SizedBox(height: 35.0),
+            Column(
+              children: [
+                SizedBox(
+                  width: 247,
+                  height: 34,
+                  child: TextButton(
+                    onPressed: onPressed,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        staffOrange,
+                      ),
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                        Colors.white,
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20.0,
+                        height: 1.2,
+                        letterSpacing: 0.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                SizedBox(
+                  width: 247,
+                  height: 34,
+                  child: TextButton(
+                    onPressed: dontSaveOnPressed,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        Colors.white,
+                      ),
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                        Colors.white,
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: const BorderSide(
+                            width: 1.5,
+                            color: Color(0xFFDD5726),
+                          ),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      'Don\'t Save',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20.0,
+                        height: 1.2,
+                        letterSpacing: 0.0,
+                        color: primaryOrange,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30.0),
+                SizedBox(
+                  width: 247,
+                  height: 34,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromRGBO(128, 128, 128, 0.5),
+                      ),
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                        Colors.white,
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20.0,
+                        height: 1.2,
+                        letterSpacing: 0.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 dynamic showCancelConfirmationModal(
     BuildContext context, OnPressedCallBack onPressed) {
   showDialog(
@@ -811,11 +1135,11 @@ dynamic showLogoutConfirmationModal(BuildContext context,
           mainAxisSize: MainAxisSize.min,
           children: [
             Column(
-              children: [
-                const SizedBox(height: 40),
+              children: const [
+                SizedBox(height: 40),
                 Text(
-                  'Are you sure\nyou want to\n$modeWord ?',
-                  style: const TextStyle(
+                  'Do you want\nto sign out ?',
+                  style: TextStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
@@ -825,7 +1149,7 @@ dynamic showLogoutConfirmationModal(BuildContext context,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30),
               ],
             ),
             Column(
@@ -842,14 +1166,16 @@ dynamic showLogoutConfirmationModal(BuildContext context,
                           await FirebaseAuth.instance
                               .signOut()
                               .then((value) => Navigator.of(context).pop())
-                              .then((value) => Navigator.of(context).pushNamed(
-                                    // navigates to homeRoute screen and removes previous routes
-                                    loginRoute,
-                                  ));
+                              .then(
+                                (value) => Navigator.of(context).pushNamed(
+                                  // navigates to homeRoute screen and removes previous routes
+                                  loginRoute,
+                                ),
+                              );
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryGreen,
+                            primaryRed,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
@@ -879,7 +1205,7 @@ dynamic showLogoutConfirmationModal(BuildContext context,
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryRed,
+                            primaryGray,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,

@@ -381,7 +381,41 @@ class _DisableViewState extends State<DisableView> {
                 top: 65,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    widget.mode == editMode
+                        ? reasonController.text != widget.reason &&
+                                (numOfCharacter >= 10 && numOfCharacter <= 250)
+                            ? showEditExitConfirmationModal(context, () async {
+                                Navigator.of(context).pop();
+                                showLoadModal(context);
+                                try {
+                                  await FirebaseCloudStorage()
+                                      .updateDisableReason(
+                                        widget.disableIds,
+                                        reasonController.text,
+                                      )
+                                      .then((_) => Navigator.of(context).pop())
+                                      .then((_) => Navigator.of(context).pop());
+                                } catch (e) {
+                                  // Handle error
+                                  showErrorModal(
+                                    context,
+                                    () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                }
+                              }, () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              })
+                            : Navigator.of(context).pop()
+                        : numOfCharacter >= 10
+                            ? showDisableExitConfirmationModal(context, () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              })
+                            : Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
