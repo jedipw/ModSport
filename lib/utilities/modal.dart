@@ -1121,7 +1121,6 @@ dynamic showSaveConfirmationModal(
 
 dynamic showLogoutConfirmationModal(BuildContext context,
     OnPressedCallBack onPressed, bool showSuccess, String mode) {
-  String modeWord = 'sign out';
 
   showDialog(
     context: context,

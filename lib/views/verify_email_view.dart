@@ -148,10 +148,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               log(user.toString());
                               try {
                                 verifyEmail()
-                                    .then((_) => {Navigator.of(context).pop()})
+                                    .then((_) => {Navigator.of(context).pop()});
                                     //
                                     // .then((value) async => await user!.reload())
-                                    .then((value) async => {await signOut()});
+                                    // .then((value) async => {await signOut()});
                                     // .then((_) =>
                                     //     showSuccessMailModal(context, true));
 
