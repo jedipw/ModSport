@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 
 import '../constants/routes.dart';
 
@@ -571,8 +572,8 @@ dynamic showDisableExitConfirmationModal(
   );
 }
 
-dynamic showEditExitConfirmationModal(
-    BuildContext context, OnPressedCallBack onPressed, OnPressedCallBack dontSaveOnPressed) {
+dynamic showEditExitConfirmationModal(BuildContext context,
+    OnPressedCallBack onPressed, OnPressedCallBack dontSaveOnPressed) {
   showDialog(
     context: context,
     barrierColor: Colors.white.withOpacity(0.5),
@@ -1163,9 +1164,13 @@ dynamic showLogoutConfirmationModal(BuildContext context,
                       child: TextButton(
                         onPressed: () async {
                           showLoadModal(context);
+                          String userId =
+                              FirebaseAuth.instance.currentUser!.uid;
                           await FirebaseAuth.instance
                               .signOut()
                               .then((value) => Navigator.of(context).pop())
+                              .then((_) => FirebaseCloudStorage()
+                                  .removeDeviceTokenAndUserId(userId))
                               .then(
                                 (value) => Navigator.of(context).pushNamed(
                                   // navigates to homeRoute screen and removes previous routes

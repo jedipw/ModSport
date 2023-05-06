@@ -5,6 +5,7 @@ const reservationCollection = 'reservation';
 const userCollection = 'user';
 const userReservationCollection = 'userreservation';
 const zoneCollection = 'zone';
+const deviceCollection = 'device';
 
 // ID field
 const locationIdField = 'locationId';
@@ -34,3 +35,6 @@ const zoneNameField = 'zoneName';
 
 // User reservation
 const isSuccessfulField = 'isSuccessful';
+
+// Device field
+const deviceTokenField = 'deviceToken';

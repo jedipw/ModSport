@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -20,14 +21,18 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
 
   // Running the app
   runApp(const MainApp());
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
 }
 
 // MainApp widget that builds the app
@@ -52,7 +57,7 @@ class _MainAppState extends State<MainApp> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     email.dispose();
     password.dispose();
     super.dispose();

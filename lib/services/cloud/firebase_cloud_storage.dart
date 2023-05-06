@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/services/cloud/cloud_storage_constants.dart';
 import 'package:modsport/services/cloud/cloud_storage_exceptions.dart';
@@ -14,6 +15,7 @@ class FirebaseCloudStorage {
       FirebaseFirestore.instance.collection(userReservationCollection);
   final res = FirebaseFirestore.instance.collection(reservationCollection);
   final disable = FirebaseFirestore.instance.collection(disableCollection);
+  final device = FirebaseFirestore.instance.collection(deviceCollection);
 
   Future<bool> getUserHasRole(String userId) async {
     try {
@@ -34,26 +36,26 @@ class FirebaseCloudStorage {
   }
 
   Future<List<ZoneData>> getAllZones() async {
-  try {
-    QuerySnapshot snapshot = await zone.get();
-    log(snapshot.toString());
-    return snapshot.docs.map((document) => ZoneData(
-      zoneId: document.id,
-        imgUrl: document.get(imgUrlField),
-        locationId: document.get(locationIdField),
-        zoneName: document.get(zoneNameField)
-    )).toList();
-  } catch (e) {
-    throw CouldNotGetException();
+    try {
+      QuerySnapshot snapshot = await zone.get();
+      log(snapshot.toString());
+      return snapshot.docs
+          .map((document) => ZoneData(
+              zoneId: document.id,
+              imgUrl: document.get(imgUrlField),
+              locationId: document.get(locationIdField),
+              zoneName: document.get(zoneNameField)))
+          .toList();
+    } catch (e) {
+      throw CouldNotGetException();
+    }
   }
-}
-
 
   Future<ZoneData> getZone(String zoneId) async {
     try {
       DocumentSnapshot documentSnapshot = await zone.doc(zoneId).get();
       return ZoneData(
-        zoneId: documentSnapshot.id,
+          zoneId: documentSnapshot.id,
           imgUrl: documentSnapshot[imgUrlField],
           locationId: documentSnapshot[locationIdField],
           zoneName: documentSnapshot[zoneNameField]);
@@ -61,7 +63,6 @@ class FirebaseCloudStorage {
       throw CouldNotGetException();
     }
   }
-
 
   Future<List<ReservationData>> getReservation(
       String zoneId, bool isDisableMenu, int selectedDateIndex) async {
@@ -626,6 +627,28 @@ class FirebaseCloudStorage {
       return reservations;
     } catch (e) {
       throw CouldNotGetException();
+    }
+  }
+
+  void addDeviceTokenAndUserId(String userId) async {
+    try {
+      String? deviceToken = await FirebaseMessaging.instance.getToken();
+      // Use device token as the document ID in "device" collection
+      await device.doc(deviceToken).set({
+        userIdField: userId,
+      });
+    } catch (error) {
+      throw CouldNotCreateException();
+    }
+  }
+
+  void removeDeviceTokenAndUserId(String userId) async {
+    try {
+      String? deviceToken = await FirebaseMessaging.instance.getToken();
+      // Delete document by ID in "device" collection
+      await device.doc(deviceToken).delete();
+    } catch (error) {
+      throw CouldNotDeleteException;
     }
   }
 }
