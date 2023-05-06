@@ -69,9 +69,12 @@ class TimeSlotLoading extends StatelessWidget {
                             highlightColor:
                                 const Color.fromRGBO(173, 173, 173, 0.824),
                             child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.white,
+                              ),
                               width: 150,
-                              height: 30.0,
-                              color: Colors.white,
+                              height: 25.0,
                             )),
                         Row(
                           children: [
@@ -84,9 +87,12 @@ class TimeSlotLoading extends StatelessWidget {
                               highlightColor:
                                   const Color.fromRGBO(173, 173, 173, 0.824),
                               child: Container(
-                                width: 40,
-                                height: 30.0,
-                                color: Colors.white,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.white,
+                                ),
+                                width: 50,
+                                height: 25.0,
                               ),
                             )
                           ],

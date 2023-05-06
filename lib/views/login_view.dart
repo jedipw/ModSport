@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:modsport/utilities/custom_text_field/lemail_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/password_text_field.dart';
 
@@ -199,6 +200,7 @@ class _LoginViewState extends State<LoginView> {
                                                   .currentUser!.emailVerified) {
                                                 Future.delayed(Duration.zero,
                                                     () async {
+                                                  FirebaseCloudStorage().addDeviceTokenAndUserId(FirebaseAuth.instance.currentUser!.uid);
                                                   await Navigator.of(context)
                                                       .pushNamedAndRemoveUntil(
                                                     // navigates to homeRoute screen and removes previous routes
