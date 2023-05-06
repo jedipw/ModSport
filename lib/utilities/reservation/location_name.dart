@@ -46,9 +46,12 @@ class LocationName extends StatelessWidget {
                           highlightColor:
                               const Color.fromRGBO(173, 173, 173, 0.824),
                           child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white,
+                            ),
                             width: double.infinity,
                             height: 10.0,
-                            color: Colors.white,
                           )),
                     )
                   : Flexible(

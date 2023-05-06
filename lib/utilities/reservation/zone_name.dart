@@ -33,10 +33,14 @@ class ZoneName extends StatelessWidget {
                 baseColor: const Color.fromARGB(255, 216, 216, 216),
                 highlightColor: const Color.fromRGBO(173, 173, 173, 0.824),
                 child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.white,
+                  ),
                   width: 150,
                   height: 30.0,
-                  color: Colors.white,
-                ))
+                ),
+              )
             : Opacity(
                 opacity: isSwipingUp ? 0.33 : 1,
                 child: Row(

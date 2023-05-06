@@ -12,7 +12,7 @@ class EnableButton extends StatelessWidget {
     return SizedBox(
       height: 55,
       width: 140,
-      child: TextButton(
+      child: TextButton( 
         style: ButtonStyle(
           side: MaterialStateProperty.all(
             const BorderSide(

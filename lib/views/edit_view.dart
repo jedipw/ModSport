@@ -534,20 +534,23 @@ class _EditViewState extends State<EditView> {
                                                       .spaceBetween,
                                               children: [
                                                 Shimmer.fromColors(
-                                                    baseColor:
-                                                        const Color.fromARGB(
-                                                            255, 216, 216, 216),
-                                                    highlightColor:
-                                                        const Color.fromRGBO(
-                                                            173,
-                                                            173,
-                                                            173,
-                                                            0.824),
-                                                    child: Container(
-                                                      width: 150,
-                                                      height: 30.0,
+                                                  baseColor:
+                                                      const Color.fromARGB(
+                                                          255, 216, 216, 216),
+                                                  highlightColor:
+                                                      const Color.fromRGBO(
+                                                          173, 173, 173, 0.824),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
                                                       color: Colors.white,
-                                                    )),
+                                                    ),
+                                                    width: 150,
+                                                    height: 25.0,
+                                                  ),
+                                                ),
                                                 Row(
                                                   children: [
                                                     const Icon(Icons.people,
@@ -568,9 +571,15 @@ class _EditViewState extends State<EditView> {
                                                               173,
                                                               0.824),
                                                       child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(30),
+                                                          color: Colors.white,
+                                                        ),
                                                         width: 40,
-                                                        height: 30.0,
-                                                        color: Colors.white,
+                                                        height: 25.0,
                                                       ),
                                                     )
                                                   ],
