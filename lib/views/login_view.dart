@@ -194,28 +194,31 @@ class _LoginViewState extends State<LoginView> {
                                                 .then((value) =>
                                                     Navigator.of(context).pop())
                                                 .then((value) {
-                                              if (FirebaseAuth
-                                                      .instance
-                                                      .currentUser
-                                                      ?.emailVerified ??
-                                                  false) {
-                                                Navigator.of(context)
-                                                    .pushNamedAndRemoveUntil(
-                                                  // navigates to homeRoute screen and removes previous routes
-                                                  homeRoute,
-                                                  (route) => false,
-                                                );
+                                              if (FirebaseAuth.instance
+                                                  .currentUser!.emailVerified) {
+                                                Future.delayed(Duration.zero,
+                                                    () async {
+                                                  await Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    // navigates to homeRoute screen and removes previous routes
+                                                    homeRoute,
+                                                    (route) => false,
+                                                  );
+                                                });
                                               } else {
                                                 /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
                                                 // Navigator.of(context).pushNamed(
                                                 //   verifyEmailRoute,
                                                 // );
-                                                Navigator.of(context)
-                                                    .pushNamedAndRemoveUntil(
-                                                  // navigates to homeRoute screen and removes previous routes
-                                                  homeRoute,
-                                                  (route) => false,
-                                                );
+                                                Future.delayed(Duration.zero,
+                                                    () async {
+                                                  await Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    // navigates to homeRoute screen and removes previous routes
+                                                    verifyEmailRoute,
+                                                    (route) => false,
+                                                  );
+                                                });
                                               }
                                             });
                                           } on FirebaseAuthException catch (e) {
@@ -225,6 +228,7 @@ class _LoginViewState extends State<LoginView> {
                                                 _isSomeThingWrong = true;
                                               });
                                             }
+                                          } finally {
                                             Navigator.of(context).pop();
                                           }
                                         } on FirebaseAuthException catch (e) {

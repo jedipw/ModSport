@@ -814,7 +814,7 @@ dynamic showLogoutConfirmationModal(BuildContext context,
               children: [
                 const SizedBox(height: 40),
                 Text(
-                  'Are you sure\nyou want to\n$modeWord ?',
+                  'Do you want to\n$modeWord ?',
                   style: const TextStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w600,
@@ -849,10 +849,16 @@ dynamic showLogoutConfirmationModal(BuildContext context,
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryGreen,
+                            primaryRed,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                         child: const Text(
@@ -879,10 +885,16 @@ dynamic showLogoutConfirmationModal(BuildContext context,
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryRed,
+                            primaryGray,
                           ),
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                         child: const Text(
