@@ -1265,7 +1265,7 @@ dynamic showSuccessMailModal(BuildContext context, bool needToClose) {
                   shape: BoxShape.circle,
                   color: primaryGreen,
                 ),
-                child: const Icon(Icons.check, color: Colors.white, size: 80),
+                child: const Icon(Icons.mail, color: Colors.green, size: 80),
               ),
               const SizedBox(height: 30),
               const Text(
