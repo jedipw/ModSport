@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-import 'package:modsport/utilities/customTextFeild/FemailTextField.dart';
-import 'package:modsport/utilities/customTextFeild/PasswordTextField.dart';
+import 'package:modsport/utilities/custom_text_field/lemail_text_field.dart';
+import 'package:modsport/utilities/custom_text_field/password_text_field.dart';
 
 import '../utilities/modal.dart';
 
@@ -38,13 +40,23 @@ class _LoginViewState extends State<LoginView> {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       // User is already signed in
-      Future.delayed(Duration.zero, () async {
-        await Navigator.of(context).pushNamedAndRemoveUntil(
-          // navigates to homeRoute screen and removes previous routes
-          homeRoute,
-          (route) => false,
-        );
-      });
+      if (user.emailVerified) {
+        Future.delayed(Duration.zero, () async {
+          await Navigator.of(context).pushNamedAndRemoveUntil(
+            // navigates to homeRoute screen and removes previous routes
+            homeRoute,
+            (route) => false,
+          );
+        });
+      } else {
+        Future.delayed(Duration.zero, () async {
+          await Navigator.of(context).pushNamedAndRemoveUntil(
+            // navigates to homeRoute screen and removes previous routes
+            verifyEmailRoute,
+            (route) => false,
+          );
+        });
+      }
     } else {
       return Scaffold(
         // resizeToAvoidBottomInset: false,
@@ -71,7 +83,7 @@ class _LoginViewState extends State<LoginView> {
                                 style: TextStyle(
                                   color: primaryOrange,
                                   fontSize: 30,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w600,
                                   fontFamily: "Poppins",
                                 ),
                               ),
@@ -175,6 +187,7 @@ class _LoginViewState extends State<LoginView> {
                                         try {
                                           showLoadModal(context);
                                           try {
+                                            // This is sign in with firebase
                                             await FirebaseAuth.instance
                                                 .signInWithEmailAndPassword(
                                                     email: email,
@@ -182,50 +195,56 @@ class _LoginViewState extends State<LoginView> {
                                                 .then((value) =>
                                                     Navigator.of(context).pop())
                                                 .then((value) {
-                                              if (FirebaseAuth
-                                                      .instance
-                                                      .currentUser
-                                                      ?.emailVerified ??
-                                                  false) {
-                                                Navigator.of(context)
-                                                    .pushNamedAndRemoveUntil(
-                                                  // navigates to homeRoute screen and removes previous routes
-                                                  homeRoute,
-                                                  (route) => false,
-                                                );
+                                              if (FirebaseAuth.instance
+                                                  .currentUser!.emailVerified) {
+                                                Future.delayed(Duration.zero,
+                                                    () async {
+                                                  await Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    // navigates to homeRoute screen and removes previous routes
+                                                    homeRoute,
+                                                    (route) => false,
+                                                  );
+                                                });
                                               } else {
                                                 /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
                                                 // Navigator.of(context).pushNamed(
                                                 //   verifyEmailRoute,
                                                 // );
-                                                Navigator.of(context)
-                                                    .pushNamedAndRemoveUntil(
-                                                  // navigates to homeRoute screen and removes previous routes
-                                                  homeRoute,
-                                                  (route) => false,
-                                                );
+                                                Future.delayed(Duration.zero,
+                                                    () async {
+                                                  await Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    // navigates to homeRoute screen and removes previous routes
+                                                    verifyEmailRoute,
+                                                    (route) => false,
+                                                  );
+                                                });
                                               }
                                             });
                                           } on FirebaseAuthException catch (e) {
+                                            log(e.toString());
                                             if (mounted) {
                                               setState(() {
                                                 _isSomeThingWrong = true;
                                               });
                                             }
+                                          } finally {
                                             Navigator.of(context).pop();
                                           }
                                         } on FirebaseAuthException catch (e) {
+                                          log(e.toString());
                                           if (mounted) {
                                             setState(() {
                                               _isSomeThingWrong = true;
                                             });
                                           }
-                                          // if (e.code == 'user-not-found') {
-                                          //   print('User not found');
-                                          // } else {
-                                          //   print('SOMETHING ELSE HAPPEND');
-                                          //   print(e.code);
-                                          // }
+                                          if (e.code == 'user-not-found') {
+                                            log('User not found');
+                                          } else {
+                                            log('SOMETHING ELSE HAPPENED');
+                                            log(e.code);
+                                          }
                                         }
                                       } else {
                                         if (emailController.text == "" ||
@@ -311,59 +330,62 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                      Padding(
-                padding: const EdgeInsets.fromLTRB(0, 30, 16, 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Don’t have an account?",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                            height: 1.5,
-                            color: Color.fromRGBO(0, 0, 0, 0.45),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pushNamed(
-                                    registerRoute,
-                                  );
-                                },
-                                child: const Text(
-                                  "Sign up",
-                                  style: TextStyle(
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 14,
-                                    height: 1.0,
-                                    decoration: TextDecoration.underline,
-                                    color: primaryOrange,
-                                  ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 30, 16, 16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Don’t have an account?",
                                   textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    height: 1.5,
+                                    color: Color.fromRGBO(0, 0, 0, 0.45),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                  // )
-                ))
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                            registerRoute,
+                                            (route) => false,
+                                          );
+                                        },
+                                        child: const Text(
+                                          "Sign up",
+                                          style: TextStyle(
+                                            fontFamily: "Poppins",
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14,
+                                            height: 1.0,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            color: primaryOrange,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                          // )
+                        ))
                   ],
                 ),
               ),
@@ -429,7 +451,7 @@ class _LoginViewState extends State<LoginView> {
         ),
       );
     }
-    return const Text("Loading...");
+    return Container(color: Colors.white, child: const Text(""));
   }
 
   bool _isValidEmail(String email) {

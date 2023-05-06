@@ -13,11 +13,11 @@ class ChangePasswordView extends StatefulWidget {
 class _ChangePasswordViewState extends State<ChangePasswordView> {
   final int _currentDrawerIndex = 3;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _currentPasswordController =
-      TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  // final TextEditingController _currentPasswordController =
+  //     TextEditingController();
+  // final TextEditingController _newPasswordController = TextEditingController();
+  // final TextEditingController _confirmPasswordController =
+  //     TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +52,78 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   ),
                 ],
               ),
-              
+              // const Expanded(
+              //   child: CustomPageView(),
+              // ),
             ],
           ),
         ),
       );
     }
     return const Text("Loading..");
+  }
+}
+
+class CustomPageView extends StatefulWidget {
+  const CustomPageView({Key? key}) : super(key: key);
+
+  @override
+  State<CustomPageView> createState() => _CustomPageViewState();
+}
+
+class _CustomPageViewState extends State<CustomPageView> {
+  final _controller = PageController(initialPage: 0);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Column(
+          children: [
+            Container(
+              width: 200,
+              height: 200,
+              margin: const EdgeInsets.only(
+                top: 136,
+                left: 113,
+              ),
+              decoration: const BoxDecoration(
+                color: primaryOrange,
+                shape: BoxShape.circle,
+              ),
+              child: Transform.rotate(
+                angle: 38.67 * ((22 / 7) / 180),
+                child: const Icon(
+                  Icons.key,
+                  size: 97.86,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.animateToPage(
+                      1,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.ease,
+                    );
+                  },
+                  child: const Text("Next"),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
-class LnameTextField extends StatelessWidget {
+import '../../constants/color.dart';
+
+class EmailTextField extends StatelessWidget {
   final TextEditingController controller;
-  final bool isLnameValid;
-  const LnameTextField({
+  final bool isObscure;
+  final bool isEmailValid;
+  const EmailTextField({
     Key? key,
     required this.controller,
-    required this.isLnameValid,
+    this.isObscure = false,
+    required this.isEmailValid,
   }) : super(key: key);
 
   @override
@@ -17,13 +21,13 @@ class LnameTextField extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            "Surname",
+            "Email",
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -42,11 +46,13 @@ class LnameTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            keyboardType: isLnameValid ? TextInputType.name : null,
+            keyboardType: isEmailValid ? TextInputType.emailAddress : null,
+            obscureText: isObscure,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
             decoration: const InputDecoration(
+              hintText: "user12345@kmutt.ac.th" ,
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
@@ -56,9 +62,9 @@ class LnameTextField extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isLnameValid)
+              if (!isEmailValid)
                 const Text(
-                  "Please enter your surname using only letters and hyphens (-)",
+                  "Please enter a valid email.",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',
