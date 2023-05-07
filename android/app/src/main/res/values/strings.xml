@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ModSport</string>
+    <string name="default_notification_channel_id">channelId</string>
+</resources>

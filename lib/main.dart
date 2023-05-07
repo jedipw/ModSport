@@ -1,9 +1,9 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 // Importing route constants and custom page route transitions
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/services/notifi_service.dart';
 import 'package:modsport/utilities/page_route.dart';
 import 'package:modsport/views/change_password_view.dart';
 import 'package:modsport/views/forget_password_view.dart';
@@ -21,7 +21,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  NotificationService().initNotification();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -29,10 +29,6 @@ void main() async {
 
   // Running the app
   runApp(const MainApp());
-}
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
 }
 
 // MainApp widget that builds the app

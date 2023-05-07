@@ -10,6 +10,7 @@ import 'package:modsport/constants/mode.dart';
 
 // Import firebase cloud storage
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
+import 'package:modsport/services/notifi_service.dart';
 
 // Import reservation page's utilities
 import 'package:modsport/utilities/reservation/date_list.dart';
@@ -38,8 +39,6 @@ import 'package:modsport/utilities/types.dart';
 import 'package:modsport/views/disable_view.dart';
 import 'package:modsport/views/edit_view.dart';
 
-final String userId = FirebaseAuth.instance.currentUser!.uid;
-
 // Number of Dates that will appear in the date list for normal user
 const int numOfUserDay = 7;
 
@@ -58,6 +57,7 @@ class ReservationView extends StatefulWidget {
 // Creating a State object called _ReservationViewState
 class _ReservationViewState extends State<ReservationView> {
   // Variables that determine whether the data has been successfully retrieve from database
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
   bool _hasRole = false;
   bool _isReservationLoaded = false;
   bool _isZoneLoaded = false;
