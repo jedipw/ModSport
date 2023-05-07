@@ -8,6 +8,7 @@ import 'package:modsport/utilities/drawer.dart';
 // import 'package:path/path.dart';
 
 import '../utilities/custom_text_field/reg_password_field.dart';
+import '../utilities/modal.dart';
 
 class ChangePasswordView extends StatefulWidget {
   const ChangePasswordView({super.key});
@@ -87,13 +88,20 @@ class _CustomPageViewState extends State<CustomPageView> {
   var currentUser = FirebaseAuth.instance.currentUser!;
   changePassword(String oldPassword, String newPassword) async {
     try {
-      log("Hello????????");
       var cred = EmailAuthProvider.credential(
           email: currentUser.email!, password: oldPassword);
       await currentUser
           .reauthenticateWithCredential(cred)
           .then((value) => {currentUser.updatePassword(newPassword)})
-          .then((value) => log("New password set! ${currentUser.toString()}"));
+          .then((value) => log("New password set! ${currentUser.toString()}"))
+          .then((value) => {
+                if (mounted)
+                  {
+                    setState(() {
+                      _isCorrectPassword = true;
+                    })
+                  }
+              });
     } catch (error) {
       log(error.toString());
       if (mounted) {
@@ -202,7 +210,7 @@ class _CustomPageViewState extends State<CustomPageView> {
               minimumSize: MaterialStateProperty.all(const Size(173.42, 64)),
             ),
             onPressed: () {
-              if (isValidPassword(_currentPasswordController.text.toString(),
+              if (isValidPassword(_newPasswordController.text.toString(),
                       _confirmPasswordController.text.toString(), "P") ==
                   "OK") {
                 log("New password OK");
@@ -210,19 +218,18 @@ class _CustomPageViewState extends State<CustomPageView> {
                   setState(() {
                     _isPasswordValid = true;
                   });
+                  showSuccessPasswordModal(context, true);
                 }
-                // changePassword(_currentPasswordController.text.toString(),
-                //     _confirmPasswordController.text.toString());
+                if (_isCorrectPassword) {
+                  changePassword(_currentPasswordController.text.toString(),
+                      _confirmPasswordController.text.toString());
+                }
               } else {
-                log("What");
-                log(isValidPassword(_currentPasswordController.text.toString(),
-                      _confirmPasswordController.text.toString(), "P"));
                 if (mounted) {
                   setState(() {
                     _isPasswordValid = false;
                   });
                 }
-                log("How?");
               }
             },
             child: const Text(

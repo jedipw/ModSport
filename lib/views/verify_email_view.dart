@@ -78,9 +78,11 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     ],
                   ),
                 ),
-                SingleChildScrollView(
-                  child: Expanded(
-                    child: Center(
+                // SingleChildScrollView(
+                  // child: 
+                  // Expanded(
+                  //   child: 
+                    Center(
                         child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -147,8 +149,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               final user = FirebaseAuth.instance.currentUser;
                               log(user.toString());
                               try {
-                                verifyEmail()
-                                    .then((_) => {Navigator.of(context).pop()});
+                                verifyEmail().then((value) => showSuccessMailModal(context,true));
+                                    // .then((_) => {Navigator.of(context).pop()});
                                     //
                                     // .then((value) async => await user!.reload())
                                     // .then((value) async => {await signOut()});
@@ -192,8 +194,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                             ))
                       ],
                     )),
-                  ),
-                ),
+                  // ),
+                // ),
               ],
             ),
           ),
