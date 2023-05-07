@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/custom_text_field/password_text_field.dart';
 import 'package:modsport/utilities/drawer.dart';
@@ -75,11 +74,9 @@ class CustomPageView extends StatefulWidget {
 
 class _CustomPageViewState extends State<CustomPageView> {
   final _controller = PageController(initialPage: 0);
-  final TextEditingController _currentPasswordController =
-      TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  TextEditingController _currentPasswordController = TextEditingController();
+  TextEditingController _newPasswordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
   String userId = "";
   bool _isCorrectPassword = true;
   bool _isPasswordValid = true;
@@ -99,6 +96,9 @@ class _CustomPageViewState extends State<CustomPageView> {
                   {
                     setState(() {
                       _isCorrectPassword = true;
+                      _confirmPasswordController = TextEditingController();
+                      _newPasswordController = TextEditingController();
+                      _currentPasswordController = TextEditingController();
                     })
                   }
               });
@@ -188,6 +188,7 @@ class _CustomPageViewState extends State<CustomPageView> {
                     passwordStat: isValidPassword(
                         _newPasswordController.text.toString(),
                         _confirmPasswordController.text.toString(),
+                        _currentPasswordController.text.toString(),
                         "password"),
                     text: "New Password"),
                 RegPasswordField(
@@ -196,6 +197,7 @@ class _CustomPageViewState extends State<CustomPageView> {
                     passwordStat: isValidPassword(
                         _confirmPasswordController.text.toString(),
                         _newPasswordController.text.toString(),
+                        _currentPasswordController.text.toString(),
                         "confirm password"),
                     text: "Confirm Password"),
               ],
@@ -210,8 +212,11 @@ class _CustomPageViewState extends State<CustomPageView> {
               minimumSize: MaterialStateProperty.all(const Size(173.42, 64)),
             ),
             onPressed: () {
-              if (isValidPassword(_newPasswordController.text.toString(),
-                      _confirmPasswordController.text.toString(), "P") ==
+              if (isValidPassword(
+                      _newPasswordController.text.toString(),
+                      _confirmPasswordController.text.toString(),
+                      _currentPasswordController.text.toString(),
+                      "P") ==
                   "OK") {
                 log("New password OK");
                 if (mounted) {
@@ -250,7 +255,8 @@ class _CustomPageViewState extends State<CustomPageView> {
     );
   }
 
-  String isValidPassword(String password1, String password2, String p) {
+  String isValidPassword(
+      String password1, String password2, String password3, String p) {
     if (password1 == "" || password1.isEmpty) {
       return 'Please enter your $p.';
     }
@@ -259,6 +265,9 @@ class _CustomPageViewState extends State<CustomPageView> {
     }
     if (password1 != password2) {
       return 'Passwords do not match.';
+    }
+    if (password1 == password3 || password1 == password3) {
+      return 'The new password cannot be the same as the old password.';
     }
     return "OK";
   }
