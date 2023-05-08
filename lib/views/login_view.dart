@@ -309,7 +309,7 @@ class _LoginViewState extends State<LoginView> {
                                               borderRadius:
                                                   BorderRadius.circular(40))),
                                       fixedSize: MaterialStateProperty.all(
-                                          const Size(173.42, 64)),
+                                          const Size(130, 64)),
                                       side: MaterialStateProperty.all(
                                           const BorderSide(
                                         color: primaryOrange,
@@ -324,7 +324,7 @@ class _LoginViewState extends State<LoginView> {
                                           const Color.fromRGBO(0, 0, 0, 0.25)),
                                     ),
                                     child: Container(
-                                      width: 173.42,
+                                      width: 130,
                                       height: 64,
                                       alignment: Alignment.center,
                                       child: const Text(

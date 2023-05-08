@@ -133,7 +133,7 @@ class _RegisterViewState extends State<RegisterView> {
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40))),
                           minimumSize:
-                              MaterialStateProperty.all(const Size(173.42, 64)),
+                              MaterialStateProperty.all(const Size(130, 64)),
                         ),
                         onPressed: () async {
                           // if (_formKey.currentState!.validate()) {
@@ -229,7 +229,7 @@ class _RegisterViewState extends State<RegisterView> {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 24.0,
+                            fontSize: 21,
                             height: 1.0,
                             color: Colors.white,
                           ),

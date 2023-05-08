@@ -128,7 +128,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               borderRadius: BorderRadius.circular(40),
                             )),
                             minimumSize:
-                                MaterialStateProperty.all(const Size(208, 60)),
+                                MaterialStateProperty.all(const Size(170, 60)),
                             side: MaterialStateProperty.all(const BorderSide(
                               color: primaryOrange,
                             )),
@@ -145,35 +145,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                           // ),
                           onPressed: () async {
                             // final user = FirebaseAuth.instance.currentUser;
-                            // log(user.toString());
                             try {
                               verifyEmail().then((value) =>
                                   showSuccessMailModal(context, true));
-                              // .then((_) => {Navigator.of(context).pop()});
-                              //
-                              // .then((value) async => await user!.reload())
-                              // .then((value) async => {await signOut()});
-                              // .then((_) =>
-                              //     showSuccessMailModal(context, true));
-
-                              //.then((value) => {
-                              //   if (user!.emailVerified)
-                              //     {
-                              //       setState(() {
-                              //         _isEmailVerified = true;
-                              //       })
-                              //     }
-                              // });
-                              // .then((value) => showSuccessMailModal(context, true))
-                              // .then(
-                              //     (value) => Future.delayed(Duration.zero, () async {
-                              //           await Navigator.of(context)
-                              //               .pushNamedAndRemoveUntil(
-                              //             // navigates to homeRoute screen and removes previous routes
-                              //             loginRoute,
-                              //             (route) => false,
-                              //           );
-                              //         }));
+                             
                             } on FirebaseAuthException catch (_) {
                               (_) => {Navigator.of(context).pop()};
                               // log(e.toString());
@@ -186,7 +161,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w500,
-                              fontSize: 22,
+                              fontSize: 21,
                               height: 1,
                               color: Colors.white,
                             ),

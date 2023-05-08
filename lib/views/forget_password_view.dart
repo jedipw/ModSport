@@ -25,11 +25,12 @@ class ForgetPasswordView extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      // navigates to homeRoute screen and removes previous routes
-                      loginRoute,
-                      (route) => false,
-                    );
+                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                    //   // navigates to homeRoute screen and removes previous routes
+                    //   loginRoute,
+                    //   (route) => false,
+                    // );
+                    Navigator.of(context).pop();
                   },
                   child: const Icon(
                     Icons.arrow_back_ios_new,
