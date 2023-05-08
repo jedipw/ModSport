@@ -2,26 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/drawer.dart';
 import 'package:modsport/views/detail_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
+
+import '../utilities/types.dart';
 
 
-class Booking {
-  final String zone;
-  final String date;
-  final String time;
-  final DateTime dateTime;
-  final bool isSuccessful;
 
-  Booking({
-    required this.zone,
-    required this.date,
-    required this.time,
-    required this.dateTime,
-    required this.isSuccessful,
-  });
-}
 
 class StatusView extends StatefulWidget {
   const StatusView({Key? key}) : super(key: key);
@@ -30,65 +19,70 @@ class StatusView extends StatefulWidget {
   State<StatusView> createState() => _StatusViewState();
 }
 
+
 class _StatusViewState extends State<StatusView> {
   final int _currentDrawerIndex = 1;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<Booking> _book = [];
+  bool _isBookLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  
+
+ Future<void> _bookings() async {
+  try {
+    List<Booking> status = await FirebaseCloudStorage().getBookings();
+    setState(() {
+      _book = status;
+      _isBookLoaded = true;
+    });
+  } catch (e) {
+    _handleError();
+  }
+}
+
+  void _handleError() {
+    // Handle the error in a way that makes sense for your app
+  }
+
+  Future<void> fetchData() async {
+    await _bookings();
+  }
 
   
 
   @override
   Widget build(BuildContext context) {
     
-    final String userId = FirebaseAuth.instance.currentUser!.uid;
+    
     return Scaffold(
       
       key: _scaffoldKey,
       drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('userreservation').where('userId', isEqualTo: userId)
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      body: 
 
-          final List<Booking> bookings = snapshot.data!.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
-            final startDateTime = DateTime.fromMillisecondsSinceEpoch(
-                data['startDateTime'].millisecondsSinceEpoch);
-            final formattedDate = DateFormat('d MMM y')
-                .format(startDateTime); // Example date format
-            final formattedTime = DateFormat('HH:mm')
-                .format(startDateTime); // Example time format
-            return Booking(
-              zone: data['zoneId'],
-              date: formattedDate,
-              time: formattedTime,
-              dateTime: startDateTime,
-              isSuccessful: data['isSuccessful'],
-            );
-          }).toList();
-
-          return Stack(
+           Stack(
             children: [
           
               Padding(
                 padding: const EdgeInsets.fromLTRB(6,125,6,6.0),
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10.0),
-                  itemCount: bookings.length,
+                  itemCount: _book.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final booking = bookings[index];
+                    final booking = _book[index];
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => DetailView(
-                              zoneId: booking.zone,
+                              zoneId: booking.zoneId,
                               startDateTime: booking.dateTime,
                             ),
                           ),
@@ -102,51 +96,61 @@ class _StatusViewState extends State<StatusView> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
                                   width: 300,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ListTile(
-                                        title: Text(
-                                          booking.zone,
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontStyle: FontStyle.normal,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20.0,
-                                            height: 20.0 / 13.0,
-                                            color: Color.fromRGBO(0, 0, 0, 0.7),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ListTile(
+                                          title: Text(
+                                            booking.zoneName,
+                                            style: const TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 20.0,
+                                              height: 20.0 / 13.0,
+                                              color: Color.fromRGBO(0, 0, 0, 0.7),
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            '${booking.date}\n${booking.time} - ${booking.endTime}',
+                                            style: const TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 16.0,
+                                              height: 20.0 / 13.0,
+                                              color: Color.fromRGBO(0, 0, 0, 0.7),
+                                            ),
                                           ),
                                         ),
-                                        subtitle: Text(
-                                          '${booking.date}\n${booking.time}',
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontStyle: FontStyle.normal,
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 16.0,
-                                            height: 20.0 / 13.0,
-                                            color: Color.fromRGBO(0, 0, 0, 0.7),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 booking.isSuccessful
-                                    ? const Icon(
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                        size: 60.0,
-                                      )
-                                    : const Icon(
-                                        Icons.cancel_rounded,
-                                        color: Colors.red,
-                                        size: 60.0,
-                                      )
+                                    ? const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(
+                                          Icons.check_circle,
+                                          color: Colors.green,
+                                          size: 70.0,
+                                        ),
+                                    )
+                                    : const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: Colors.red,
+                                          size: 70.0,
+                                        ),
+                                    )
                               ]),
                         ),
                       ),
@@ -207,9 +211,9 @@ class _StatusViewState extends State<StatusView> {
                 ],
               ),
             ],
-          );
-        },
-      ),
+          ),
+        
+      
     );
   }
 }
