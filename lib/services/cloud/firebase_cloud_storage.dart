@@ -634,9 +634,11 @@ class FirebaseCloudStorage {
     try {
       String? deviceToken = await FirebaseMessaging.instance.getToken();
       // Use device token as the document ID in "device" collection
-      await device.doc(deviceToken).set({
-        userIdField: userId,
-      });
+      if (deviceToken != null) {
+        await device.doc(deviceToken).set({
+          userIdField: userId,
+        });
+      }
     } catch (error) {
       throw CouldNotCreateException();
     }
@@ -646,7 +648,9 @@ class FirebaseCloudStorage {
     try {
       String? deviceToken = await FirebaseMessaging.instance.getToken();
       // Delete document by ID in "device" collection
-      await device.doc(deviceToken).delete();
+      if (deviceToken != null) {
+        await device.doc(deviceToken).delete();
+      }
     } catch (error) {
       throw CouldNotDeleteException;
     }
