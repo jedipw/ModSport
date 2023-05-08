@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
@@ -28,6 +29,7 @@ class _EditViewState extends State<EditView> {
   bool _isDisableReservationLoaded = false;
   bool _isReservationIdLoaded = false;
   bool _isZoneNameLoaded = false;
+  bool _isReservationTimeLoaded = false;
 
   String _firstDisableReason = '';
   String _zoneName = '';
@@ -37,6 +39,7 @@ class _EditViewState extends State<EditView> {
   List<bool> _selectedTimeSlots = [];
   List<String> _reservationIds = [];
   List<String> _disableIds = [];
+  List<Timestamp> startTimes = [];
 
   @override
   void initState() {
@@ -121,6 +124,22 @@ class _EditViewState extends State<EditView> {
     }
   }
 
+  Future<void> _getReservationTime() async {
+    try {
+      List<Map<String, dynamic>> reservation = await FirebaseCloudStorage()
+          .getReservationTime(_reservationIds, widget.selectedDateIndex);
+      setState(() {
+        startTimes = reservation
+            .map((time) => Timestamp.fromDate(time["startTime"]))
+            .toList();
+
+        _isReservationTimeLoaded = true;
+      });
+    } catch (e) {
+      log('Error fetching zone name: $e');
+    }
+  }
+
   String _getDayOrdinal(int day) {
     if (day >= 11 && day <= 13) {
       return '${day}th';
@@ -144,7 +163,8 @@ class _EditViewState extends State<EditView> {
         await _getZoneName()
             .then((_) => _getReservationData())
             .then((_) => _getDisableReservationData())
-            .then((_) => _getReservationIds());
+            .then((_) => _getReservationIds())
+            .then((_) => _getReservationTime());
         break;
       case adminMode:
         setState(
@@ -152,11 +172,13 @@ class _EditViewState extends State<EditView> {
             _isReservationLoaded = false;
             _isDisableReservationLoaded = false;
             _isReservationIdLoaded = false;
+            _isReservationTimeLoaded = false;
           },
         );
         await _getReservationData()
             .then((_) => _getDisableReservationData())
-            .then((_) => _getReservationIds());
+            .then((_) => _getReservationIds())
+            .then((_) => _getReservationTime());
         break;
     }
   }
@@ -254,7 +276,8 @@ class _EditViewState extends State<EditView> {
       return _isReservationLoaded &&
           _isDisableReservationLoaded &&
           _isReservationIdLoaded &&
-          _isZoneNameLoaded;
+          _isZoneNameLoaded &&
+          _isReservationTimeLoaded;
     }
 
     DateTime currentDate =
@@ -774,6 +797,8 @@ class _EditViewState extends State<EditView> {
                                 await FirebaseCloudStorage()
                                     .deleteDisableReservation(
                                       _disableIds,
+                                      widget.zoneId,
+                                      startTimes,
                                     )
                                     .then(
                                       (_) => Navigator.of(context).pop(),
