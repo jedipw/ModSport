@@ -1,14 +1,10 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-// import 'package:modsport/utilities/custom_text_field/answer_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/fname_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/lname_text_field.dart';
-// import 'package:modsport/utilities/custom_text_field/question_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/reg_password_field.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -102,7 +98,8 @@ class _RegisterViewState extends State<RegisterView> {
                         controller: lastNameController,
                         isLnameValid: _isLnameValid),
                     EmailTextField(
-                        controller: emailController, isEmailValid: _isEmailValid),
+                        controller: emailController,
+                        isEmailValid: _isEmailValid),
                     RegPasswordField(
                       passwordController: passwordController,
                       passwordStat: _isValidPassword(
@@ -125,17 +122,18 @@ class _RegisterViewState extends State<RegisterView> {
                     // AnswerTextField(
                     //     controller: answerController,
                     //     isAnswerValid: _isAnswerValid),
-    
+
                     Center(
                       // centers child widget in the screen
                       child: TextButton(
                         style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(primaryOrange),
-                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40))),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40))),
                           minimumSize:
-                              MaterialStateProperty.all(const Size(173.42, 64)),
+                              MaterialStateProperty.all(const Size(130, 64)),
                         ),
                         onPressed: () async {
                           // if (_formKey.currentState!.validate()) {
@@ -154,7 +152,8 @@ class _RegisterViewState extends State<RegisterView> {
                                   FirebaseFirestore firestore =
                                       FirebaseFirestore.instance;
                                   final email = emailController.text.trim();
-                                  final password = passwordController.text.trim();
+                                  final password =
+                                      passwordController.text.trim();
                                   Navigator.of(context).pop();
                                   showLoadModal(context);
                                   final userCredential = await FirebaseAuth
@@ -180,21 +179,13 @@ class _RegisterViewState extends State<RegisterView> {
                                         // 'answer': answerController.text.trim(),
                                       })
                                       .then((value) {
-                                        log('User added to Firestore');
+                                        // log('User added to Firestore');
                                       })
                                       .catchError((error) {
-                                        log('Error adding user to Firestore: $error');
+                                        // log('Error adding user to Firestore: $error');
                                       })
-                                      .then(
-                                          (value) => Navigator.of(context).pop())
-                                      // .then((value) =>
-                                      //     Navigator.of(context).pushNamedAndRemoveUntil(
-                                      //       //navigates to homeRoute screen and removes previous routes
-                                      //       verifyEmailRoute,
-                                      //       (route) => false,
-                                      //     ));
-    
-    /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
+                                      .then((value) =>
+                                          Navigator.of(context).pop())
                                       .then((value) => Navigator.of(context)
                                               .pushNamedAndRemoveUntil(
                                             // navigates to homeRoute screen and removes previous routes
@@ -238,7 +229,7 @@ class _RegisterViewState extends State<RegisterView> {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 24.0,
+                            fontSize: 21,
                             height: 1.0,
                             color: Colors.white,
                           ),
@@ -246,7 +237,7 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                     ),
-    
+
                     // Have account text
                     Padding(
                       padding: const EdgeInsets.only(top: 30, bottom: 50),
@@ -309,8 +300,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
-    final emailRegex =
-        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
+    final emailRegex = RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
   }
 

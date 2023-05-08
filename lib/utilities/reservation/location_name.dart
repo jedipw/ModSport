@@ -3,6 +3,12 @@ import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LocationName extends StatelessWidget {
+  final String locationName;
+
+  final bool isError;
+  final bool isLocationLoaded;
+  final bool isSwipingUp;
+
   const LocationName({
     super.key,
     required this.locationName,
@@ -10,10 +16,6 @@ class LocationName extends StatelessWidget {
     required this.isLocationLoaded,
     required this.isSwipingUp,
   });
-  final String locationName;
-  final bool isError;
-  final bool isLocationLoaded;
-  final bool isSwipingUp;
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 
 class ErrorMessage extends StatelessWidget {
-  const ErrorMessage({super.key});
+  const ErrorMessage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

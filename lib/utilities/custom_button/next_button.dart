@@ -32,7 +32,7 @@ class CustomPageViewButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(40),
         ),
-        minimumSize: const Size(174, 64),
+        minimumSize: const Size(130, 64),
         padding: const EdgeInsets.symmetric(horizontal: 24),
         elevation: 4,
         shadowColor: Colors.black.withOpacity(0.25),
@@ -42,7 +42,7 @@ class CustomPageViewButton extends StatelessWidget {
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontSize: 18,
+          fontSize: 21,
         ),
       ),
     );
