@@ -1,32 +1,36 @@
 import 'package:flutter/material.dart';
 
-class RegConPasswordField extends StatelessWidget {
-  const RegConPasswordField({
+import '../../constants/color.dart';
+
+class RegPasswordField extends StatelessWidget {
+  const RegPasswordField({
     Key? key,
     required this.passwordController,
     required this.passwordStat,
     required this.isPasswordOk,
+    this.text = 'Password',
   }) : super(key: key);
 
   final TextEditingController passwordController;
   final String passwordStat;
   final bool isPasswordOk;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
+         Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            'Confirm Password',
-            style: TextStyle(
+            text,
+            style: const TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -56,13 +60,13 @@ class RegConPasswordField extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(13.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               if (!isPasswordOk && passwordStat != "OK")
                 Text(
                   passwordStat,
-                  style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
+                  style: const TextStyle(color: Colors.red, fontFamily: 'Poppins'),
                 ),
             ],
           ),

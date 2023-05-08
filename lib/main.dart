@@ -1,10 +1,11 @@
-import 'dart:math';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:math';
 
 // Importing route constants and custom page route transitions
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/services/notifi_service.dart';
 import 'package:modsport/utilities/page_route.dart';
 import 'package:modsport/views/change_password_view.dart';
 import 'package:modsport/views/forget_password_view.dart';
@@ -20,15 +21,39 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 // Importing Firebase options
 import 'firebase_options.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Running the app
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    NotificationService().showNotification(
+        title: message.notification!.title, body: message.notification!.body);
+  });
+
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  NotificationService().initNotification();
   runApp(const MainApp());
+  // Running the app
 }
 
 // MainApp widget that builds the app
@@ -53,7 +78,7 @@ class _MainAppState extends State<MainApp> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     email.dispose();
     password.dispose();
     super.dispose();

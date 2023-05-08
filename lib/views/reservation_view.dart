@@ -1,6 +1,5 @@
 // Import a neccesary package from Flutter.
 import 'dart:math';
-import 'dart:developer' as dev;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
@@ -38,8 +37,6 @@ import 'package:modsport/utilities/types.dart';
 import 'package:modsport/views/disable_view.dart';
 import 'package:modsport/views/edit_view.dart';
 
-final String userId = FirebaseAuth.instance.currentUser!.uid;
-
 // Number of Dates that will appear in the date list for normal user
 const int numOfUserDay = 7;
 
@@ -58,6 +55,7 @@ class ReservationView extends StatefulWidget {
 // Creating a State object called _ReservationViewState
 class _ReservationViewState extends State<ReservationView> {
   // Variables that determine whether the data has been successfully retrieve from database
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
   bool _hasRole = false;
   bool _isReservationLoaded = false;
   bool _isZoneLoaded = false;
@@ -175,8 +173,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getLocationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -201,8 +197,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getZoneData");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -226,8 +220,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getLocationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -276,8 +268,6 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
-      dev.log("_getReservationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -298,8 +288,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getUserReservationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -333,8 +321,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getDisableReservationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -368,8 +354,6 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      dev.log("_getReservationIds()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -400,8 +384,6 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
-      dev.log("_getReservationIndexData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -436,8 +418,6 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
-      dev.log("_getIsReservedData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -1357,7 +1337,7 @@ class _ReservationViewState extends State<ReservationView> {
                           color: _isError || !isEverythingLoaded()
                               ? primaryGray
                               : _isDisableMenu
-                                  ? primaryRed
+                                  ? staffOrange
                                   : primaryOrange,
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(20.0),

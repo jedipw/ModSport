@@ -27,7 +27,7 @@ class ToggleRoleButton extends StatelessWidget {
         backgroundColor: isError || !isEverythingLoaded
             ? primaryGray
             : isDisableMenu
-                ? primaryRed
+                ? staffOrange
                 : primaryOrange,
         fixedSize: const Size.fromRadius(25),
       ),

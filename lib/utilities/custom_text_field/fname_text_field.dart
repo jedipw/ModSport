@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-class RegPasswordField extends StatelessWidget {
-  const RegPasswordField({
-    Key? key,
-    required this.passwordController,
-    required this.passwordStat,
-    required this.isPasswordOk,
-  }) : super(key: key);
+import '../../constants/color.dart';
 
-  final TextEditingController passwordController;
-  final String passwordStat;
-  final bool isPasswordOk;
+class FnameTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final bool isFnameValid;
+  const FnameTextField({
+    Key? key,
+    required this.controller,
+    required this.isFnameValid,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +19,13 @@ class RegPasswordField extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            'Password',
+            "Name",
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -44,7 +43,8 @@ class RegPasswordField extends StatelessWidget {
             ],
           ),
           child: TextField(
-            controller: passwordController,
+            controller: controller,
+            keyboardType: isFnameValid ? TextInputType.name : null,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
@@ -52,17 +52,19 @@ class RegPasswordField extends StatelessWidget {
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
-            obscureText: true,
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isPasswordOk && passwordStat != "OK")
-                Text(
-                  passwordStat,
-                  style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
+              if (!isFnameValid)
+                const Text(
+                  "Please enter your name using only letters and hyphens (-)",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontFamily: 'Poppins',
+                  ),
                 ),
             ],
           ),
