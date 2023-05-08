@@ -51,6 +51,34 @@ class FirebaseCloudStorage {
     }
   }
 
+  Future<List<String>> getAllCategories() async {
+  try {
+    List<String> categories = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection(categoryCollection)
+        .get();
+        log(snapshot.toString());
+    for (var document in snapshot.docs) {
+      categories.add(document.get(
+        categoryNameField));
+    }
+    return categories;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
+Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection(zoneToCategoryCollection)
+        .get();
+    return snapshot.docs;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
   Future<ZoneData> getZone(String zoneId) async {
     try {
       DocumentSnapshot documentSnapshot = await zone.doc(zoneId).get();

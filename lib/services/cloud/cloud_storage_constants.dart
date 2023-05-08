@@ -6,11 +6,14 @@ const userCollection = 'user';
 const userReservationCollection = 'userreservation';
 const zoneCollection = 'zone';
 const deviceCollection = 'device';
+const categoryCollection = 'category';
+const zoneToCategoryCollection = 'zonetocategory';
 
 // ID field
 const locationIdField = 'locationId';
 const zoneIdField = 'zoneId';
 const userIdField = 'userId';
+const categoryIdField = 'categoryId';
 
 // Location field
 const locationNameField = 'locationName';
@@ -38,3 +41,9 @@ const isSuccessfulField = 'isSuccessful';
 
 // Device field
 const deviceTokenField = 'deviceToken';
+
+//Category field
+const categoryNameField = 'categoryName';
+
+//Zone to category field
+const zoneToCategoryIdField = 'zoneToCategory';
