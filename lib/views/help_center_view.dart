@@ -100,7 +100,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       ),
                     ),
                     children: <Widget>[
-                      //1
+                      //Q1
                       ListTile(
                         title: RichText(
                           text: const TextSpan(
@@ -131,14 +131,14 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                         ),
                       ),
-                      //2
+                      //Q2
                       ListTile(
                         title: RichText(
                           text: const TextSpan(
                             children: [
                               TextSpan(
                                 text:
-                                    "Q: Can I modify or cancel my reservation once it's been made?\n",
+                                    "Q: Can I cancel a reservation if I change my mind?\n",
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontStyle: FontStyle.normal,
@@ -150,7 +150,74 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               ),
                               TextSpan(
                                 text:
-                                    'A: Yes, you can cancel your reservation.',
+                                    'A: Yes, you can cancel a reservation as long as'
+                                    ' before reserved time coming.',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color: primaryGray,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      //Q3
+                      ListTile(
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    "Q: How do I check my reservation result?\n",
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color:
+                                      primaryOrange, // change color to orange
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    'A: To view your reservation history, go to the "Status"'
+                                    ' in menu bar of the app. Here you can see your status reservatons.',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color: primaryGray,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      //Q4
+                      ListTile(
+                        title: RichText(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    "Q: Is there a limit to the number of reservations I can make?\n",
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.0,
+                                  color:
+                                      primaryOrange, // change color to orange
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    'A: There is no limit to the number of reservations '
+                                    'you can make, as long as the facility is available.',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontStyle: FontStyle.normal,
@@ -167,7 +234,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                   ),
                 ),
 
-                //3
+                //3 Troubleshooting Tips
                 Card(
                   elevation: 4,
                   margin: const EdgeInsets.all(8),
@@ -186,76 +253,155 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       ),
                     ),
                     children: <Widget>[
-                      ListTile(
-                        //1
+                      //1 Tips1
+                      ExpansionTile(
                         title: Text(
-                          "This is tile number 3.1",
+                          "Can't log in to the app",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w400,
                             fontSize: 14.0,
-                            color: primaryGray,
+                            color: primaryOrange, // change color to orange
                           ),
                         ),
+                        children: <Widget>[
+                          ListTile(
+                              title: Text(
+                            "     If you're having trouble logging in to the app, "
+                            "make sure you're using the correct username and password."
+                            "If you forgot your password, you can reset it by clicking "
+                            "on the 'Forget password?' on the LOG IN page.",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: primaryGray,
+                            ),
+                          )),
+                        ],
                       ),
-                      ListTile(
-                        //2
+                      //2 Tips2
+                      ExpansionTile(
                         title: Text(
-                          "This is tile number 3.2",
+                          "Unable to make a reservation",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w400,
                             fontSize: 14.0,
-                            color: primaryGray,
+                            color: primaryOrange, // change color to orange
                           ),
                         ),
+                        children: <Widget>[
+                          ListTile(
+                              title: Text(
+                            "     If you're having trouble making a reservation, check "
+                            "that the facility you want to reserve is available.",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: primaryGray,
+                            ),
+                          )),
+                        ],
                       ),
-                      ListTile(
-                        //3
+                      //3 Tips3
+                      ExpansionTile(
                         title: Text(
-                          "This is tile number 3.3",
+                          "Facility not available",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w400,
                             fontSize: 14.0,
-                            color: primaryGray,
+                            color: primaryOrange, // change color to orange
                           ),
                         ),
+                        children: <Widget>[
+                          ListTile(
+                              title: Text(
+                            "     If the facility you want to reserve is not available,"
+                            " try selecting a different date or time. If the facility "
+                            "is still not available, it may be reserved by someone else"
+                            " or temporarily closed.",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: primaryGray,
+                            ),
+                          )),
+                        ],
                       ),
-                      ListTile(
-                        //4
+                      //4 Tips4
+                      ExpansionTile(
                         title: Text(
-                          "This is tile number 3.4",
+                          "App crashes or freezes",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w400,
                             fontSize: 14.0,
-                            color: primaryGray,
+                            color: primaryOrange, // change color to orange
                           ),
                         ),
+                        children: <Widget>[
+                          ListTile(
+                              title: Text(
+                            "     If the app crashes or freezes, try restarting your"
+                            " device and then launching the app again. If the problem"
+                            " persists, try uninstalling and reinstalling the app. If "
+                            "that still doesn't work, contact the customer support team"
+                            " for assistance.",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: primaryGray,
+                            ),
+                          )),
+                        ],
                       ),
-                      ListTile(
-                        //5
+                      //5 Tips5
+                      ExpansionTile(
                         title: Text(
-                          "This is tile number 3.5",
+                          "Feedback and suggestions",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w400,
                             fontSize: 14.0,
-                            color: primaryGray,
+                            color: primaryOrange, // change color to orange
                           ),
                         ),
+                        children: <Widget>[
+                          ListTile(
+                              title: Text(
+                            "     If you have any feedback or suggestions for the app,"
+                            " please feel free to contact the customer support team. "
+                            "They would be happy to hear from you and will do their best"
+                            " to address any issues or concerns you may have.",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: primaryGray,
+                            ),
+                          )),
+                        ],
                       ),
                     ],
                   ),
                 ),
 
-                //4
+                //4 Contact Information
                 Card(
                   elevation: 4,
                   margin: const EdgeInsets.all(8),
