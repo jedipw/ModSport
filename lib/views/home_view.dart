@@ -29,23 +29,50 @@ class _HomeViewState extends State<HomeView> {
 
   List<ZoneData> _zoneList = [];
   List<String> _categoryList = [];
+  List<bool> _pushPinClickedList = [];
   bool _isCategoryLoaded = false;
-  bool _isPushPinClicked = false;
+  bool isPinned = true;
+  // bool _isPushPinClicked = false;
   bool _isZoneLoaded = false;
   bool _isSearching = false; //detect search bar
   int index = 0;
-  late String _selectedCategory; // assume this state variable stores the currently selected category
+  late String
+      _selectedCategory; // assume this state variable stores the currently selected category
 
-  final TextEditingController _searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   List<ZoneData> _foundZones = [];
   final ScrollController _scrollController = ScrollController();
+  Map<String, bool> _pushPinClickedMap = {};
 
-  
   @override
   void initState() {
     super.initState();
     _foundZones = _zoneList;
     fetchData();
+    FirebaseCloudStorage().getPinnedZones().then((pinnedZones) {
+    setState(() {
+      _pushPinClickedList = pinnedZones.map((zoneId) => true).toList();
+    });
+  });
+  FirebaseCloudStorage().getAllZones().then((zoneList) {
+    setState(() {
+      _zoneList = zoneList;
+      if (_pushPinClickedList.isNotEmpty) {
+        for (int i = 0; i < _pushPinClickedList.length; i++) {
+          if (_pushPinClickedList[i]) {
+            String pinnedZoneId = _zoneList[i].zoneId;
+            int pinnedIndex = _zoneList.indexWhere((zone) => zone.zoneId == pinnedZoneId);
+            ZoneData pinnedZone = _zoneList.removeAt(pinnedIndex);
+            _zoneList.insert(0, pinnedZone);
+          }
+        }
+      }
+    });
+  }).catchError((e) {
+    // if (e is CouldNotFetchDataException) {
+    //   // Handle exception
+    // }
+  });
   }
 
   @override
@@ -69,7 +96,9 @@ class _HomeViewState extends State<HomeView> {
         _zoneList = zones;
         _isZoneLoaded = true;
         _foundZones = _zoneList;
-        _isPushPinClicked = false;
+        
+        isPinned = false;
+        // _isPushPinClicked = false;
       });
     } catch (e) {
       _handleError();
@@ -88,54 +117,86 @@ class _HomeViewState extends State<HomeView> {
       _handleError();
     }
   }
+
   void _handleError() {
     // Handle the error in a way that makes sense for your app
   }
 
   Future<void> _getZoneToCategoriesData() async {
-  try {
-    List<DocumentSnapshot<Object?>> zoneToCategories =
-        await FirebaseCloudStorage().getAllZoneToCategory();
+    try {
+      List<DocumentSnapshot<Object?>> zoneToCategories =
+          await FirebaseCloudStorage().getAllZoneToCategory();
 
-    List<String> categories = zoneToCategories
-        .map((doc) => doc.get("categoryName").toString())
-        .toList();
-
-    setState(() {
-      _categoryList = categories;
-      _isCategoryLoaded = true;
-    });
-  } catch (e) {
-    _handleError();
-  }
-}
-
-  void _onSearch(String query) {
-    setState(() {
-      _foundZones = _zoneList
-          .where((zone) =>
-              zone.zoneName.toLowerCase().contains(query.toLowerCase()))
+      List<String> categories = zoneToCategories
+          .map((doc) => doc.get("categoryName").toString())
           .toList();
-    });
+
+      setState(() {
+        _categoryList = categories;
+        _isCategoryLoaded = true;
+      });
+    } catch (e) {
+      _handleError();
+    }
   }
 
   void _onCategorySelected(String category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+  }
+  
+  
+
+//For push pin
+  // void _handlePushPinClick(int index) async {
+  //   // Get the zone data for the clicked push pin
+  //   ZoneData clickedZone = _zoneList[index];
+  //   // Remove the clicked zone data from the list
+  //   _zoneList.removeAt(index);
+  //   // Add the clicked zone data back to the list at the beginning
+  //   _zoneList.insert(0, clickedZone);
+  //   // log("Hi: " + clickedZone.zoneName.toString());
+
+  //   // Set the state to trigger a re-render of the list
+  //   setState(() {});
+
+  //   // Pin the zone in the database
+  //   try {
+  //     await FirebaseCloudStorage().pinZone(clickedZone.zoneId);
+  //   } catch (e) {
+  //     log("Could not pin zone: $e");
+  //   }
+  // }
+ void _handlePushPinClick(String zoneId) {
   setState(() {
-    _selectedCategory = category;
+    _pushPinClickedMap[zoneId] = true;
+    FirebaseCloudStorage().pinZone(zoneId);
+    
+    // find the index of the zone with the given id
+    int index = _zoneList.indexWhere((zone) => zone.zoneId == zoneId);
+    
+    // remove the zone from the list
+    ZoneData pinnedZone = _zoneList.removeAt(index);
+    
+    // insert the zone at the beginning of the list
+    _zoneList.insert(0, pinnedZone);
+    
+    // update the list of pinned zones
+    _pushPinClickedList.insert(0, true);
   });
 }
 
-//For push pin
-  void _handlePushPinClick(int index) {
-  // Get the zone data for the clicked push pin
-  ZoneData clickedZone = _zoneList[index];
-  // Remove the clicked zone data from the list
-  _zoneList.removeAt(index);
-  // Add the clicked zone data back to the list at the beginning
-  _zoneList.insert(0, clickedZone);
-  // Set the state to trigger a re-render of the list
-  setState(() {});
-}
+
+
+  void _handleUnpinClick(String zoneId) {
+    setState(() {
+      _pushPinClickedMap[zoneId] = false;
+      FirebaseCloudStorage().unpinZone(zoneId);
+    });
+  }
+
+  
 
 
   Future<void> fetchData() async {
@@ -165,7 +226,18 @@ class _HomeViewState extends State<HomeView> {
                       ? Container(
                           padding: const EdgeInsets.only(top: 35),
                           child: Column(
-                            children: _zoneList.map((e) {
+                            children: _zoneList.asMap().entries.map((entry) {
+                              //  bool _isPushPinClicked = false;
+                              final index = entry.key;
+                              final e = entry.value;
+
+                              if (_pushPinClickedList.length <= index) {
+                                // Set initial value of push pin clicked status for new items
+                                _pushPinClickedList.add(false);
+                              }
+                              bool isPushPinClicked =
+                                  _pushPinClickedList[index];
+                              log(index.toString());
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -296,29 +368,47 @@ class _HomeViewState extends State<HomeView> {
                                                     GestureDetector(
                                                       onTap: () {
                                                         setState(() {
-                                                          _isPushPinClicked =
-                                                              !_isPushPinClicked;
-                                                          if (_isPushPinClicked) {
+                                                          _pushPinClickedMap[
+                                                                  e.zoneId] =
+                                                              _pushPinClickedMap[e
+                                                                          .zoneId] ==
+                                                                      null
+                                                                  ? true
+                                                                  : !_pushPinClickedMap[
+                                                                      e.zoneId]!;
+                                                          if (_pushPinClickedMap[
+                                                              e.zoneId]!) {
                                                             _handlePushPinClick(
-                                                                index);
+                                                                e.zoneId);
+                                                          } else {
+                                                            FirebaseCloudStorage()
+                                                                .unpinZone(
+                                                                    e.zoneId);
                                                           }
                                                         });
                                                       },
                                                       child: Transform.rotate(
                                                         angle: 45 * 3.14 / 180,
                                                         child: Icon(
-                                                          _isPushPinClicked
-                                                              ? Icons.push_pin
-                                                              : Icons
-                                                                  .push_pin_outlined,
+                                                          _pushPinClickedMap[e
+                                                                          .zoneId] ==
+                                                                      null ||
+                                                                  !_pushPinClickedMap[
+                                                                      e.zoneId]!
+                                                              ? Icons
+                                                                  .push_pin_outlined
+                                                              : Icons.push_pin,
                                                           size: 24,
-                                                          color:
-                                                              _isPushPinClicked
-                                                                  ? primaryOrange
-                                                                  : primaryGray,
+                                                          color: _pushPinClickedMap[e
+                                                                          .zoneId] ==
+                                                                      null ||
+                                                                  !_pushPinClickedMap[
+                                                                      e.zoneId]!
+                                                              ? primaryGray
+                                                              : primaryOrange,
                                                         ),
                                                       ),
-                                                    ),
+                                                    )
                                                   ],
                                                 ),
                                                 const SizedBox(height: 8),
@@ -783,6 +873,7 @@ class _HomeViewState extends State<HomeView> {
                       padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
                       height: 40,
                       child: TextField(
+                        controller: _searchController,
                         onTap: () {
                           setState(() {
                             _isSearching = true;
@@ -796,7 +887,7 @@ class _HomeViewState extends State<HomeView> {
                               ? IconButton(
                                   icon: const Icon(
                                     Icons.arrow_back,
-                                    color: Color(0xffE17325),
+                                    color: primaryOrange,
                                   ),
                                   onPressed: () {
                                     setState(() {
@@ -809,13 +900,14 @@ class _HomeViewState extends State<HomeView> {
                                 )
                               : const Icon(
                                   Icons.search,
-                                  color: Color(0xffE17325),
+                                  color: primaryOrange,
                                 ),
                           suffixIcon: _isSearching
                               ? GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      _searchController.clear();
+                                      _searchController =
+                                          TextEditingController();
                                       _searchText = '';
                                     });
                                   },

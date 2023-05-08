@@ -8,6 +8,7 @@ const zoneCollection = 'zone';
 const deviceCollection = 'device';
 const categoryCollection = 'category';
 const zoneToCategoryCollection = 'zonetocategory';
+const pinCollection = 'pin';
 
 // ID field
 const locationIdField = 'locationId';
