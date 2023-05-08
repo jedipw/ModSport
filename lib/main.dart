@@ -1,7 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'dart:math';
 
 // Importing route constants and custom page route transitions
 import 'package:modsport/constants/routes.dart';

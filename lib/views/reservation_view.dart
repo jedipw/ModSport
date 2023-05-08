@@ -42,10 +42,10 @@ const int numOfUserDay = 7;
 
 // Creating a StatefulWidget called ReservationView
 class ReservationView extends StatefulWidget {
-  const ReservationView({super.key, required this.zoneId});
-
   // Get zone ID that is sent from the home page.
   final String zoneId;
+
+  const ReservationView({super.key, required this.zoneId});
 
   // Override method to create a State object
   @override
@@ -56,7 +56,11 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   // Variables that determine whether the data has been successfully retrieve from database
   final String userId = FirebaseAuth.instance.currentUser!.uid;
+
+  // All boolean variables
   bool _hasRole = false;
+  bool _isReserved = false;
+  bool _isSwipingUp = false;
   bool _isReservationLoaded = false;
   bool _isZoneLoaded = false;
   bool _isLocationLoaded = false;
@@ -66,10 +70,6 @@ class _ReservationViewState extends State<ReservationView> {
   bool _isReservationIndexLoaded = false;
   bool _isReservationIdLoaded = true;
   bool _isHasRoleLoaded = false;
-  bool _isSwipingUp = false;
-
-  // All boolean variables
-  bool _isReserved = false;
   bool _isDisableMenu = false;
   bool _isError = false;
 
@@ -587,15 +587,14 @@ class _ReservationViewState extends State<ReservationView> {
                                 Positioned(
                                   left: 25,
                                   top: 15,
-                                  child:
-                                      _isSwipingUp
-                                          ? Container()
-                                          : ZoneName(
-                                              isError: _isError,
-                                              isZoneLoaded: _isZoneLoaded,
-                                              zoneName: _zoneName,
-                                              isSwipingUp: _isSwipingUp,
-                                            ),
+                                  child: _isSwipingUp
+                                      ? Container()
+                                      : ZoneName(
+                                          isError: _isError,
+                                          isZoneLoaded: _isZoneLoaded,
+                                          zoneName: _zoneName,
+                                          isSwipingUp: _isSwipingUp,
+                                        ),
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(bottom: 10),
