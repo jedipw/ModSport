@@ -2,7 +2,7 @@
 A new Flutter project.  
 \==================== First time setup ====================  
 Update:  
-\<p>choco upgrade dart-\</p>  
+\choco upgrade dart-\
 flutter channel stable  
 flutter upgrade
 
@@ -12,3 +12,8 @@ Fix firebase:
 3\. flutterfire configure
 
 \==================== First time setup ====================
+
+!!!IMPORTANT!!!
+\If verify email come late or you want to use sport staff role:
+\Email: thitipa.neth@kmutt.ac.th
+\Password: modsport
