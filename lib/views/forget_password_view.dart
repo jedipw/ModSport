@@ -16,47 +16,51 @@ class ForgetPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // required method to build the UI
-    return Scaffold(
-      body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(32, 59, 0, 20),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    // navigates to homeRoute screen and removes previous routes
-                    loginRoute,
-                    (route) => false,
-                  );
-                },
-                child: const Icon(
-                  Icons.arrow_back_ios_new,
-                  color: primaryOrange,
-                  size: 38,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 12),
-                child: Text(
-                  'FORGET PASSWORD',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 28,
-                    height: 1.5,
+    return 
+    GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(32, 59, 0, 20),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      // navigates to homeRoute screen and removes previous routes
+                      loginRoute,
+                      (route) => false,
+                    );
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios_new,
                     color: primaryOrange,
+                    size: 38,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+                const Padding(
+                  padding: EdgeInsets.only(left: 12),
+                  child: Text(
+                    'FORGET PASSWORD',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 28,
+                      height: 1.5,
+                      color: primaryOrange,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const Expanded(
-          child: CustomPageView(),
-        ),
-      ]),
+          const Expanded(
+            child: CustomPageView(),
+          ),
+        ]),
+      ),
     );
   }
 }

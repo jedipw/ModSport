@@ -24,39 +24,42 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      return Scaffold(
-        key: _scaffoldKey,
-        drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
-        body: Container(
-          color: authenGray,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 75),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
-                        _scaffoldKey.currentState?.openEndDrawer();
-                      } else {
-                        _scaffoldKey.currentState?.openDrawer();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: authenGray,
-                      shape: const CircleBorder(),
-                      fixedSize: const Size.fromRadius(25),
-                      elevation: 0,
+      return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          key: _scaffoldKey,
+          drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
+          body: Container(
+            color: authenGray,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                const SizedBox(height: 75),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+                          _scaffoldKey.currentState?.openEndDrawer();
+                        } else {
+                          _scaffoldKey.currentState?.openDrawer();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: authenGray,
+                        shape: const CircleBorder(),
+                        fixedSize: const Size.fromRadius(25),
+                        elevation: 0,
+                      ),
+                      child: const Icon(Icons.menu, color: primaryOrange),
                     ),
-                    child: const Icon(Icons.menu, color: primaryOrange),
-                  ),
-                ],
-              ),
-              const Expanded(
-                child: CustomPageView(),
-              ),
-            ],
+                  ],
+                ),
+                const Expanded(
+                  child: CustomPageView(),
+                ),
+              ],
+            ),
           ),
         ),
       );
