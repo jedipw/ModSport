@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 // Importing route constants and custom page route transitions
 import 'package:modsport/constants/routes.dart';
+import 'package:modsport/services/notifi_service.dart';
 import 'package:modsport/utilities/page_route.dart';
 import 'package:modsport/views/change_password_view.dart';
 import 'package:modsport/views/forget_password_view.dart';
@@ -19,20 +20,39 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 // Importing Firebase options
 import 'firebase_options.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Running the app
-  runApp(const MainApp());
-}
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    NotificationService().showNotification(
+        title: message.notification!.title, body: message.notification!.body);
+  });
+
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  NotificationService().initNotification();
+  runApp(const MainApp());
+  // Running the app
 }
 
 // MainApp widget that builds the app

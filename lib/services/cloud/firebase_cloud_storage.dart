@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -312,7 +314,22 @@ Future<List<String>> getPinnedZones() async {
     List<Timestamp> startDateTimeList,
   ) async {
     try {
+      final userIds = <String>[];
       for (var startDateTime in startDateTimeList) {
+        // Check if a disable reservation already exists for the given zoneId and startDateTime
+        final existingDocs = await disable
+            .where(zoneIdField, isEqualTo: zoneId)
+            .where(startDateTimeField,
+                isEqualTo: Timestamp.fromDate(startDateTime.toDate()))
+            .get();
+
+        if (existingDocs.docs.isNotEmpty) {
+          // A disable reservation already exists for the given zoneId and startDateTime
+          // Skip adding a new one and continue with the next startDateTime in the list
+          continue;
+        }
+
+        // Add the disable reservation to the disable collection
         await disable.add({
           zoneIdField: zoneId,
           disableReasonField: disableReason,
@@ -324,24 +341,69 @@ Future<List<String>> getPinnedZones() async {
             await userRes.where(zoneIdField, isEqualTo: zoneId).get();
 
         if (querySnapshot.docs.isNotEmpty) {
-          await Future.wait(querySnapshot.docs.map((doc) async {
-            if (startDateTime.toDate().year ==
-                    doc[startDateTimeField].toDate().year &&
-                startDateTime.toDate().month ==
-                    doc[startDateTimeField].toDate().month &&
-                startDateTime.toDate().day ==
-                    doc[startDateTimeField].toDate().day &&
-                startDateTime.toDate().hour ==
-                    doc[startDateTimeField].toDate().hour &&
-                startDateTime.toDate().minute ==
-                    doc[startDateTimeField].toDate().minute &&
-                startDateTime.toDate().second ==
-                    doc[startDateTimeField].toDate().second) {
-              return doc.reference.update({
-                'isSuccessful': false,
+          await Future.wait(
+            querySnapshot.docs.map(
+              (doc) async {
+                if (startDateTime.toDate().year ==
+                        doc[startDateTimeField].toDate().year &&
+                    startDateTime.toDate().month ==
+                        doc[startDateTimeField].toDate().month &&
+                    startDateTime.toDate().day ==
+                        doc[startDateTimeField].toDate().day &&
+                    startDateTime.toDate().hour ==
+                        doc[startDateTimeField].toDate().hour &&
+                    startDateTime.toDate().minute ==
+                        doc[startDateTimeField].toDate().minute &&
+                    startDateTime.toDate().second ==
+                        doc[startDateTimeField].toDate().second) {
+                  if (doc[isSuccessfulField] == true) {
+                    userIds.add(doc[userIdField]);
+                  }
+
+                  return doc.reference.update({
+                    'isSuccessful': false,
+                  });
+                }
+              },
+            ),
+          );
+
+          Future<List<String>> getDeviceTokens(List<String> userIds) async {
+            final querySnapshot =
+                await device.where(userIdField, whereIn: userIds).get();
+            return querySnapshot.docs.map((doc) => doc.id).toList();
+          }
+
+          List<String> deviceTokens = [];
+          if (userIds.isNotEmpty) {
+            deviceTokens = await getDeviceTokens(userIds);
+          }
+
+          for (String deviceToken in deviceTokens) {
+            String constructFCMPayload(String? token) {
+              return jsonEncode({
+                'to': token,
+                'data': {
+                  'via': 'FlutterFire Cloud Messaging!!!',
+                },
+                'notification': {
+                  'title': 'Reservation Canceled',
+                  'body':
+                      'Your reservation has been canceled. Please check the app for more information.',
+                },
               });
             }
-          }));
+
+            await http.post(
+              Uri.parse("https://fcm.googleapis.com/fcm/send"),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+                "Authorization":
+                    "key=AAAAoUHQOTI:APA91bEtJeZRt2Gs88M9LZ5WbbnVEyB4ATEAP4rYIRiZj-ZLZAOUjRJny5a441spMa6gZ6x2zWUlg6DC5qu1QeETT7NJNjsNWc6-i6VwJiC4nj2W9arXFCQew1Z3-ywt8WTyEFUHPUPE",
+              },
+              body: constructFCMPayload(deviceToken),
+            );
+          }
         }
       }
     } catch (e) {
@@ -349,11 +411,84 @@ Future<List<String>> getPinnedZones() async {
     }
   }
 
-  Future<void> deleteDisableReservation(List<String> reservationIds) async {
+  Future<void> deleteDisableReservation(
+    List<String> reservationIds,
+    String zoneId,
+    List<Timestamp> startDateTimeList,
+  ) async {
     try {
       for (final id in reservationIds) {
         final reservationRef = disable.doc(id);
         await reservationRef.delete();
+      }
+      // Update userReservation to set isSuccessful to false
+      final querySnapshot =
+          await userRes.where(zoneIdField, isEqualTo: zoneId).get();
+
+      final userIds = <String>[];
+
+      for (var startDateTime in startDateTimeList) {
+        if (querySnapshot.docs.isNotEmpty) {
+          await Future.wait(
+            querySnapshot.docs.map(
+              (doc) async {
+                if (startDateTime.toDate().year ==
+                        doc[startDateTimeField].toDate().year &&
+                    startDateTime.toDate().month ==
+                        doc[startDateTimeField].toDate().month &&
+                    startDateTime.toDate().day ==
+                        doc[startDateTimeField].toDate().day &&
+                    startDateTime.toDate().hour ==
+                        doc[startDateTimeField].toDate().hour &&
+                    startDateTime.toDate().minute ==
+                        doc[startDateTimeField].toDate().minute &&
+                    startDateTime.toDate().second ==
+                        doc[startDateTimeField].toDate().second) {
+                  if (doc[isSuccessfulField] == false) {
+                    userIds.add(doc[userIdField]);
+                  }
+                }
+              },
+            ),
+          );
+
+          Future<List<String>> getDeviceTokens(List<String> userIds) async {
+            final querySnapshot =
+                await device.where(userIdField, whereIn: userIds).get();
+            return querySnapshot.docs.map((doc) => doc.id).toList();
+          }
+
+          List<String> deviceTokens = [];
+          if (userIds.isNotEmpty) {
+            deviceTokens = await getDeviceTokens(userIds);
+          }
+
+          for (String deviceToken in deviceTokens) {
+            String constructFCMPayload(String? token) {
+              return jsonEncode({
+                'to': token,
+                'data': {
+                  'via': 'FlutterFire Cloud Messaging!!!',
+                },
+                'notification': {
+                  'title': 'Reservation Available',
+                  'body':
+                      'Your canceled reservation is now available again. Please check the app for more information.',
+                },
+              });
+            }
+
+            await http.post(
+              Uri.parse("https://fcm.googleapis.com/fcm/send"),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+                "Authorization":
+                    "key=AAAAoUHQOTI:APA91bEtJeZRt2Gs88M9LZ5WbbnVEyB4ATEAP4rYIRiZj-ZLZAOUjRJny5a441spMa6gZ6x2zWUlg6DC5qu1QeETT7NJNjsNWc6-i6VwJiC4nj2W9arXFCQew1Z3-ywt8WTyEFUHPUPE",
+              },
+              body: constructFCMPayload(deviceToken),
+            );
+          }
+        }
       }
     } catch (e) {
       throw CouldNotDeleteException();
@@ -496,10 +631,10 @@ Future<List<String>> getPinnedZones() async {
       if (canCreate && !needToUpdate) {
         await userRes.add(
           {
-            'startDateTime': startDateTime,
-            'userId': userId,
-            'zoneId': zoneId,
-            'isSuccessful': true,
+            startDateTimeField: startDateTime,
+            userIdField: userId,
+            zoneIdField: zoneId,
+            isSuccessfulField: true,
             // Add any other fields you want to store in the document
           },
         );
@@ -511,7 +646,7 @@ Future<List<String>> getPinnedZones() async {
             .get();
         if (querySnapshot.docs.isNotEmpty) {
           final docRef = querySnapshot.docs.first.reference;
-          await docRef.update({'isSuccessful': true});
+          await docRef.update({isSuccessfulField: true});
         } else {
           throw CouldNotCreateException();
         }
@@ -704,9 +839,11 @@ Future<List<String>> getPinnedZones() async {
     try {
       String? deviceToken = await FirebaseMessaging.instance.getToken();
       // Use device token as the document ID in "device" collection
-      await device.doc(deviceToken).set({
-        userIdField: userId,
-      });
+      if (deviceToken != null) {
+        await device.doc(deviceToken).set({
+          userIdField: userId,
+        });
+      }
     } catch (error) {
       throw CouldNotCreateException();
     }
@@ -716,7 +853,9 @@ Future<List<String>> getPinnedZones() async {
     try {
       String? deviceToken = await FirebaseMessaging.instance.getToken();
       // Delete document by ID in "device" collection
-      await device.doc(deviceToken).delete();
+      if (deviceToken != null) {
+        await device.doc(deviceToken).delete();
+      }
     } catch (error) {
       throw CouldNotDeleteException;
     }

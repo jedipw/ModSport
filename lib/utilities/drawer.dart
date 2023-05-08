@@ -18,11 +18,12 @@ class ModSportDrawer extends StatelessWidget {
         FirebaseAuth.instance.currentUser!.displayName.toString();
     final String mail = FirebaseAuth.instance.currentUser!.email.toString();
     List<String> nameParts = userName.split(' ');
-    String firstName = nameParts[0]; 
+    String firstName = nameParts[0];
     String lastName = nameParts[1];
-    String userFirstName = firstName.substring(0,1);
-    String userLastName = lastName.substring(0,1);
-    String name = userFirstName+userLastName;
+    String userFirstName = firstName.substring(0, 1);
+    String userLastName = lastName.substring(0, 1);
+    String name = userFirstName + userLastName;
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
 
     return Drawer(
       backgroundColor: Colors.white,

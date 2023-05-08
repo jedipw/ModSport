@@ -23,6 +23,7 @@ dependencies:
   dio: ^4.0.0
   flutter_local_notifications: ^14.0.0+1
   firebase_messaging: ^14.5.0
+  http: ^0.13.6
 
 dev_dependencies:
   flutter_test:
@@ -31,7 +32,7 @@ dev_dependencies:
   flutter_launcher_icons: "^0.13.0"
 
 flutter_icons:
-  android: "launcher_icon"
+  android: "ic_launcher"
   ios: true
   image_path: "assets/icon/modsport.png"
 

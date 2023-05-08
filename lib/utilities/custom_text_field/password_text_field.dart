@@ -7,21 +7,23 @@ class PasswordTextField extends StatelessWidget {
     Key? key,
     required this.passwordController,
     required this.isPasswordOk,
+    this.text = 'Password',
   }) : super(key: key);
 
   final TextEditingController passwordController;
   final bool isPasswordOk;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
+         Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            'Password',
-            style: TextStyle(
+            text,
+            style: const TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,

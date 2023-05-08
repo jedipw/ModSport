@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+
 import 'package:modsport/constants/color.dart';
 
 typedef OnPressedCallBack = Function();
 
 class DisableButton extends StatelessWidget {
+  final bool isDisableMenu;
+
+  final List<bool?> selectedTimeSlots;
+  
+  final OnPressedCallBack onPressed;
+
   const DisableButton({
     Key? key,
     required this.isDisableMenu,
     required this.selectedTimeSlots,
     required this.onPressed,
   }) : super(key: key);
-  final bool isDisableMenu;
-  final List<bool?> selectedTimeSlots;
-  final OnPressedCallBack onPressed;
 
   @override
   Widget build(BuildContext context) {

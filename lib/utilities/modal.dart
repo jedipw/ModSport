@@ -1121,7 +1121,6 @@ dynamic showSaveConfirmationModal(
 
 dynamic showLogoutConfirmationModal(BuildContext context,
     OnPressedCallBack onPressed, bool showSuccess, String mode) {
-  String modeWord = 'sign out';
 
   showDialog(
     context: context,
@@ -1249,7 +1248,7 @@ dynamic showSuccessMailModal(BuildContext context, bool needToClose) {
     barrierColor: Colors.white.withOpacity(0.5),
     builder: (BuildContext context) {
       if (needToClose) {
-        Future.delayed(const Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 4), () {
           Navigator.of(context).pop();
         });
       }
@@ -1270,20 +1269,133 @@ dynamic showSuccessMailModal(BuildContext context, bool needToClose) {
                   shape: BoxShape.circle,
                   color: primaryGreen,
                 ),
-                child: const Icon(Icons.mail, color: Colors.green, size: 80),
+                child: const Icon(Icons.mail, color: Colors.white, size: 80),
               ),
               const SizedBox(height: 30),
-              const Text(
-                'Email sent! \nPlease verify your email and try to login again.',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                  color: Color.fromRGBO(0, 0, 0, 0.8),
-                  height: 1.3,
-                  letterSpacing: 0.0,
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Email sent! \nPlease wait 1-5 minutes for the verification email, then try logging in again.',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                    color: Color.fromRGBO(0, 0, 0, 0.8),
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 60),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+dynamic showSuccessPasswordModal(BuildContext context, bool needToClose) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    barrierColor: Colors.white.withOpacity(0.5),
+    builder: (BuildContext context) {
+      if (needToClose) {
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
+      }
+      return Center(
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          contentPadding: EdgeInsets.zero,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 60),
+              Container(
+                width: 100,
+                height: 100,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: primaryGreen,
+                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 80),
+              ),
+              const SizedBox(height: 30),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Password changed! \nYou can exit this page.',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                    color: Color.fromRGBO(0, 0, 0, 0.8),
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 60),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+dynamic showSuccessForgetModal(BuildContext context, bool needToClose) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    barrierColor: Colors.white.withOpacity(0.5),
+    builder: (BuildContext context) {
+      if (needToClose) {
+        Future.delayed(const Duration(seconds: 4), () {
+          Navigator.of(context).pop();
+        });
+      }
+      return Center(
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          contentPadding: EdgeInsets.zero,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 60),
+              Container(
+                width: 100,
+                height: 100,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: primaryGreen,
+                ),
+                child: const Icon(Icons.mail, color: Colors.white, size: 80),
+              ),
+              const SizedBox(height: 30),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Email sent! \nPlease wait 1-5 mins for password change email, then try logging in again.',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                    color: Color.fromRGBO(0, 0, 0, 0.8),
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(height: 60),
             ],

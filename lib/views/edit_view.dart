@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
@@ -28,6 +27,7 @@ class _EditViewState extends State<EditView> {
   bool _isDisableReservationLoaded = false;
   bool _isReservationIdLoaded = false;
   bool _isZoneNameLoaded = false;
+  bool _isReservationTimeLoaded = false;
 
   String _firstDisableReason = '';
   String _zoneName = '';
@@ -37,6 +37,7 @@ class _EditViewState extends State<EditView> {
   List<bool> _selectedTimeSlots = [];
   List<String> _reservationIds = [];
   List<String> _disableIds = [];
+  List<Timestamp> startTimes = [];
 
   @override
   void initState() {
@@ -73,7 +74,7 @@ class _EditViewState extends State<EditView> {
         _isZoneNameLoaded = true;
       });
     } catch (e) {
-      log('Error fetching zone name: $e');
+      handleError();
     }
   }
 
@@ -121,6 +122,22 @@ class _EditViewState extends State<EditView> {
     }
   }
 
+  Future<void> _getReservationTime() async {
+    try {
+      List<Map<String, dynamic>> reservation = await FirebaseCloudStorage()
+          .getReservationTime(_reservationIds, widget.selectedDateIndex);
+      setState(() {
+        startTimes = reservation
+            .map((time) => Timestamp.fromDate(time["startTime"]))
+            .toList();
+
+        _isReservationTimeLoaded = true;
+      });
+    } catch (e) {
+      handleError();
+    }
+  }
+
   String _getDayOrdinal(int day) {
     if (day >= 11 && day <= 13) {
       return '${day}th';
@@ -144,7 +161,8 @@ class _EditViewState extends State<EditView> {
         await _getZoneName()
             .then((_) => _getReservationData())
             .then((_) => _getDisableReservationData())
-            .then((_) => _getReservationIds());
+            .then((_) => _getReservationIds())
+            .then((_) => _getReservationTime());
         break;
       case adminMode:
         setState(
@@ -152,11 +170,13 @@ class _EditViewState extends State<EditView> {
             _isReservationLoaded = false;
             _isDisableReservationLoaded = false;
             _isReservationIdLoaded = false;
+            _isReservationTimeLoaded = false;
           },
         );
         await _getReservationData()
             .then((_) => _getDisableReservationData())
-            .then((_) => _getReservationIds());
+            .then((_) => _getReservationIds())
+            .then((_) => _getReservationTime());
         break;
     }
   }
@@ -254,386 +274,583 @@ class _EditViewState extends State<EditView> {
       return _isReservationLoaded &&
           _isDisableReservationLoaded &&
           _isReservationIdLoaded &&
-          _isZoneNameLoaded;
+          _isZoneNameLoaded &&
+          _isReservationTimeLoaded;
     }
 
     DateTime currentDate =
         DateTime.now().add(Duration(days: widget.selectedDateIndex));
 
     return Scaffold(
-        body: Container(
-      color: Colors.white,
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(height: 140),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+      body: Container(
+        color: Colors.white,
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 140),
+                  !_isError
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const SizedBox(width: 20),
-                            Text(
-                              '${_getDayOrdinal(currentDate.day)} ${DateFormat('MMMM').format(currentDate)} ${currentDate.year}',
-                              style: const TextStyle(
-                                color: staffOrange,
-                                fontFamily: 'Poppins',
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18.0,
-                                height:
-                                    1.5, // adjust line height with the line-height CSS property
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SizedBox(width: 20),
-                            Text(
-                              _zoneName,
-                              style: const TextStyle(
-                                color: staffOrange,
-                                fontFamily: 'Poppins',
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18.0,
-                                height:
-                                    1.5, // adjust line height with the line-height CSS property
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                      ],
-                    ),
-                  ],
-                ),
-                isEverythingLoaded() && !_isError
-                    ? Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
-                            itemCount: _reservations.length,
-                            itemBuilder: (context, index) {
-                              return Stack(
-                                children: [
-                                  _isReasonShow
-                                      ? Container(
-                                          width: double.infinity,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              bottomLeft: Radius.circular(20),
-                                              bottomRight: Radius.circular(20),
-                                            ),
-                                            color: authenGray,
-                                          ),
-                                          margin: const EdgeInsets.fromLTRB(
-                                              10, 75, 10, 20),
-                                          padding: const EdgeInsets.fromLTRB(
-                                              15, 30, 15, 30),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Reason:',
-                                                style: TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  fontStyle: FontStyle.normal,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 16.0,
-                                                  color: Color.fromRGBO(
-                                                      0, 0, 0, 0.7),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                _disabledReservation[index]
-                                                    .disableReason,
-                                                style: const TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  fontStyle: FontStyle.normal,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 16.0,
-                                                  color: Color.fromRGBO(
-                                                      0, 0, 0, 0.7),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedTimeSlots[index] =
-                                            !_selectedTimeSlots[index];
-                                      });
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
-                                      padding: const EdgeInsets.fromLTRB(
-                                          5, 18, 5, 14),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color:
-                                                Color.fromRGBO(0, 0, 0, 0.25),
-                                            offset: Offset(0, 4),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(width: 20),
+                                    Text(
+                                      '${_getDayOrdinal(currentDate.day)} ${DateFormat('MMMM').format(currentDate)} ${currentDate.year}',
+                                      style: const TextStyle(
+                                        color: staffOrange,
+                                        fontFamily: 'Poppins',
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18.0,
+                                        height:
+                                            1.5, // adjust line height with the line-height CSS property
                                       ),
-                                      child: Row(
-                                        children: [
-                                          Checkbox(
-                                            activeColor: primaryGray,
-                                            value: _selectedTimeSlots[index],
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                _selectedTimeSlots[index] =
-                                                    value!;
-                                              });
-                                            },
-                                            checkColor: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4.0),
-                                            ),
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            visualDensity: const VisualDensity(
-                                                horizontal: 1, vertical: 1),
-                                            hoverColor:
-                                                primaryOrange.withOpacity(0.04),
-                                            focusColor:
-                                                primaryOrange.withOpacity(0.12),
-                                          ),
-                                          const SizedBox(
-                                            width: 9,
-                                          ), // Add some space between the checkbox and the text
-                                          Expanded(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    '${_reservations[index].startTime.toString().substring(11, 16)} - ${_reservations[index].endTime.toString().substring(11, 16)}',
-                                                    style: const TextStyle(
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(width: 20),
+                                    Text(
+                                      _zoneName,
+                                      style: const TextStyle(
+                                        color: staffOrange,
+                                        fontFamily: 'Poppins',
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18.0,
+                                        height:
+                                            1.5, // adjust line height with the line-height CSS property
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  isEverythingLoaded() && !_isError
+                      ? _disabledReservation.isNotEmpty
+                          ? Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: ListView.builder(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 70),
+                                  itemCount: _reservations.length,
+                                  itemBuilder: (context, index) {
+                                    return Stack(
+                                      children: [
+                                        _isReasonShow
+                                            ? Container(
+                                                width: double.infinity,
+                                                decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(20),
+                                                    bottomRight:
+                                                        Radius.circular(20),
+                                                  ),
+                                                  color: authenGray,
+                                                ),
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 75, 10, 20),
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        15, 30, 15, 30),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      'Reason:',
+                                                      style: TextStyle(
                                                         fontFamily: 'Poppins',
                                                         fontStyle:
                                                             FontStyle.normal,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 22,
-                                                        color: primaryGray),
-                                                  ),
-                                                  Row(
-                                                    children: const [
-                                                      SizedBox(width: 8),
-                                                      Icon(
-                                                        Icons.block,
-                                                        color: primaryGray,
-                                                        size: 35,
+                                                            FontWeight.w400,
+                                                        fontSize: 16.0,
+                                                        color: Color.fromRGBO(
+                                                            0, 0, 0, 0.7),
                                                       ),
-                                                      SizedBox(width: 13),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      )
-                    : _isError
-                        ? Container()
-                        : Expanded(
-                            child: ListView.builder(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
-                              shrinkWrap: true,
-                              itemCount: 8, // increment by 1
-                              itemBuilder: (context, index) {
-                                // Builds a RadioListTile widget for each item in the list
-                                return Theme(
-                                  data: theme,
-                                  child: Container(
-                                    margin: const EdgeInsets.fromLTRB(
-                                        10, 0, 10, 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.25),
-                                          blurRadius: 4,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ListTileTheme(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 10, horizontal: 2),
-                                      selectedColor: primaryOrange,
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        child: SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1,
-                                          child: RadioListTile(
-                                            secondary: Container(
-                                              width: 24,
-                                              height: 24,
-                                              margin: const EdgeInsets.only(
-                                                  left: 15),
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.transparent,
-                                                border: Border.all(
-                                                  width: 2,
-                                                  color: primaryGray,
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      _disabledReservation[
+                                                              index]
+                                                          .disableReason,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontStyle:
+                                                            FontStyle.normal,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 16.0,
+                                                        color: Color.fromRGBO(
+                                                            0, 0, 0, 0.7),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
+                                              )
+                                            : Container(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedTimeSlots[index] =
+                                                  !_selectedTimeSlots[index];
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 10),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                5, 18, 5, 14),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color.fromRGBO(
+                                                      0, 0, 0, 0.25),
+                                                  offset: Offset(0, 4),
+                                                  blurRadius: 4,
+                                                ),
+                                              ],
                                             ),
-                                            title: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                            child: Row(
                                               children: [
-                                                Shimmer.fromColors(
-                                                  baseColor:
-                                                      const Color.fromARGB(
-                                                          255, 216, 216, 216),
-                                                  highlightColor:
-                                                      const Color.fromRGBO(
-                                                          173, 173, 173, 0.824),
+                                                Checkbox(
+                                                  activeColor: primaryGray,
+                                                  value:
+                                                      _selectedTimeSlots[index],
+                                                  onChanged: (bool? value) {
+                                                    setState(() {
+                                                      _selectedTimeSlots[
+                                                          index] = value!;
+                                                    });
+                                                  },
+                                                  checkColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4.0),
+                                                  ),
+                                                  materialTapTargetSize:
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
+                                                  visualDensity:
+                                                      const VisualDensity(
+                                                          horizontal: 1,
+                                                          vertical: 1),
+                                                  hoverColor: primaryOrange
+                                                      .withOpacity(0.04),
+                                                  focusColor: primaryOrange
+                                                      .withOpacity(0.12),
+                                                ),
+                                                const SizedBox(
+                                                  width: 9,
+                                                ), // Add some space between the checkbox and the text
+                                                Expanded(
                                                   child: Container(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              30),
-                                                      color: Colors.white,
+                                                              20),
                                                     ),
-                                                    width: 150,
-                                                    height: 25.0,
-                                                  ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    const Icon(Icons.people,
-                                                        color: primaryGray,
-                                                        size: 30),
-                                                    const SizedBox(width: 4),
-                                                    Shimmer.fromColors(
-                                                      baseColor:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              216,
-                                                              216,
-                                                              216),
-                                                      highlightColor:
-                                                          const Color.fromRGBO(
-                                                              173,
-                                                              173,
-                                                              173,
-                                                              0.824),
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(30),
-                                                          color: Colors.white,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          '${_reservations[index].startTime.toString().substring(11, 16)} - ${_reservations[index].endTime.toString().substring(11, 16)}',
+                                                          style: const TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .normal,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 22,
+                                                              color:
+                                                                  primaryGray),
                                                         ),
-                                                        width: 40,
-                                                        height: 25.0,
-                                                      ),
-                                                    )
-                                                  ],
+                                                        Row(
+                                                          children: const [
+                                                            SizedBox(width: 8),
+                                                            Icon(
+                                                              Icons.block,
+                                                              color:
+                                                                  primaryGray,
+                                                              size: 35,
+                                                            ),
+                                                            SizedBox(width: 13),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                            value: index,
-                                            groupValue: const [
-                                              1,
-                                              2,
-                                              3,
-                                              4,
-                                              5,
-                                              6,
-                                              7,
-                                              8
-                                            ],
-                                            onChanged: null,
-                                            activeColor: Colors.white,
-                                            selectedTileColor: primaryOrange,
-                                            controlAffinity:
-                                                ListTileControlAffinity
-                                                    .trailing,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(Icons.calendar_today,
+                                      size: 100, color: primaryGray),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'There are no disabled reservations',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.5, // 21/14 = 1.5
+                                      color: primaryGray,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
+                                  Text(
+                                    'to enable or edit on this page.',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.5, // 21/14 = 1.5
+                                      color: primaryGray,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                      : _isError
+                          ? Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Icon(Icons.error,
+                                          size: 100, color: primaryGray),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Something went wrong!',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.5, // 21/14 = 1.5
+                                          color: primaryGray,
+                                          letterSpacing: 0,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Please try again later.',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.5, // 21/14 = 1.5
+                                          color: primaryGray,
+                                          letterSpacing: 0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Expanded(
+                              child: ListView.builder(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
+                                shrinkWrap: true,
+                                itemCount: 8, // increment by 1
+                                itemBuilder: (context, index) {
+                                  // Builds a RadioListTile widget for each item in the list
+                                  return Theme(
+                                    data: theme,
+                                    child: Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10, 0, 10, 20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.25),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ListTileTheme(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 2),
+                                        selectedColor: primaryOrange,
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                1,
+                                            child: RadioListTile(
+                                              secondary: Container(
+                                                width: 24,
+                                                height: 24,
+                                                margin: const EdgeInsets.only(
+                                                    left: 15),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.transparent,
+                                                  border: Border.all(
+                                                    width: 2,
+                                                    color: primaryGray,
+                                                  ),
+                                                ),
+                                              ),
+                                              title: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Shimmer.fromColors(
+                                                    baseColor:
+                                                        const Color.fromARGB(
+                                                            255, 216, 216, 216),
+                                                    highlightColor:
+                                                        const Color.fromRGBO(
+                                                            173,
+                                                            173,
+                                                            173,
+                                                            0.824),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(30),
+                                                        color: Colors.white,
+                                                      ),
+                                                      width: 150,
+                                                      height: 25.0,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      const Icon(Icons.people,
+                                                          color: primaryGray,
+                                                          size: 30),
+                                                      const SizedBox(width: 4),
+                                                      Shimmer.fromColors(
+                                                        baseColor: const Color
+                                                                .fromARGB(
+                                                            255, 216, 216, 216),
+                                                        highlightColor:
+                                                            const Color
+                                                                    .fromRGBO(
+                                                                173,
+                                                                173,
+                                                                173,
+                                                                0.824),
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        30),
+                                                            color: Colors.white,
+                                                          ),
+                                                          width: 40,
+                                                          height: 25.0,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              value: index,
+                                              groupValue: const [
+                                                1,
+                                                2,
+                                                3,
+                                                4,
+                                                5,
+                                                6,
+                                                7,
+                                                8
+                                              ],
+                                              onChanged: null,
+                                              activeColor: Colors.white,
+                                              selectedTileColor: primaryOrange,
+                                              controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .trailing,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
+                                  );
+                                },
+                              ),
+                            ),
+                ],
+              ),
+            ),
+            if (isEverythingLoaded() &&
+                !_selectedTimeSlots.every((element) => element == false)) ...[
+              Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: const Color.fromRGBO(255, 255, 255, 0.75),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (checkSameDisableReasonAndDate(
+                        _disabledReservation,
+                        DateTime.now().add(
+                          Duration(
+                            days: widget.selectedDateIndex,
+                          ),
+                        ),
+                      ))
+                        SizedBox(
+                          height: 55,
+                          width: 140,
+                          child: TextButton(
+                            style: ButtonStyle(
+                              side: MaterialStateProperty.all(
+                                const BorderSide(
+                                  color: staffOrange,
+                                  width: 3,
+                                ),
+                              ),
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ), // Set the button background color to grey
+
+                            onPressed: () {
+                              _disableIds = [];
+                              _selectedTimeSlots.asMap().forEach(
+                                (index, isSelected) {
+                                  if (isSelected) {
+                                    _disableIds.add(
+                                      _disabledReservation[index].disableId,
+                                    );
+                                  }
+                                },
+                              );
+
+                              _reservationIds = [];
+                              _selectedTimeSlots.asMap().forEach(
+                                (index, isSelected) {
+                                  if (isSelected) {
+                                    _reservationIds.add(
+                                      _reservations[index].reservationId,
+                                    );
+                                  }
+                                },
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  fullscreenDialog: true,
+                                  builder: (context) => DisableView(
+                                    disableIds: _disableIds,
+                                    zoneId: widget.zoneId,
+                                    reservationIds: _reservationIds,
+                                    reason: _firstDisableReason,
+                                    selectedDateIndex: widget.selectedDateIndex,
+                                    mode: editMode,
                                   ),
-                                );
-                              },
+                                ),
+                              )
+                                  .then(
+                                    (_) => setState(
+                                      () {
+                                        _selectedTimeSlots = [];
+                                      },
+                                    ),
+                                  )
+                                  .then(
+                                    (_) => fetchData(adminMode),
+                                  );
+                            },
+
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "EDIT ", // Set the button text to "Disable"
+                                  style: TextStyle(
+                                    color: staffOrange,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                numOfSelectedTimeSlots > 1
+                                    ? Text(
+                                        "($numOfSelectedTimeSlots)", // Set the button text to "Disable"
+                                        style: const TextStyle(
+                                          color: primaryOrange,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Poppins',
+                                          fontStyle: FontStyle.normal,
+                                          height: 1.5,
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
                             ),
                           ),
-              ],
-            ),
-          ),
-          if (isEverythingLoaded() &&
-              !_selectedTimeSlots.every((element) => element == false)) ...[
-            Positioned(
-              bottom: 20,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: const Color.fromRGBO(255, 255, 255, 0.75),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    if (checkSameDisableReasonAndDate(
-                      _disabledReservation,
-                      DateTime.now().add(
-                        Duration(
-                          days: widget.selectedDateIndex,
                         ),
-                      ),
-                    ))
                       SizedBox(
                         height: 55,
                         width: 140,
@@ -641,7 +858,7 @@ class _EditViewState extends State<EditView> {
                           style: ButtonStyle(
                             side: MaterialStateProperty.all(
                               const BorderSide(
-                                color: staffOrange,
+                                color: primaryGreen,
                                 width: 3,
                               ),
                             ),
@@ -653,7 +870,6 @@ class _EditViewState extends State<EditView> {
                               ),
                             ),
                           ), // Set the button background color to grey
-
                           onPressed: () {
                             _disableIds = [];
                             _selectedTimeSlots.asMap().forEach(
@@ -665,51 +881,52 @@ class _EditViewState extends State<EditView> {
                                 }
                               },
                             );
-
-                            _reservationIds = [];
-                            _selectedTimeSlots.asMap().forEach(
-                              (index, isSelected) {
-                                if (isSelected) {
-                                  _reservationIds.add(
-                                    _reservations[index].reservationId,
+                            showEnableConfirmationModal(
+                              context,
+                              () async {
+                                try {
+                                  Navigator.of(context).pop();
+                                  showLoadModal(context);
+                                  // Call createDisableReservation to disable the selected time slots
+                                  await FirebaseCloudStorage()
+                                      .deleteDisableReservation(
+                                        _disableIds,
+                                        widget.zoneId,
+                                        startTimes,
+                                      )
+                                      .then(
+                                        (_) => Navigator.of(context).pop(),
+                                      )
+                                      .then(
+                                        (_) => setState(
+                                          () {
+                                            _selectedTimeSlots = [];
+                                          },
+                                        ),
+                                      )
+                                      .then(
+                                        (_) => fetchData(adminMode),
+                                      );
+                                } catch (e) {
+                                  showErrorModal(
+                                    context,
+                                    () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                      fetchData(adminMode);
+                                    },
                                   );
                                 }
                               },
                             );
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                fullscreenDialog: true,
-                                builder: (context) => DisableView(
-                                  disableIds: _disableIds,
-                                  zoneId: widget.zoneId,
-                                  reservationIds: _reservationIds,
-                                  reason: _firstDisableReason,
-                                  selectedDateIndex: widget.selectedDateIndex,
-                                  mode: editMode,
-                                ),
-                              ),
-                            )
-                                .then(
-                                  (_) => setState(
-                                    () {
-                                      _selectedTimeSlots = [];
-                                    },
-                                  ),
-                                )
-                                .then(
-                                  (_) => fetchData(adminMode),
-                                );
                           },
-
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                "EDIT ", // Set the button text to "Disable"
+                                "ENABLE ", // Set the button text to "Disable"
                                 style: TextStyle(
-                                  color: staffOrange,
+                                  color: primaryGreen,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: 'Poppins',
@@ -721,7 +938,7 @@ class _EditViewState extends State<EditView> {
                                   ? Text(
                                       "($numOfSelectedTimeSlots)", // Set the button text to "Disable"
                                       style: const TextStyle(
-                                        color: primaryOrange,
+                                        color: primaryGreen,
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
                                         fontFamily: 'Poppins',
@@ -733,188 +950,93 @@ class _EditViewState extends State<EditView> {
                             ],
                           ),
                         ),
-                      ),
-                    SizedBox(
-                      height: 55,
-                      width: 140,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          side: MaterialStateProperty.all(
-                            const BorderSide(
-                              color: primaryGreen,
-                              width: 3,
-                            ),
-                          ),
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ), // Set the button background color to grey
-                        onPressed: () {
-                          _disableIds = [];
-                          _selectedTimeSlots.asMap().forEach(
-                            (index, isSelected) {
-                              if (isSelected) {
-                                _disableIds.add(
-                                  _disabledReservation[index].disableId,
-                                );
-                              }
-                            },
-                          );
-                          showEnableConfirmationModal(
-                            context,
-                            () async {
-                              try {
-                                Navigator.of(context).pop();
-                                showLoadModal(context);
-                                // Call createDisableReservation to disable the selected time slots
-                                await FirebaseCloudStorage()
-                                    .deleteDisableReservation(
-                                      _disableIds,
-                                    )
-                                    .then(
-                                      (_) => Navigator.of(context).pop(),
-                                    )
-                                    .then(
-                                      (_) => setState(
-                                        () {
-                                          _selectedTimeSlots = [];
-                                        },
-                                      ),
-                                    )
-                                    .then(
-                                      (_) => fetchData(adminMode),
-                                    );
-                              } catch (e) {
-                                showErrorModal(
-                                  context,
-                                  () {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pop();
-                                    fetchData(adminMode);
-                                  },
-                                );
-                              }
-                            },
-                          );
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "ENABLE ", // Set the button text to "Disable"
-                              style: TextStyle(
-                                color: primaryGreen,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                                fontStyle: FontStyle.normal,
-                                height: 1.5,
-                              ),
-                            ),
-                            numOfSelectedTimeSlots > 1
-                                ? Text(
-                                    "($numOfSelectedTimeSlots)", // Set the button text to "Disable"
-                                    style: const TextStyle(
-                                      color: primaryGreen,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Poppins',
-                                      fontStyle: FontStyle.normal,
-                                      height: 1.5,
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-          Positioned(
-            top: 130,
-            right: 20,
-            child: TextButton(
-              onPressed: () {
-                if (_isReasonShow) {
-                  setState(() {
-                    _isReasonShow = false;
-                  });
-                } else {
-                  setState(() {
-                    _isReasonShow = true;
-                  });
-                }
-              },
-              child: Text(
-                _isReasonShow ? 'Hide Reasons' : 'Show Reasons',
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16.0,
-                  height:
-                      1.5, // adjust line height with the line-height CSS property
-                  decoration: TextDecoration.underline,
-                  color: primaryGray,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            height: 125,
-            decoration: const BoxDecoration(
-              color: staffOrange,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20.0),
-                bottomRight: Radius.circular(20.0),
-              ),
-            ),
-            padding: const EdgeInsets.only(bottom: 17),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                Text(
-                  'EDIT DISABLE',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 24.0,
-                    height: 1.5,
-                    color: Colors.white,
+                      )
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 10,
-            top: 65,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: staffOrange,
-                padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
-                shape: const CircleBorder(),
-                fixedSize: const Size.fromRadius(25),
-                elevation: 0,
+              )
+            ],
+            _disabledReservation.isNotEmpty && !_isError
+                ? Positioned(
+                    top: 130,
+                    right: 20,
+                    child: TextButton(
+                      onPressed: () {
+                        if (_isReasonShow) {
+                          setState(() {
+                            _isReasonShow = false;
+                          });
+                        } else {
+                          setState(() {
+                            _isReasonShow = true;
+                          });
+                        }
+                      },
+                      child: Text(
+                        _isReasonShow ? 'Hide Reasons' : 'Show Reasons',
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16.0,
+                          height:
+                              1.5, // adjust line height with the line-height CSS property
+                          decoration: TextDecoration.underline,
+                          color: primaryGray,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
+            Container(
+              height: 125,
+              decoration: const BoxDecoration(
+                color: staffOrange,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20.0),
+                  bottomRight: Radius.circular(20.0),
+                ),
               ),
-              child: const Icon(Icons.arrow_back_ios,
-                  color: Colors.white, size: 30),
+              padding: const EdgeInsets.only(bottom: 17),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: const [
+                  Text(
+                    'EDIT DISABLE',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 24.0,
+                      height: 1.5,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Positioned(
+              left: 10,
+              top: 65,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: staffOrange,
+                  padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                  shape: const CircleBorder(),
+                  fixedSize: const Size.fromRadius(25),
+                  elevation: 0,
+                ),
+                child: const Icon(Icons.arrow_back_ios,
+                    color: Colors.white, size: 30),
+              ),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

@@ -1,14 +1,10 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-// import 'package:modsport/utilities/custom_text_field/answer_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/fname_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/lname_text_field.dart';
-// import 'package:modsport/utilities/custom_text_field/question_text_field.dart';
 import 'package:modsport/utilities/custom_text_field/reg_password_field.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -52,262 +48,259 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        // resizeToAvoidBottomInset: false,
-        body: SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 114, 0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: const [
-                    Text(
-                      "CREATE ACCOUNT",
-                      style: TextStyle(
-                        color: primaryOrange,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: "Poppins",
-                      ),
-                    ),
-                  ],
-                ),
-                const Text(
-                  "Please sign in to continue",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 16,
-                    height: 1.5,
-                    color: primaryGray,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+          // resizeToAvoidBottomInset: false,
+          body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(30, 114, 0, 0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Don't have verification yet
-                  FnameTextField(
-                      controller: firstNameController,
-                      isFnameValid: _isFnameValid),
-                  LnameTextField(
-                      controller: lastNameController,
-                      isLnameValid: _isLnameValid),
-                  EmailTextField(
-                      controller: emailController, isEmailValid: _isEmailValid),
-                  RegPasswordField(
-                    passwordController: passwordController,
-                    passwordStat: _isValidPassword(
-                        passwordController.text.toString(),
-                        confirmPasswordController.text.toString(),
-                        "password"),
-                    isPasswordOk: _isPasswordOk,
-                  ),
-                  RegConPasswordField(
-                    passwordController: confirmPasswordController,
-                    passwordStat: _isValidPassword(
-                        confirmPasswordController.text.toString(),
-                        passwordController.text.toString(),
-                        "confirm password"),
-                    isPasswordOk: _isPasswordOk,
-                  ),
-                  // QuestionTextField(
-                  //     controller: questionController,
-                  //     isQuestionValid: _isQuestionValid),
-                  // AnswerTextField(
-                  //     controller: answerController,
-                  //     isAnswerValid: _isAnswerValid),
-
-                  Center(
-                    // centers child widget in the screen
-                    child: TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(primaryOrange),
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40))),
-                        minimumSize:
-                            MaterialStateProperty.all(const Size(173.42, 64)),
-                      ),
-                      onPressed: () async {
-                        // if (_formKey.currentState!.validate()) {
-                        if (_isEverythingOk(
-                            firstNameController.text.trim(),
-                            lastNameController.text.trim(),
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                            confirmPasswordController.text.trim(),
-                            questionController.text.trim(),
-                            answerController.text.trim())) {
-                          showAccountConfirmationModal(
-                            context,
-                            () async {
-                              try {
-                                FirebaseFirestore firestore =
-                                    FirebaseFirestore.instance;
-                                final email = emailController.text.trim();
-                                final password = passwordController.text.trim();
-                                Navigator.of(context).pop();
-                                showLoadModal(context);
-                                final userCredential = await FirebaseAuth
-                                    .instance
-                                    .createUserWithEmailAndPassword(
-                                        email: email, password: password);
-                                userCredential.user?.updateDisplayName(
-                                  "${firstNameController.text.trim().toUpperCase().substring(0, 1)}${firstNameController.text.trim().toLowerCase().substring(1)} ${lastNameController.text.trim().toUpperCase().substring(0, 1)}${lastNameController.text.trim().toLowerCase().substring(1)}",
-                                );
-                                await firestore
-                                    .collection('user')
-                                    .doc(userCredential.user!.uid)
-                                    .set({
-                                      'firstName': firstNameController.text
-                                          .trim()
-                                          .toLowerCase(),
-                                      'lastName': lastNameController.text
-                                          .trim()
-                                          .toLowerCase(),
-                                      'hasRole': false,
-                                      // 'question':
-                                      //     questionController.text.trim(),
-                                      // 'answer': answerController.text.trim(),
-                                    })
-                                    .then((value) {
-                                      log('User added to Firestore');
-                                    })
-                                    .catchError((error) {
-                                      log('Error adding user to Firestore: $error');
-                                    })
-                                    .then(
-                                        (value) => Navigator.of(context).pop())
-                                    // .then((value) =>
-                                    //     Navigator.of(context).pushNamedAndRemoveUntil(
-                                    //       //navigates to homeRoute screen and removes previous routes
-                                    //       verifyEmailRoute,
-                                    //       (route) => false,
-                                    //     ));
-
-/////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
-                                    .then((value) => Navigator.of(context)
-                                            .pushNamedAndRemoveUntil(
-                                          // navigates to homeRoute screen and removes previous routes
-                                          loginRoute,
-                                          (route) => false,
-                                        ));
-                              } catch (e) {
-                                showErrorModal(
-                                  context,
-                                  () {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pop();
-                                  },
-                                );
-                                // throw(e);
-                              }
-                            },
-                            firstNameController.text
-                                    .trim()
-                                    .toUpperCase()
-                                    .substring(0, 1) +
-                                firstNameController.text
-                                    .trim()
-                                    .toLowerCase()
-                                    .substring(1),
-                            lastNameController.text
-                                    .trim()
-                                    .toUpperCase()
-                                    .substring(0, 1) +
-                                lastNameController.text
-                                    .trim()
-                                    .toLowerCase()
-                                    .substring(1),
-                            emailController.text,
-                          );
-                        }
-                      },
-                      child: const Text(
-                        // label text for the button
-                        "Sign up",
+                  Row(
+                    children: const [
+                      Text(
+                        "CREATE ACCOUNT",
                         style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 24.0,
-                          height: 1.0,
-                          color: Colors.white,
+                          color: primaryOrange,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: "Poppins",
                         ),
-                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  const Text(
+                    "Please sign in to continue",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 16,
+                      height: 1.5,
+                      color: primaryGray,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
+                child: Column(
+                  children: [
+                    // Don't have verification yet
+                    FnameTextField(
+                        controller: firstNameController,
+                        isFnameValid: _isFnameValid),
+                    LnameTextField(
+                        controller: lastNameController,
+                        isLnameValid: _isLnameValid),
+                    EmailTextField(
+                        controller: emailController,
+                        isEmailValid: _isEmailValid),
+                    RegPasswordField(
+                      passwordController: passwordController,
+                      passwordStat: _isValidPassword(
+                          passwordController.text.toString(),
+                          confirmPasswordController.text.toString(),
+                          "password"),
+                      isPasswordOk: _isPasswordOk,
+                    ),
+                    RegConPasswordField(
+                      passwordController: confirmPasswordController,
+                      passwordStat: _isValidPassword(
+                          confirmPasswordController.text.toString(),
+                          passwordController.text.toString(),
+                          "confirm password"),
+                      isPasswordOk: _isPasswordOk,
+                    ),
+                    // QuestionTextField(
+                    //     controller: questionController,
+                    //     isQuestionValid: _isQuestionValid),
+                    // AnswerTextField(
+                    //     controller: answerController,
+                    //     isAnswerValid: _isAnswerValid),
+
+                    Center(
+                      // centers child widget in the screen
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(primaryOrange),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40))),
+                          minimumSize:
+                              MaterialStateProperty.all(const Size(130, 64)),
+                        ),
+                        onPressed: () async {
+                          // if (_formKey.currentState!.validate()) {
+                          if (_isEverythingOk(
+                              firstNameController.text.trim(),
+                              lastNameController.text.trim(),
+                              emailController.text.trim(),
+                              passwordController.text.trim(),
+                              confirmPasswordController.text.trim(),
+                              questionController.text.trim(),
+                              answerController.text.trim())) {
+                            showAccountConfirmationModal(
+                              context,
+                              () async {
+                                try {
+                                  FirebaseFirestore firestore =
+                                      FirebaseFirestore.instance;
+                                  final email = emailController.text.trim();
+                                  final password =
+                                      passwordController.text.trim();
+                                  Navigator.of(context).pop();
+                                  showLoadModal(context);
+                                  final userCredential = await FirebaseAuth
+                                      .instance
+                                      .createUserWithEmailAndPassword(
+                                          email: email, password: password);
+                                  userCredential.user?.updateDisplayName(
+                                    "${firstNameController.text.trim().toUpperCase().substring(0, 1)}${firstNameController.text.trim().toLowerCase().substring(1)} ${lastNameController.text.trim().toUpperCase().substring(0, 1)}${lastNameController.text.trim().toLowerCase().substring(1)}",
+                                  );
+                                  await firestore
+                                      .collection('user')
+                                      .doc(userCredential.user!.uid)
+                                      .set({
+                                        'firstName': firstNameController.text
+                                            .trim()
+                                            .toLowerCase(),
+                                        'lastName': lastNameController.text
+                                            .trim()
+                                            .toLowerCase(),
+                                        'hasRole': false,
+                                        // 'question':
+                                        //     questionController.text.trim(),
+                                        // 'answer': answerController.text.trim(),
+                                      })
+                                      .then((value) {
+                                        // log('User added to Firestore');
+                                      })
+                                      .catchError((error) {
+                                        // log('Error adding user to Firestore: $error');
+                                      })
+                                      .then((value) =>
+                                          Navigator.of(context).pop())
+                                      .then((value) => Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                            // navigates to homeRoute screen and removes previous routes
+                                            loginRoute,
+                                            (route) => false,
+                                          ));
+                                } catch (e) {
+                                  showErrorModal(
+                                    context,
+                                    () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                  // throw(e);
+                                }
+                              },
+                              firstNameController.text
+                                      .trim()
+                                      .toUpperCase()
+                                      .substring(0, 1) +
+                                  firstNameController.text
+                                      .trim()
+                                      .toLowerCase()
+                                      .substring(1),
+                              lastNameController.text
+                                      .trim()
+                                      .toUpperCase()
+                                      .substring(0, 1) +
+                                  lastNameController.text
+                                      .trim()
+                                      .toLowerCase()
+                                      .substring(1),
+                              emailController.text,
+                            );
+                          }
+                        },
+                        child: const Text(
+                          // label text for the button
+                          "Sign up",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 21,
+                            height: 1.0,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                  ),
 
-                  // Have account text
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30, bottom: 50),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Already have an account?",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 15,
-                                height: 1.5,
-                                color: Color.fromRGBO(0, 0, 0, 0.45),
+                    // Have account text
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30, bottom: 50),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Already have an account?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                  height: 1.5,
+                                  color: Color.fromRGBO(0, 0, 0, 0.45),
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pushNamed(
-                                        loginRoute,
-                                      );
-                                    },
-                                    child: const Text(
-                                      "Sign in",
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14,
-                                        height: 1.0,
-                                        decoration: TextDecoration.underline,
-                                        color: primaryOrange,
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).pushNamed(
+                                          loginRoute,
+                                        );
+                                      },
+                                      child: const Text(
+                                        "Sign in",
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          height: 1.0,
+                                          decoration: TextDecoration.underline,
+                                          color: primaryOrange,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                      textAlign: TextAlign.center,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              )),
-        ],
-      ),
-    ));
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )),
+          ],
+        ),
+      )),
+    );
   }
 
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
-    final emailRegex =
-        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$');
+    final emailRegex = RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
   }
 
@@ -546,100 +539,3 @@ dynamic showAccountConfirmationModal(BuildContext context,
     },
   );
 }
-
-///////////////////// The nav part put in column/////////////////////
-// child: Column(
-//   children: [
-//     //Name
-//     const TextField(
-//       decoration: InputDecoration(hintText: "Name"),
-//     ),
-//     //Surname
-//     const TextField(
-//       decoration: InputDecoration(hintText: "Surname"),
-//     ),
-//     //Email
-//     TextField(
-//       controller: emailController,
-//       decoration:
-//           const InputDecoration(hintText: "user12345@kmutt.ac.th"),
-//       keyboardType: TextInputType.emailAddress,
-//     ),
-
-//     //Password
-//     TextField(
-//       controller: passwordController,
-//       decoration: const InputDecoration(hintText: "Password"),
-//       obscureText: true,
-//       enableSuggestions: false,
-//       autocorrect: false,
-//     ),
-//     //Confirm Password
-//     TextField(
-//       controller: passwordController,
-//       decoration: const InputDecoration(hintText: "Confirm Password"),
-//       obscureText: true,
-//       enableSuggestions: false,
-//       autocorrect: false,
-//     ),
-//     const SizedBox(height: 25),
-//     Center(
-//       // centers child widget in the screen
-//       child: TextButton(
-//         style: ButtonStyle(
-//           backgroundColor: MaterialStateProperty.all(primaryOrange),
-//           shape: MaterialStateProperty.all(RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(40))),
-//           minimumSize:
-//               MaterialStateProperty.all(const Size(173.42, 64)),
-//         ),
-//         onPressed: () async {
-//           await Firebase.initializeApp(
-//               options: DefaultFirebaseOptions.currentPlatform
-//           );
-
-//           final email = emailController.text;
-//           final password = passwordController.text;
-//           final userCredential = await FirebaseAuth.instance
-//               .createUserWithEmailAndPassword(
-//                   email: email, password: password);
-//           print(userCredential);
-//         },
-//         child: const Text(
-//           // label text for the button
-//           "Sign up",
-//           style: TextStyle(
-//             fontFamily: 'Poppins',
-//             fontWeight: FontWeight.w500,
-//             fontSize: 24.0,
-//             height: 1.0,
-//             color: Colors.white,
-//           ),
-//           textAlign: TextAlign.center,
-//         ),
-//       ),
-//     ),
-//     //Nav to verify page
-//     // TextButton(
-//     //   // a flat button with a text label
-//     //   style: ButtonStyle(
-//     //       // style the button
-//     //       backgroundColor: MaterialStateProperty.all(
-//     //           primaryOrange)), // set button background color
-//     //   onPressed: () {
-//     //     // method called when button is pressed
-//     //     Navigator.of(context).pushNamed(
-//     //       // navigates to homeRoute screen and removes previous routes
-//     //       verifyEmailRoute,
-//     //     );
-//     //   },
-//     //   child: const Text(
-//     //     // label text for the button
-//     //     "Register!",
-//     //     style: TextStyle(
-//     //       color: Colors.white,
-//     //     ),
-//     //   ),
-//     // ),
-//   ],
-// ),
