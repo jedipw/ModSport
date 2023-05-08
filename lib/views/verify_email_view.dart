@@ -144,7 +144,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                           //   (route) => false,
                           // ),
                           onPressed: () async {
-                            final user = FirebaseAuth.instance.currentUser;
+                            // final user = FirebaseAuth.instance.currentUser;
                             // log(user.toString());
                             try {
                               verifyEmail().then((value) =>
@@ -174,7 +174,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               //             (route) => false,
                               //           );
                               //         }));
-                            } on FirebaseAuthException catch (e) {
+                            } on FirebaseAuthException catch (_) {
                               (_) => {Navigator.of(context).pop()};
                               // log(e.toString());
                             }
