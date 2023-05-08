@@ -211,7 +211,7 @@ class _CustomPageViewState extends State<CustomPageView> {
               backgroundColor: MaterialStateProperty.all(primaryOrange),
               shape: MaterialStateProperty.all(RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40))),
-              minimumSize: MaterialStateProperty.all(const Size(173.42, 64)),
+              minimumSize: MaterialStateProperty.all(const Size(130, 64)),
             ),
             onPressed: () {
               if (isValidPassword(
@@ -244,7 +244,7 @@ class _CustomPageViewState extends State<CustomPageView> {
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500,
-                fontSize: 24.0,
+                fontSize: 21.0,
                 height: 1.0,
                 color: Colors.white,
               ),
