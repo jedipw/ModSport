@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -8,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:modsport/services/cloud/cloud_storage_constants.dart';
 import 'package:modsport/services/cloud/cloud_storage_exceptions.dart';
 import 'package:modsport/utilities/types.dart';
+import 'package:modsport/views/reservation_view.dart';
 
 class FirebaseCloudStorage {
   final user = FirebaseFirestore.instance.collection(userCollection);
@@ -18,6 +20,7 @@ class FirebaseCloudStorage {
   final res = FirebaseFirestore.instance.collection(reservationCollection);
   final disable = FirebaseFirestore.instance.collection(disableCollection);
   final device = FirebaseFirestore.instance.collection(deviceCollection);
+  final pin = FirebaseFirestore.instance.collection(pinCollection);
 
   Future<bool> getUserHasRole(String userId) async {
     try {
@@ -52,6 +55,77 @@ class FirebaseCloudStorage {
       throw CouldNotGetException();
     }
   }
+
+  Future<List<String>> getAllCategories() async {
+  try {
+    List<String> categories = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection(categoryCollection)
+        .get();
+        log(snapshot.toString());
+    for (var document in snapshot.docs) {
+      categories.add(document.get(
+        categoryNameField));
+    }
+    return categories;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
+Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection(zoneToCategoryCollection)
+        .get();
+    return snapshot.docs;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
+Future<void> pinZone(String zoneId) async {
+  try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    await pin.add({
+      zoneIdField: zoneId,
+      userIdField : userId
+    });
+  } catch (e) {
+    throw CouldNotCreateException();
+  }
+}
+
+Future<void> unpinZone(String zoneId) async {
+  try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final querySnapshot = await pin
+        .where(zoneIdField, isEqualTo: zoneId)
+        .where(userIdField, isEqualTo: userId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      await Future.wait(querySnapshot.docs.map((doc) async {
+        return doc.reference.delete();
+      }));
+    }
+  } catch (e) {
+    throw CouldNotDeleteException();
+  }
+}
+Future<List<String>> getPinnedZones() async {
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  try {
+    final querySnapshot = await pin
+        .where(userIdField, isEqualTo: userId)
+        .get();
+    return querySnapshot.docs.map((doc) => doc.data()[zoneIdField] as String).toList();
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
+
 
   Future<ZoneData> getZone(String zoneId) async {
     try {
