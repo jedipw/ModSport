@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
 import 'package:modsport/constants/routes.dart';
-import 'package:modsport/services/notifi_service.dart';
 import 'package:modsport/utilities/modal.dart';
 import 'package:flutter/services.dart';
 
