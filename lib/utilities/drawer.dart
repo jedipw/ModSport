@@ -23,6 +23,7 @@ class ModSportDrawer extends StatelessWidget {
     String userFirstName = firstName.substring(0, 1);
     String userLastName = lastName.substring(0, 1);
     String name = userFirstName + userLastName;
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
 
     return Drawer(
       backgroundColor: Colors.white,
