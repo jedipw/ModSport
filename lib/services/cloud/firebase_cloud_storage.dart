@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -85,6 +86,7 @@ Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
 
 Future<void> pinZone(String zoneId) async {
   try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
     await pin.add({
       zoneIdField: zoneId,
       userIdField : userId
@@ -96,6 +98,7 @@ Future<void> pinZone(String zoneId) async {
 
 Future<void> unpinZone(String zoneId) async {
   try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
     final querySnapshot = await pin
         .where(zoneIdField, isEqualTo: zoneId)
         .where(userIdField, isEqualTo: userId)
@@ -111,6 +114,7 @@ Future<void> unpinZone(String zoneId) async {
   }
 }
 Future<List<String>> getPinnedZones() async {
+  final userId = FirebaseAuth.instance.currentUser!.uid;
   try {
     final querySnapshot = await pin
         .where(userIdField, isEqualTo: userId)
