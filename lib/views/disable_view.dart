@@ -1,5 +1,3 @@
-import 'dart:developer' show log;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
@@ -73,6 +71,8 @@ class _DisableViewState extends State<DisableView> {
 
   bool _isZoneNameLoaded = false;
   bool _isReservationTimeLoaded = false;
+  bool _isError = false;
+
   String _getDayOrdinal(int day) {
     if (day >= 11 && day <= 13) {
       return '${day}th';
@@ -116,7 +116,7 @@ class _DisableViewState extends State<DisableView> {
         _isZoneNameLoaded = true;
       });
     } catch (e) {
-      log('Error fetching zone name: $e');
+      handleError();
     }
   }
 
@@ -133,7 +133,18 @@ class _DisableViewState extends State<DisableView> {
         _isReservationTimeLoaded = true;
       });
     } catch (e) {
-      log('Error fetching zone name: $e');
+      handleError();
+    }
+  }
+
+  // Handle the error when data cannot be fetched from database
+  void handleError() {
+    if (mounted) {
+      setState(
+        () {
+          _isError = true;
+        },
+      );
     }
   }
 
@@ -152,197 +163,250 @@ class _DisableViewState extends State<DisableView> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 150),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(35, 20, 35, 5),
-                      child: Column(
+            child: !_isError
+                ? Column(
+                    children: [
+                      const SizedBox(height: 150),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Facility: ', style: topTextStyle),
-                              _isZoneNameLoaded
-                                  ? Expanded(
-                                      child: Text(_zoneName,
-                                          style: inputTextStyle),
-                                    )
-                                  : Shimmer.fromColors(
-                                      baseColor: const Color.fromARGB(
-                                          255, 216, 216, 216),
-                                      highlightColor: const Color.fromRGBO(
-                                          173, 173, 173, 0.824),
-                                      child: Container(
-                                        margin: const EdgeInsets.only(top: 5),
-                                        width: 150,
-                                        height: 25.0,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Text('Date: ', style: topTextStyle),
-                                  const SizedBox(width: 26),
-                                  _isReservationTimeLoaded
-                                      ? Text(
-                                          '${_getDayOrdinal(reservationTimes.first['startTime'].day)} ${DateFormat('MMMM').format(reservationTimes.first['startTime'])} ${reservationTimes[0]['startTime'].year}',
-                                          style: inputTextStyle)
-                                      : Shimmer.fromColors(
-                                          baseColor: const Color.fromARGB(
-                                              255, 216, 216, 216),
-                                          highlightColor: const Color.fromRGBO(
-                                              173, 173, 173, 0.824),
-                                          child: Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 5),
-                                            width: 150,
-                                            height: 25.0,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                ],
-                              )
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Time: ', style: topTextStyle),
-                              const SizedBox(width: 23),
-                              _isReservationTimeLoaded
-                                  ? Column(
-                                      children: reservationTimes
-                                          .map(
-                                            (text) => Text(
-                                                '${text['startTime'].toString().substring(11, 16)} - ${text['endTime'].toString().substring(11, 16)}',
-                                                style: inputTextStyle),
-                                          )
-                                          .toList(),
-                                      // Text(widget.reservationIds[index]);
-                                    )
-                                  : Shimmer.fromColors(
-                                      baseColor: const Color.fromARGB(
-                                          255, 216, 216, 216),
-                                      highlightColor: const Color.fromRGBO(
-                                          173, 173, 173, 0.824),
-                                      child: Container(
-                                        margin: const EdgeInsets.only(top: 5),
-                                        width: 150,
-                                        height: 25.0,
-                                        color: Colors.white,
-                                      )),
-                            ],
-                          ),
-                          const SizedBox(height: 50),
-                          Text('Reason:', style: topTextStyle),
-                          if (numOfCharacter < 10) ...[
-                            Text(
-                              'Type at least 10 characters!',
-                              style: bottomTextStyle,
-                            ),
-                          ] else if (numOfCharacter > 250) ...[
-                            Text(
-                              'Don\'t type more than 250 characters!',
-                              style: bottomTextStyle,
-                            ),
-                          ] else ...[
-                            const SizedBox(height: 21),
-                          ],
-                          LayoutBuilder(
-                            builder: (context, constraint) {
-                              return SizedBox(
-                                width: _textFieldWidth,
-                                child: Stack(
-                                  children: [
-                                    TextField(
-                                      cursorColor: Colors.black,
-                                      decoration: const InputDecoration(
-                                        border: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.black,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                      keyboardType: TextInputType.text,
-                                      controller: reasonController,
-                                      maxLines: null,
-                                      minLines: 1,
-                                      autocorrect: false,
-                                      enableSuggestions: false,
-                                      cursorWidth: 1.0,
-                                      cursorRadius: const Radius.circular(1.0),
-                                      autofocus: true,
-                                      onChanged: (_) {
-                                        setState(() {
-                                          numOfCharacter =
-                                              reasonController.text.length;
-                                        });
-                                      },
-                                      onEditingComplete: () {
-                                        setState(() {
-                                          _textFieldWidth = constraint.maxWidth;
-                                        });
-                                      },
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 16.0,
-                                        height: 20.0 / 13.0,
-                                        color: Color.fromRGBO(0, 0, 0, 0.7),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '$numOfCharacter/250',
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    height:
-                                        1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
-                                    color: numOfCharacter < 10 ||
-                                            numOfCharacter > 250
-                                        ? secondaryOrange
-                                        : primaryGray,
+                              padding: const EdgeInsets.fromLTRB(35, 20, 35, 5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Facility: ', style: topTextStyle),
+                                      _isZoneNameLoaded
+                                          ? Expanded(
+                                              child: Text(_zoneName,
+                                                  style: inputTextStyle),
+                                            )
+                                          : Shimmer.fromColors(
+                                              baseColor: const Color.fromARGB(
+                                                  255, 216, 216, 216),
+                                              highlightColor:
+                                                  const Color.fromRGBO(
+                                                      173, 173, 173, 0.824),
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                    top: 5),
+                                                width: 150,
+                                                height: 25.0,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                  Row(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text('Date: ', style: topTextStyle),
+                                          const SizedBox(width: 26),
+                                          _isReservationTimeLoaded
+                                              ? Text(
+                                                  '${_getDayOrdinal(reservationTimes.first['startTime'].day)} ${DateFormat('MMMM').format(reservationTimes.first['startTime'])} ${reservationTimes[0]['startTime'].year}',
+                                                  style: inputTextStyle)
+                                              : Shimmer.fromColors(
+                                                  baseColor:
+                                                      const Color.fromARGB(
+                                                          255, 216, 216, 216),
+                                                  highlightColor:
+                                                      const Color.fromRGBO(
+                                                          173, 173, 173, 0.824),
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 5),
+                                                    width: 150,
+                                                    height: 25.0,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Time: ', style: topTextStyle),
+                                      const SizedBox(width: 23),
+                                      _isReservationTimeLoaded
+                                          ? Column(
+                                              children: reservationTimes
+                                                  .map(
+                                                    (text) => Text(
+                                                        '${text['startTime'].toString().substring(11, 16)} - ${text['endTime'].toString().substring(11, 16)}',
+                                                        style: inputTextStyle),
+                                                  )
+                                                  .toList(),
+                                              // Text(widget.reservationIds[index]);
+                                            )
+                                          : Shimmer.fromColors(
+                                              baseColor: const Color.fromARGB(
+                                                  255, 216, 216, 216),
+                                              highlightColor:
+                                                  const Color.fromRGBO(
+                                                      173, 173, 173, 0.824),
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                    top: 5),
+                                                width: 150,
+                                                height: 25.0,
+                                                color: Colors.white,
+                                              )),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 50),
+                                  Text('Reason:', style: topTextStyle),
+                                  if (numOfCharacter < 10) ...[
+                                    Text(
+                                      'Type at least 10 characters!',
+                                      style: bottomTextStyle,
+                                    ),
+                                  ] else if (numOfCharacter > 250) ...[
+                                    Text(
+                                      'Don\'t type more than 250 characters!',
+                                      style: bottomTextStyle,
+                                    ),
+                                  ] else ...[
+                                    const SizedBox(height: 21),
+                                  ],
+                                  LayoutBuilder(
+                                    builder: (context, constraint) {
+                                      return SizedBox(
+                                        width: _textFieldWidth,
+                                        child: Stack(
+                                          children: [
+                                            TextField(
+                                              cursorColor: Colors.black,
+                                              decoration: const InputDecoration(
+                                                border: UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Colors.grey,
+                                                    width: 1.0,
+                                                  ),
+                                                ),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Colors.black,
+                                                    width: 1.0,
+                                                  ),
+                                                ),
+                                              ),
+                                              keyboardType: TextInputType.text,
+                                              controller: reasonController,
+                                              maxLines: null,
+                                              minLines: 1,
+                                              autocorrect: false,
+                                              enableSuggestions: false,
+                                              cursorWidth: 1.0,
+                                              cursorRadius:
+                                                  const Radius.circular(1.0),
+                                              autofocus: true,
+                                              onChanged: (_) {
+                                                setState(() {
+                                                  numOfCharacter =
+                                                      reasonController
+                                                          .text.length;
+                                                });
+                                              },
+                                              onEditingComplete: () {
+                                                setState(() {
+                                                  _textFieldWidth =
+                                                      constraint.maxWidth;
+                                                });
+                                              },
+                                              style: const TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontStyle: FontStyle.normal,
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 16.0,
+                                                height: 20.0 / 13.0,
+                                                color: Color.fromRGBO(
+                                                    0, 0, 0, 0.7),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 5),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '$numOfCharacter/250',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontStyle: FontStyle.normal,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                            height:
+                                                1.5, // or line-height: 21px, which is equivalent to 1.5 times the font size
+                                            color: numOfCharacter < 10 ||
+                                                    numOfCharacter > 250
+                                                ? secondaryOrange
+                                                : primaryGray,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )),
                         ],
                       ),
+                    ],
+                  )
+                : SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.error, size: 100, color: primaryGray),
+                            SizedBox(height: 20),
+                            Text(
+                              'Something went wrong!',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.5, // 21/14 = 1.5
+                                color: primaryGray,
+                                letterSpacing: 0,
+                              ),
+                            ),
+                            Text(
+                              'Please try again later.',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.5, // 21/14 = 1.5
+                                color: primaryGray,
+                                letterSpacing: 0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
           ),
           Stack(
             children: [

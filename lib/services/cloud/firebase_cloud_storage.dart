@@ -246,6 +246,20 @@ class FirebaseCloudStorage {
     try {
       final userIds = <String>[];
       for (var startDateTime in startDateTimeList) {
+        // Check if a disable reservation already exists for the given zoneId and startDateTime
+        final existingDocs = await disable
+            .where(zoneIdField, isEqualTo: zoneId)
+            .where(startDateTimeField,
+                isEqualTo: Timestamp.fromDate(startDateTime.toDate()))
+            .get();
+
+        if (existingDocs.docs.isNotEmpty) {
+          // A disable reservation already exists for the given zoneId and startDateTime
+          // Skip adding a new one and continue with the next startDateTime in the list
+          continue;
+        }
+
+        // Add the disable reservation to the disable collection
         await disable.add({
           zoneIdField: zoneId,
           disableReasonField: disableReason,
@@ -295,7 +309,6 @@ class FirebaseCloudStorage {
             deviceTokens = await getDeviceTokens(userIds);
           }
 
-          log(deviceTokens.toString());
           for (String deviceToken in deviceTokens) {
             String constructFCMPayload(String? token) {
               return jsonEncode({
@@ -324,7 +337,6 @@ class FirebaseCloudStorage {
         }
       }
     } catch (e) {
-      log(e.toString());
       throw CouldNotCreateException();
     }
   }
@@ -381,7 +393,6 @@ class FirebaseCloudStorage {
             deviceTokens = await getDeviceTokens(userIds);
           }
 
-          log(deviceTokens.toString());
           for (String deviceToken in deviceTokens) {
             String constructFCMPayload(String? token) {
               return jsonEncode({
@@ -550,10 +561,10 @@ class FirebaseCloudStorage {
       if (canCreate && !needToUpdate) {
         await userRes.add(
           {
-            'startDateTime': startDateTime,
-            'userId': userId,
-            'zoneId': zoneId,
-            'isSuccessful': true,
+            startDateTimeField: startDateTime,
+            userIdField: userId,
+            zoneIdField: zoneId,
+            isSuccessfulField: true,
             // Add any other fields you want to store in the document
           },
         );
@@ -565,7 +576,7 @@ class FirebaseCloudStorage {
             .get();
         if (querySnapshot.docs.isNotEmpty) {
           final docRef = querySnapshot.docs.first.reference;
-          await docRef.update({'isSuccessful': true});
+          await docRef.update({isSuccessfulField: true});
         } else {
           throw CouldNotCreateException();
         }

@@ -1,6 +1,5 @@
 // Import a neccesary package from Flutter.
 import 'dart:math';
-import 'dart:developer' as dev;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
@@ -10,7 +9,6 @@ import 'package:modsport/constants/mode.dart';
 
 // Import firebase cloud storage
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
-import 'package:modsport/services/notifi_service.dart';
 
 // Import reservation page's utilities
 import 'package:modsport/utilities/reservation/date_list.dart';
@@ -175,8 +173,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getLocationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -201,8 +197,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getZoneData");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -226,8 +220,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getLocationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -276,8 +268,6 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
-      dev.log("_getReservationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -298,8 +288,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getUserReservationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -333,8 +321,6 @@ class _ReservationViewState extends State<ReservationView> {
         );
       }
     } catch (e) {
-      dev.log("_getDisableReservationData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -368,8 +354,6 @@ class _ReservationViewState extends State<ReservationView> {
         });
       }
     } catch (e) {
-      dev.log("_getReservationIds()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -400,8 +384,6 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
-      dev.log("_getReservationIndexData()");
-      dev.log(e.toString());
       handleError();
     }
   }
@@ -436,8 +418,6 @@ class _ReservationViewState extends State<ReservationView> {
         }
       }
     } catch (e) {
-      dev.log("_getIsReservedData()");
-      dev.log(e.toString());
       handleError();
     }
   }
