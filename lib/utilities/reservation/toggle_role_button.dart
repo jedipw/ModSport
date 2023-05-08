@@ -4,18 +4,21 @@ import 'package:modsport/constants/color.dart';
 typedef OnPressedCallBack = Function();
 
 class ToggleRoleButton extends StatelessWidget {
-  const ToggleRoleButton(
-      {super.key,
-      required this.onPressed,
-      required this.isError,
-      required this.isEverythingLoaded,
-      required this.isDisableMenu,
-      required this.isSwipingUp});
   final OnPressedCallBack onPressed;
+
   final bool isError;
   final bool isEverythingLoaded;
   final bool isDisableMenu;
   final bool isSwipingUp;
+
+  const ToggleRoleButton({
+    super.key,
+    required this.onPressed,
+    required this.isError,
+    required this.isEverythingLoaded,
+    required this.isDisableMenu,
+    required this.isSwipingUp,
+  });
 
   @override
   Widget build(BuildContext context) {

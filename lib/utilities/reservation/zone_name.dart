@@ -3,6 +3,13 @@ import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ZoneName extends StatelessWidget {
+  final bool isError;
+
+  final bool isZoneLoaded;
+  final bool isSwipingUp;
+
+  final String zoneName;
+
   const ZoneName({
     super.key,
     required this.isError,
@@ -10,10 +17,6 @@ class ZoneName extends StatelessWidget {
     required this.isZoneLoaded,
     required this.isSwipingUp,
   });
-  final bool isError;
-  final String zoneName;
-  final bool isZoneLoaded;
-  final bool isSwipingUp;
 
   @override
   Widget build(BuildContext context) {
