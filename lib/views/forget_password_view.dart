@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
-
 import '../utilities/custom_button/next_button.dart';
 import '../utilities/modal.dart';
 
@@ -16,13 +15,12 @@ class ForgetPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // required method to build the UI
-    return 
-    GestureDetector(
+    return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: Column(children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(32, 59, 0, 20),
+            padding: const EdgeInsets.fromLTRB(17, 59, 0, 20),
             child: Row(
               children: [
                 GestureDetector(
@@ -36,17 +34,17 @@ class ForgetPasswordView extends StatelessWidget {
                   child: const Icon(
                     Icons.arrow_back_ios_new,
                     color: primaryOrange,
-                    size: 38,
+                    size: 28,
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(left: 12),
+                  padding: EdgeInsets.only(left: 55),
                   child: Text(
                     'FORGET PASSWORD',
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
-                      fontSize: 28,
+                      fontSize: 24,
                       height: 1.5,
                       color: primaryOrange,
                     ),
@@ -110,31 +108,6 @@ class _CustomPageViewState extends State<CustomPageView> {
               color: Colors.white,
             ),
           ),
-          // const Text(
-          //   'Forgot password?',
-          //   style: TextStyle(
-          //     fontFamily: 'Poppins',
-          //     fontWeight: FontWeight.w600,
-          //     fontSize: 21,
-          //     height: 1.5,
-          //     color: primaryOrange,
-          //   ),
-          //   textAlign: TextAlign.center,
-          // ),
-          // const Padding(
-          //   padding: EdgeInsets.only(left: 31, right: 31, top: 16, bottom: 16),
-          //   child: Text(
-          //     'Enter the email address associated with your account. We will send you an email to change your password.',
-          //     textAlign: TextAlign.center,
-          //     style: TextStyle(
-          //       fontFamily: 'Poppins',
-          //       fontWeight: FontWeight.w400,
-          //       fontSize: 17,
-          //       height: 1.5,
-          //       color: Color.fromRGBO(0, 0, 0, 0.7),
-          //     ),
-          //   ),
-          // ),
           Padding(
             padding: const EdgeInsets.only(left: 35, right: 35),
             child: EmailTextField(
@@ -172,8 +145,7 @@ class _CustomPageViewState extends State<CustomPageView> {
 
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
-    final emailRegex =
-        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
+    final emailRegex = RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
   }
 

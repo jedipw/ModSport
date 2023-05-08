@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -146,7 +145,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                           // ),
                           onPressed: () async {
                             final user = FirebaseAuth.instance.currentUser;
-                            log(user.toString());
+                            // log(user.toString());
                             try {
                               verifyEmail().then((value) =>
                                   showSuccessMailModal(context, true));
@@ -177,7 +176,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               //         }));
                             } on FirebaseAuthException catch (e) {
                               (_) => {Navigator.of(context).pop()};
-                              log(e.toString());
+                              // log(e.toString());
                             }
                           },
                           child: const Text(
