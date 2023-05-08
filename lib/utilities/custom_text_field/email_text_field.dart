@@ -52,9 +52,12 @@ class EmailTextField extends StatelessWidget {
               fontFamily: 'Poppins',
             ),
             decoration: const InputDecoration(
-              hintText: "user12345@kmutt.ac.th" ,
+              hintText: "user12345@kmutt.ac.th",
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              hintStyle: TextStyle(
+                color: Color.fromARGB(255, 169, 169, 169),
+              ),
             ),
           ),
         ),
