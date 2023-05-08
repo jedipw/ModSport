@@ -217,32 +217,6 @@ class ModSportDrawer extends StatelessWidget {
                       : null;
                 },
               ),
-              ListTile(
-                tileColor: currentDrawerIndex == 3
-                    ? const Color.fromRGBO(217, 217, 217, 0.5)
-                    : Colors.white,
-                title: Row(
-                  children: const [
-                    Icon(Icons.notification_add, color: primaryOrange),
-                    SizedBox(width: 8),
-                    Text(
-                      'Test notification',
-                      style: TextStyle(
-                        color: primaryOrange,
-                        fontFamily: 'Poppins',
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        height: 1.5, // line-height equivalent in Flutter
-                      ),
-                    ),
-                  ],
-                ),
-                onTap: () {
-                  NotificationService().showNotification(
-                      title: 'ModSport', body: 'This is a test message.');
-                },
-              ),
             ],
           ),
           Expanded(
