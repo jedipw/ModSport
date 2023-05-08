@@ -4,6 +4,7 @@ import 'package:modsport/constants/color.dart';
 class ReserveButton extends StatelessWidget {
   final bool
       isReserved; // Indicates if the button is for reserving or canceling a reservation
+
   final VoidCallback
       onPressed; // Callback function to execute when the button is pressed
 

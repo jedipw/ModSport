@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
+
 import 'package:modsport/constants/color.dart';
 
 const int numOfStaffDay = 30;
@@ -8,12 +10,14 @@ class DateList extends StatelessWidget {
   final int numOfUserDay;
   final int
       selectedIndex; // The index of the currently selected date in the list.
-  final ValueChanged<int>
-      onSelected; // A callback function that is called when a date is selected.
+
   final bool hasRole;
   final bool isDisableMenu;
   final bool isError;
   final bool isEverythingLoaded;
+
+  final ValueChanged<int>
+      onSelected; // A callback function that is called when a date is selected.
 
   const DateList({
     Key? key,
@@ -30,9 +34,11 @@ class DateList extends StatelessWidget {
   Widget build(BuildContext context) {
     final int numOfDay =
         hasRole && isDisableMenu ? numOfStaffDay : numOfUserDay;
+
     final today = DateTime.now(); // Get the current date.
     final endDate = today
         .add(Duration(days: numOfDay)); // Calculate the end date of the list.
+        
     final dateList = List.generate(
       endDate
           .difference(today)

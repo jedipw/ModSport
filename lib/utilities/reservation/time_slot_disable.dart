@@ -6,6 +6,13 @@ import 'package:modsport/utilities/reservation/function.dart';
 typedef OnChangedCallback = void Function(int index, bool? value);
 
 class TimeSlotDisable extends StatelessWidget {
+  final List<DisableData> disabledReservation;
+  final List<ReservationData> reservation;
+  final List<UserReservationData> userReservation;
+  final List<bool?> selectedTimeSlots;
+
+  final OnChangedCallback onChanged;
+
   const TimeSlotDisable({
     super.key,
     required this.reservation,
@@ -14,12 +21,6 @@ class TimeSlotDisable extends StatelessWidget {
     required this.selectedTimeSlots,
     required this.onChanged,
   });
-  final List<DisableData> disabledReservation;
-  final List<ReservationData> reservation;
-  final List<UserReservationData> userReservation;
-  final List<bool?> selectedTimeSlots;
-
-  final OnChangedCallback onChanged;
 
   @override
   Widget build(BuildContext context) {
