@@ -1,5 +1,7 @@
 import 'dart:developer';
-import 'dart:html';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:modsport/services/cloud/cloud_storage_constants.dart';
 import 'package:modsport/services/cloud/cloud_storage_exceptions.dart';
 import 'package:modsport/utilities/types.dart';
+import 'package:modsport/views/reservation_view.dart';
 
 class FirebaseCloudStorage {
   final user = FirebaseFirestore.instance.collection(userCollection);
@@ -18,6 +21,7 @@ class FirebaseCloudStorage {
   final res = FirebaseFirestore.instance.collection(reservationCollection);
   final disable = FirebaseFirestore.instance.collection(disableCollection);
   final device = FirebaseFirestore.instance.collection(deviceCollection);
+  final pin = FirebaseFirestore.instance.collection(pinCollection);
 
   Future<bool> getUserHasRole(String userId) async {
     try {
@@ -101,6 +105,77 @@ Future<List<Booking>> getBookings() async {
       throw CouldNotGetException();
     }
   }
+
+  Future<List<String>> getAllCategories() async {
+  try {
+    List<String> categories = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection(categoryCollection)
+        .get();
+        log(snapshot.toString());
+    for (var document in snapshot.docs) {
+      categories.add(document.get(
+        categoryNameField));
+    }
+    return categories;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
+Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection(zoneToCategoryCollection)
+        .get();
+    return snapshot.docs;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
+Future<void> pinZone(String zoneId) async {
+  try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    await pin.add({
+      zoneIdField: zoneId,
+      userIdField : userId
+    });
+  } catch (e) {
+    throw CouldNotCreateException();
+  }
+}
+
+Future<void> unpinZone(String zoneId) async {
+  try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final querySnapshot = await pin
+        .where(zoneIdField, isEqualTo: zoneId)
+        .where(userIdField, isEqualTo: userId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      await Future.wait(querySnapshot.docs.map((doc) async {
+        return doc.reference.delete();
+      }));
+    }
+  } catch (e) {
+    throw CouldNotDeleteException();
+  }
+}
+Future<List<String>> getPinnedZones() async {
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  try {
+    final querySnapshot = await pin
+        .where(userIdField, isEqualTo: userId)
+        .get();
+    return querySnapshot.docs.map((doc) => doc.data()[zoneIdField] as String).toList();
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
+
 
   Future<ZoneData> getZone(String zoneId) async {
     try {
@@ -293,7 +368,22 @@ Future<List<Booking>> getBookings() async {
     List<Timestamp> startDateTimeList,
   ) async {
     try {
+      final userIds = <String>[];
       for (var startDateTime in startDateTimeList) {
+        // Check if a disable reservation already exists for the given zoneId and startDateTime
+        final existingDocs = await disable
+            .where(zoneIdField, isEqualTo: zoneId)
+            .where(startDateTimeField,
+                isEqualTo: Timestamp.fromDate(startDateTime.toDate()))
+            .get();
+
+        if (existingDocs.docs.isNotEmpty) {
+          // A disable reservation already exists for the given zoneId and startDateTime
+          // Skip adding a new one and continue with the next startDateTime in the list
+          continue;
+        }
+
+        // Add the disable reservation to the disable collection
         await disable.add({
           zoneIdField: zoneId,
           disableReasonField: disableReason,
@@ -305,24 +395,69 @@ Future<List<Booking>> getBookings() async {
             await userRes.where(zoneIdField, isEqualTo: zoneId).get();
 
         if (querySnapshot.docs.isNotEmpty) {
-          await Future.wait(querySnapshot.docs.map((doc) async {
-            if (startDateTime.toDate().year ==
-                    doc[startDateTimeField].toDate().year &&
-                startDateTime.toDate().month ==
-                    doc[startDateTimeField].toDate().month &&
-                startDateTime.toDate().day ==
-                    doc[startDateTimeField].toDate().day &&
-                startDateTime.toDate().hour ==
-                    doc[startDateTimeField].toDate().hour &&
-                startDateTime.toDate().minute ==
-                    doc[startDateTimeField].toDate().minute &&
-                startDateTime.toDate().second ==
-                    doc[startDateTimeField].toDate().second) {
-              return doc.reference.update({
-                'isSuccessful': false,
+          await Future.wait(
+            querySnapshot.docs.map(
+              (doc) async {
+                if (startDateTime.toDate().year ==
+                        doc[startDateTimeField].toDate().year &&
+                    startDateTime.toDate().month ==
+                        doc[startDateTimeField].toDate().month &&
+                    startDateTime.toDate().day ==
+                        doc[startDateTimeField].toDate().day &&
+                    startDateTime.toDate().hour ==
+                        doc[startDateTimeField].toDate().hour &&
+                    startDateTime.toDate().minute ==
+                        doc[startDateTimeField].toDate().minute &&
+                    startDateTime.toDate().second ==
+                        doc[startDateTimeField].toDate().second) {
+                  if (doc[isSuccessfulField] == true) {
+                    userIds.add(doc[userIdField]);
+                  }
+
+                  return doc.reference.update({
+                    'isSuccessful': false,
+                  });
+                }
+              },
+            ),
+          );
+
+          Future<List<String>> getDeviceTokens(List<String> userIds) async {
+            final querySnapshot =
+                await device.where(userIdField, whereIn: userIds).get();
+            return querySnapshot.docs.map((doc) => doc.id).toList();
+          }
+
+          List<String> deviceTokens = [];
+          if (userIds.isNotEmpty) {
+            deviceTokens = await getDeviceTokens(userIds);
+          }
+
+          for (String deviceToken in deviceTokens) {
+            String constructFCMPayload(String? token) {
+              return jsonEncode({
+                'to': token,
+                'data': {
+                  'via': 'FlutterFire Cloud Messaging!!!',
+                },
+                'notification': {
+                  'title': 'Reservation Canceled',
+                  'body':
+                      'Your reservation has been canceled. Please check the app for more information.',
+                },
               });
             }
-          }));
+
+            await http.post(
+              Uri.parse("https://fcm.googleapis.com/fcm/send"),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+                "Authorization":
+                    "key=AAAAoUHQOTI:APA91bEtJeZRt2Gs88M9LZ5WbbnVEyB4ATEAP4rYIRiZj-ZLZAOUjRJny5a441spMa6gZ6x2zWUlg6DC5qu1QeETT7NJNjsNWc6-i6VwJiC4nj2W9arXFCQew1Z3-ywt8WTyEFUHPUPE",
+              },
+              body: constructFCMPayload(deviceToken),
+            );
+          }
         }
       }
     } catch (e) {
@@ -330,11 +465,84 @@ Future<List<Booking>> getBookings() async {
     }
   }
 
-  Future<void> deleteDisableReservation(List<String> reservationIds) async {
+  Future<void> deleteDisableReservation(
+    List<String> reservationIds,
+    String zoneId,
+    List<Timestamp> startDateTimeList,
+  ) async {
     try {
       for (final id in reservationIds) {
         final reservationRef = disable.doc(id);
         await reservationRef.delete();
+      }
+      // Update userReservation to set isSuccessful to false
+      final querySnapshot =
+          await userRes.where(zoneIdField, isEqualTo: zoneId).get();
+
+      final userIds = <String>[];
+
+      for (var startDateTime in startDateTimeList) {
+        if (querySnapshot.docs.isNotEmpty) {
+          await Future.wait(
+            querySnapshot.docs.map(
+              (doc) async {
+                if (startDateTime.toDate().year ==
+                        doc[startDateTimeField].toDate().year &&
+                    startDateTime.toDate().month ==
+                        doc[startDateTimeField].toDate().month &&
+                    startDateTime.toDate().day ==
+                        doc[startDateTimeField].toDate().day &&
+                    startDateTime.toDate().hour ==
+                        doc[startDateTimeField].toDate().hour &&
+                    startDateTime.toDate().minute ==
+                        doc[startDateTimeField].toDate().minute &&
+                    startDateTime.toDate().second ==
+                        doc[startDateTimeField].toDate().second) {
+                  if (doc[isSuccessfulField] == false) {
+                    userIds.add(doc[userIdField]);
+                  }
+                }
+              },
+            ),
+          );
+
+          Future<List<String>> getDeviceTokens(List<String> userIds) async {
+            final querySnapshot =
+                await device.where(userIdField, whereIn: userIds).get();
+            return querySnapshot.docs.map((doc) => doc.id).toList();
+          }
+
+          List<String> deviceTokens = [];
+          if (userIds.isNotEmpty) {
+            deviceTokens = await getDeviceTokens(userIds);
+          }
+
+          for (String deviceToken in deviceTokens) {
+            String constructFCMPayload(String? token) {
+              return jsonEncode({
+                'to': token,
+                'data': {
+                  'via': 'FlutterFire Cloud Messaging!!!',
+                },
+                'notification': {
+                  'title': 'Reservation Available',
+                  'body':
+                      'Your canceled reservation is now available again. Please check the app for more information.',
+                },
+              });
+            }
+
+            await http.post(
+              Uri.parse("https://fcm.googleapis.com/fcm/send"),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+                "Authorization":
+                    "key=AAAAoUHQOTI:APA91bEtJeZRt2Gs88M9LZ5WbbnVEyB4ATEAP4rYIRiZj-ZLZAOUjRJny5a441spMa6gZ6x2zWUlg6DC5qu1QeETT7NJNjsNWc6-i6VwJiC4nj2W9arXFCQew1Z3-ywt8WTyEFUHPUPE",
+              },
+              body: constructFCMPayload(deviceToken),
+            );
+          }
+        }
       }
     } catch (e) {
       throw CouldNotDeleteException();
@@ -477,10 +685,10 @@ Future<List<Booking>> getBookings() async {
       if (canCreate && !needToUpdate) {
         await userRes.add(
           {
-            'startDateTime': startDateTime,
-            'userId': userId,
-            'zoneId': zoneId,
-            'isSuccessful': true,
+            startDateTimeField: startDateTime,
+            userIdField: userId,
+            zoneIdField: zoneId,
+            isSuccessfulField: true,
             // Add any other fields you want to store in the document
           },
         );
@@ -492,7 +700,7 @@ Future<List<Booking>> getBookings() async {
             .get();
         if (querySnapshot.docs.isNotEmpty) {
           final docRef = querySnapshot.docs.first.reference;
-          await docRef.update({'isSuccessful': true});
+          await docRef.update({isSuccessfulField: true});
         } else {
           throw CouldNotCreateException();
         }

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modsport/constants/color.dart';
@@ -24,39 +23,42 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      return Scaffold(
-        key: _scaffoldKey,
-        drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
-        body: Container(
-          color: authenGray,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 75),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
-                        _scaffoldKey.currentState?.openEndDrawer();
-                      } else {
-                        _scaffoldKey.currentState?.openDrawer();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: authenGray,
-                      shape: const CircleBorder(),
-                      fixedSize: const Size.fromRadius(25),
-                      elevation: 0,
+      return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          key: _scaffoldKey,
+          drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
+          body: Container(
+            color: authenGray,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                const SizedBox(height: 75),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+                          _scaffoldKey.currentState?.openEndDrawer();
+                        } else {
+                          _scaffoldKey.currentState?.openDrawer();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: authenGray,
+                        shape: const CircleBorder(),
+                        fixedSize: const Size.fromRadius(25),
+                        elevation: 0,
+                      ),
+                      child: const Icon(Icons.menu, color: primaryOrange),
                     ),
-                    child: const Icon(Icons.menu, color: primaryOrange),
-                  ),
-                ],
-              ),
-              const Expanded(
-                child: CustomPageView(),
-              ),
-            ],
+                  ],
+                ),
+                const Expanded(
+                  child: CustomPageView(),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -90,7 +92,7 @@ class _CustomPageViewState extends State<CustomPageView> {
       await currentUser
           .reauthenticateWithCredential(cred)
           .then((value) => {currentUser.updatePassword(newPassword)})
-          .then((value) => log("New password set! ${currentUser.toString()}"))
+          // .then((value) => log("New password set! ${currentUser.toString()}"))
           .then((value) => {
                 if (mounted)
                   {
@@ -103,7 +105,7 @@ class _CustomPageViewState extends State<CustomPageView> {
                   }
               });
     } catch (error) {
-      log(error.toString());
+      // log(error.toString());
       if (mounted) {
         setState(() {
           _isCorrectPassword = false;
@@ -209,7 +211,7 @@ class _CustomPageViewState extends State<CustomPageView> {
               backgroundColor: MaterialStateProperty.all(primaryOrange),
               shape: MaterialStateProperty.all(RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40))),
-              minimumSize: MaterialStateProperty.all(const Size(173.42, 64)),
+              minimumSize: MaterialStateProperty.all(const Size(130, 64)),
             ),
             onPressed: () {
               if (isValidPassword(
@@ -218,7 +220,7 @@ class _CustomPageViewState extends State<CustomPageView> {
                       _currentPasswordController.text.toString(),
                       "P") ==
                   "OK") {
-                log("New password OK");
+                // log("New password OK");
                 if (mounted) {
                   setState(() {
                     _isPasswordValid = true;
@@ -242,7 +244,7 @@ class _CustomPageViewState extends State<CustomPageView> {
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500,
-                fontSize: 24.0,
+                fontSize: 21.0,
                 height: 1.0,
                 color: Colors.white,
               ),

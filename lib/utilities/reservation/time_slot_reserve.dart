@@ -8,6 +8,17 @@ typedef IsDisableCallback = bool Function(DateTime? startTime);
 
 // A StatefulWidget that creates a list of time slots as RadioListTile widgets
 class TimeSlotReserve extends StatelessWidget {
+  final List<ReservationData> reservation;
+  final List<DisableData> disabledReservation;
+  final List<UserReservationData> userReservation;
+
+  final int selectedDateIndex;
+  final int selectedTimeSlot;
+
+  final bool isReserved;
+
+  final OnChangedCallback onChanged;
+
   const TimeSlotReserve({
     super.key,
     required this.reservation,
@@ -18,14 +29,6 @@ class TimeSlotReserve extends StatelessWidget {
     required this.isReserved,
     required this.onChanged,
   });
-
-  final List<ReservationData> reservation;
-  final List<DisableData> disabledReservation;
-  final List<UserReservationData> userReservation;
-  final int selectedDateIndex;
-  final int selectedTimeSlot;
-  final bool isReserved;
-  final OnChangedCallback onChanged;
 
   // The index of the selected time slot
   @override
