@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
@@ -6,6 +5,7 @@ import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
 
 import '../utilities/custom_button/next_button.dart';
+import '../utilities/modal.dart';
 
 class ForgetPasswordView extends StatelessWidget {
   const ForgetPasswordView({Key? key})
@@ -149,7 +149,8 @@ class _CustomPageViewState extends State<CustomPageView> {
                   });
                 }
                 await FirebaseAuth.instance
-                    .sendPasswordResetEmail(email: emailController.text);
+                    .sendPasswordResetEmail(email: emailController.text)
+                    .then((value) => showSuccessForgetModal(context, true));
               } else {
                 if (mounted) {
                   setState(() {
@@ -168,7 +169,7 @@ class _CustomPageViewState extends State<CustomPageView> {
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
     final emailRegex =
-        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$');
+        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
   }
 

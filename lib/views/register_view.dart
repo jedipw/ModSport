@@ -307,7 +307,7 @@ class _RegisterViewState extends State<RegisterView> {
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
     final emailRegex =
-        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$');
+        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
   }
 
@@ -546,100 +546,3 @@ dynamic showAccountConfirmationModal(BuildContext context,
     },
   );
 }
-
-///////////////////// The nav part put in column/////////////////////
-// child: Column(
-//   children: [
-//     //Name
-//     const TextField(
-//       decoration: InputDecoration(hintText: "Name"),
-//     ),
-//     //Surname
-//     const TextField(
-//       decoration: InputDecoration(hintText: "Surname"),
-//     ),
-//     //Email
-//     TextField(
-//       controller: emailController,
-//       decoration:
-//           const InputDecoration(hintText: "user12345@kmutt.ac.th"),
-//       keyboardType: TextInputType.emailAddress,
-//     ),
-
-//     //Password
-//     TextField(
-//       controller: passwordController,
-//       decoration: const InputDecoration(hintText: "Password"),
-//       obscureText: true,
-//       enableSuggestions: false,
-//       autocorrect: false,
-//     ),
-//     //Confirm Password
-//     TextField(
-//       controller: passwordController,
-//       decoration: const InputDecoration(hintText: "Confirm Password"),
-//       obscureText: true,
-//       enableSuggestions: false,
-//       autocorrect: false,
-//     ),
-//     const SizedBox(height: 25),
-//     Center(
-//       // centers child widget in the screen
-//       child: TextButton(
-//         style: ButtonStyle(
-//           backgroundColor: MaterialStateProperty.all(primaryOrange),
-//           shape: MaterialStateProperty.all(RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(40))),
-//           minimumSize:
-//               MaterialStateProperty.all(const Size(173.42, 64)),
-//         ),
-//         onPressed: () async {
-//           await Firebase.initializeApp(
-//               options: DefaultFirebaseOptions.currentPlatform
-//           );
-
-//           final email = emailController.text;
-//           final password = passwordController.text;
-//           final userCredential = await FirebaseAuth.instance
-//               .createUserWithEmailAndPassword(
-//                   email: email, password: password);
-//           print(userCredential);
-//         },
-//         child: const Text(
-//           // label text for the button
-//           "Sign up",
-//           style: TextStyle(
-//             fontFamily: 'Poppins',
-//             fontWeight: FontWeight.w500,
-//             fontSize: 24.0,
-//             height: 1.0,
-//             color: Colors.white,
-//           ),
-//           textAlign: TextAlign.center,
-//         ),
-//       ),
-//     ),
-//     //Nav to verify page
-//     // TextButton(
-//     //   // a flat button with a text label
-//     //   style: ButtonStyle(
-//     //       // style the button
-//     //       backgroundColor: MaterialStateProperty.all(
-//     //           primaryOrange)), // set button background color
-//     //   onPressed: () {
-//     //     // method called when button is pressed
-//     //     Navigator.of(context).pushNamed(
-//     //       // navigates to homeRoute screen and removes previous routes
-//     //       verifyEmailRoute,
-//     //     );
-//     //   },
-//     //   child: const Text(
-//     //     // label text for the button
-//     //     "Register!",
-//     //     style: TextStyle(
-//     //       color: Colors.white,
-//     //     ),
-//     //   ),
-//     // ),
-//   ],
-// ),

@@ -459,7 +459,7 @@ class _LoginViewState extends State<LoginView> {
   bool _isValidEmail(String email) {
     // Validate the email using a regular expression
     final emailRegex =
-        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th|mail\.kmutt\.ac\.th)$');
+        RegExp(r'^[\w-\.]+@(kmutt\.ac\.th)$');
     return emailRegex.hasMatch(email);
   }
 
