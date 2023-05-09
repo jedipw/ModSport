@@ -7,7 +7,7 @@ const userReservationCollection = 'userreservation';
 const zoneCollection = 'zone';
 const deviceCollection = 'device';
 const categoryCollection = 'category';
-const zoneToCategoryCollection = 'zonetocategory';
+const zoneToCategoryCollection = 'zoneToCategory';
 const pinCollection = 'pin';
 
 // ID field
