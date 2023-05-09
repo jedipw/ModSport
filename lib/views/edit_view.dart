@@ -666,7 +666,7 @@ class _EditViewState extends State<EditView> {
                                                         color: Colors.white,
                                                       ),
                                                       width: 150,
-                                                      height: 25.0,
+                                                      height: 20.0,
                                                     ),
                                                   ),
                                                   Row(
@@ -696,7 +696,7 @@ class _EditViewState extends State<EditView> {
                                                             color: Colors.white,
                                                           ),
                                                           width: 40,
-                                                          height: 25.0,
+                                                          height: 20.0,
                                                         ),
                                                       )
                                                     ],

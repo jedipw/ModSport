@@ -72,7 +72,7 @@ class TimeSlotLoading extends StatelessWidget {
                               color: Colors.white,
                             ),
                             width: 150,
-                            height: 25.0,
+                            height: 20.0,
                           ),
                         ),
                         Row(
@@ -91,7 +91,7 @@ class TimeSlotLoading extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                                 width: 50,
-                                height: 25.0,
+                                height: 20.0,
                               ),
                             )
                           ],

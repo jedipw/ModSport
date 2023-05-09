@@ -63,10 +63,30 @@ Future<List<Booking>> getBookings() async {
 
       // Fetch the corresponding reservation document to get the end time
       final resSnapshot = await res.where(zoneIdField, isEqualTo: data[zoneIdField]).get();
-      final resData = resSnapshot.docs.first.data();
+      final startTimes = <DateTime>[];
+      final reservationIds = <String>[];
+      for (final reservation in resSnapshot.docs) {
+        final resData = reservation.data();
+        final startTime = DateTime.fromMillisecondsSinceEpoch(
+            resData[startTimeField].millisecondsSinceEpoch);
+
+        if (startDateTime.second == startTime.second &&
+            startDateTime.minute == startTime.minute &&
+            startDateTime.hour == startTime.hour &&
+            DateFormat('EEEE', 'en_US').format(startDateTime) ==
+                DateFormat('EEEE', 'en_US').format(startTime)) {
+          startTimes.add(startTime);
+          reservationIds.add(reservation.id);
+        }
+      }
+
+      startTimes.sort((a, b) => a.compareTo(b));
+      final reservationId = reservationIds.first;
+      final resDoc = await res.doc(reservationId).get();
+      final resData = resDoc.data() as Map<String, dynamic>;
       final endDateTime = DateTime.fromMillisecondsSinceEpoch(
           resData[endTimeField].millisecondsSinceEpoch);
-          final formattedEndTime =
+      final formattedEndTime =
           DateFormat('HH:mm').format(endDateTime);
 
       return Booking(
