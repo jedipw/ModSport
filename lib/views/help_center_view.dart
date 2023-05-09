@@ -45,51 +45,310 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                 const SizedBox(height: 150),
                 // Start writing your code here
 
-                //1
+                //1 Tutorials and Guides
                 Card(
                   elevation: 4,
                   margin: const EdgeInsets.all(8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Theme(
-                    data: ThemeData(
-                      cardColor: _isExpanded ? Colors.grey[300] : Colors.white,
-                    ),
-                    child: ExpansionTile(
-                      collapsedIconColor: Colors.amber,
-                      iconColor: Colors.green,
-                      title: const Text(
-                        'Tutorials and Guides',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16.0,
-                          color: Color.fromRGBO(0, 0, 0, 0.7),
-                        ),
+                  child: const ExpansionTile(
+                    collapsedIconColor: primaryOrange,
+                    iconColor: secondaryOrange,
+                    title: Text(
+                      'Tutorials and Guides',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.7),
                       ),
-                      onExpansionChanged: (bool expanded) {
-                        setState(() {
-                          _isExpanded = expanded;
-                        });
-                      },
-                      children: const <Widget>[
-                        ListTile(
-                          tileColor: Color.fromARGB(255, 214, 135, 185),
-                          title: Text(
-                            "This is tile number 1",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14.0,
-                              color: primaryGray,
-                            ),
+                    ),
+                    children: <Widget>[
+                      //1 For user
+                      ExpansionTile(
+                        collapsedIconColor: Colors.orangeAccent,
+                        iconColor: primaryOrange,
+                        title: Text(
+                          "  For User",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14.0,
+                            color: primaryOrange, // change color to orange
                           ),
                         ),
-                      ],
-                    ),
+                        children: <Widget>[
+                          //user tips1
+                          ExpansionTile(
+                            collapsedIconColor: Colors.orangeAccent,
+                            iconColor: primaryOrange,
+                            title: Text(
+                              "    How to Reservation Sport Facility",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0,
+                                color: primaryOrange, // change color to orange
+                              ),
+                            ),
+                            children: <Widget>[
+                              ListTile(
+                                  tileColor: Color.fromARGB(255, 254, 240, 226),
+                                  title: Text(
+                                    "      1) Menu bar\n"
+                                    "      2) Reserve Page\n"
+                                    "      3) Select sport facility\n"
+                                    "      4) Select date to reserve\n"
+                                    "      5) Select time slot to reserve\n"
+                                    "      6) Press 'RESERVE' button",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0,
+                                      color: primaryGray,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          //user tips2
+                          ExpansionTile(
+                            collapsedIconColor: Colors.orangeAccent,
+                            iconColor: primaryOrange,
+                            title: Text(
+                              "    How to Cancel a Reservation",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0,
+                                color: primaryOrange, // change color to orange
+                              ),
+                            ),
+                            children: <Widget>[
+                              ListTile(
+                                  tileColor: Color.fromARGB(255, 254, 240, 226),
+                                  title: Text(
+                                    "      1) Menu bar\n"
+                                    "      2) Reserve Page\n"
+                                    "      3) Select reserved sport facility\n"
+                                    "      4) Select reserved date\n"
+                                    "      5) Select reserved time slot\n"
+                                    "      6) Press 'CANCEL' button\n"
+                                    "      7) Press 'Yes' to confirm cancel reservation",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0,
+                                      color: primaryGray,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          //user tips3
+                          ExpansionTile(
+                            collapsedIconColor: Colors.orangeAccent,
+                            iconColor: primaryOrange,
+                            title: Text(
+                              "    How to Check Reservation Status",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0,
+                                color: primaryOrange, // change color to orange
+                              ),
+                            ),
+                            children: <Widget>[
+                              ListTile(
+                                  tileColor: Color.fromARGB(255, 254, 240, 226),
+                                  title: Text(
+                                    "      1) Menu bar\n"
+                                    "      2) Status Page\n"
+                                    "      3)	Press the reservation box to view details",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0,
+                                      color: primaryGray,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          //user tips4
+                          ExpansionTile(
+                            collapsedIconColor: Colors.orangeAccent,
+                            iconColor: primaryOrange,
+                            title: Text(
+                              "    How to Change Password",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0,
+                                color: primaryOrange, // change color to orange
+                              ),
+                            ),
+                            children: <Widget>[
+                              ListTile(
+                                  tileColor: Color.fromARGB(255, 254, 240, 226),
+                                  title: Text(
+                                    "      1) Menu bar\n"
+                                    "      2)	Change Password Page\n"
+                                    "      3)	Type your Current Password\n"
+                                    "      4)	Type your New Password\n"
+                                    "      5)	Type your New Password again to 'Confirm Password'\n"
+                                    "      6)	Press 'Save' button",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0,
+                                      color: primaryGray,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      //2 For staff
+                      ExpansionTile(
+                        collapsedIconColor: Colors.orangeAccent,
+                        iconColor: primaryOrange,
+                        title: Text(
+                          "  For Staff",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14.0,
+                            color: primaryOrange, // change color to orange
+                          ),
+                        ),
+                        children: <Widget>[
+                          //staff tips1
+                          ExpansionTile(
+                            collapsedIconColor: Colors.orangeAccent,
+                            iconColor: primaryOrange,
+                            title: Text(
+                              "    How to disable reservation",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0,
+                                color: primaryOrange, // change color to orange
+                              ),
+                            ),
+                            children: <Widget>[
+                              ListTile(
+                                  tileColor: Color.fromARGB(255, 254, 240, 226),
+                                  title: Text(
+                                    "      1) Menu bar\n"
+                                    "      2) Reserve Page\n"
+                                    "      3) Press toggle button to switch to Staff view\n"
+                                    "      4)	Select sport facility\n"
+                                    "      5)	Select date to disable\n"
+                                    "      6)	Select time slot to disable\n"
+                                    "      7)	Press 'DISABLE' button\n"
+                                    "      8)	Type Reason to disable\n"
+                                    "      9) Press 'RESERVE' button",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0,
+                                      color: primaryGray,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          //staff tips2
+                          ExpansionTile(
+                            collapsedIconColor: Colors.orangeAccent,
+                            iconColor: primaryOrange,
+                            title: Text(
+                              "    How to edit disable reservation",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0,
+                                color: primaryOrange, // change color to orange
+                              ),
+                            ),
+                            children: <Widget>[
+                              ListTile(
+                                  tileColor: Color.fromARGB(255, 254, 240, 226),
+                                  title: Text(
+                                    "      1) Menu bar\n"
+                                    "      2) Reserve Page\n"
+                                    "      3) Press toggle button to switch to Staff view\n"
+                                    "      4)	Select sport facility\n"
+                                    "      5)	Select date to edit disable\n"
+                                    "      6)	Press 'EDIT' icon\n"
+                                    "      7)	Select time slot to edit disable\n"
+                                    "      8)	Press 'EDIT' button\n"
+                                    "      9) Type reason to edit disable\n"
+                                    "      10) Press 'SAVE' button\n"
+                                    "      11) Press 'Yes' to confirm edit reason",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0,
+                                      color: primaryGray,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          //staff tips3
+                          ExpansionTile(
+                            collapsedIconColor: Colors.orangeAccent,
+                            iconColor: primaryOrange,
+                            title: Text(
+                              "    How to enable reservation",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0,
+                                color: primaryOrange, // change color to orange
+                              ),
+                            ),
+                            children: <Widget>[
+                              ListTile(
+                                  tileColor: Color.fromARGB(255, 254, 240, 226),
+                                  title: Text(
+                                    "      1) Menu bar\n"
+                                    "      2) Reserve Page\n"
+                                    "      3) Press toggle button to switch to Staff view\n"
+                                    "      4)	Select sport facility\n"
+                                    "      5)	Select date to enable\n"
+                                    "      6)	Press 'EDIT' icon\n"
+                                    "      7)	Select time slot to enable\n"
+                                    "      8)	Press 'ENABLE' button\n"
+                                    "      9) Press 'Yes' to confirm edit reason",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0,
+                                      color: primaryGray,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
 
@@ -105,8 +364,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       cardColor: _isExpanded ? Colors.grey[300] : Colors.white,
                     ),
                     child: ExpansionTile(
-                      collapsedIconColor: Colors.amber,
-                      iconColor: Colors.green,
+                      collapsedIconColor: primaryOrange,
+                      iconColor: secondaryOrange,
                       title: const Text(
                         'Frequently Asked Questions (FAQs)',
                         style: TextStyle(
@@ -125,13 +384,13 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       children: <Widget>[
                         //Q1
                         ListTile(
-                          tileColor: Color.fromARGB(255, 214, 135, 185),
+                          tileColor: const Color.fromARGB(255, 255, 230, 205),
                           title: RichText(
                             text: const TextSpan(
                               children: [
                                 TextSpan(
                                   text:
-                                      'Q: Can I make a reservation for someone else?\n',
+                                      '  Q: Can I make a reservation for someone else?\n',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -142,7 +401,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: 'A: Yes, you can.',
+                                  text: '  A: Yes, you can.',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -157,13 +416,13 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         //Q2
                         ListTile(
-                          tileColor: Color.fromARGB(255, 255, 130, 209),
+                          tileColor: const Color.fromARGB(255, 254, 240, 226),
                           title: RichText(
                             text: const TextSpan(
                               children: [
                                 TextSpan(
                                   text:
-                                      "Q: Can I cancel a reservation if I change my mind?\n",
+                                      "  Q: Can I cancel a reservation if I change my mind?\n",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -175,7 +434,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ),
                                 TextSpan(
                                   text:
-                                      'A: Yes, you can cancel a reservation as long as'
+                                      '  A: Yes, you can cancel a reservation as long as'
                                       ' before reserved time coming.',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
@@ -191,13 +450,13 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         //Q3
                         ListTile(
-                          tileColor: Color.fromARGB(255, 214, 135, 185),
+                          tileColor: const Color.fromARGB(255, 255, 230, 205),
                           title: RichText(
                             text: const TextSpan(
                               children: [
                                 TextSpan(
                                   text:
-                                      "Q: How do I check my reservation result?\n",
+                                      "  Q: How do I check my reservation result?\n",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -209,7 +468,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ),
                                 TextSpan(
                                   text:
-                                      'A: To view your reservation history, go to the "Status"'
+                                      '  A: To view your reservation history, go to the "Status"'
                                       ' in menu bar of the app. Here you can see your status reservatons.',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
@@ -225,13 +484,13 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         //Q4
                         ListTile(
-                          tileColor: Color.fromARGB(255, 214, 135, 185),
+                          tileColor: const Color.fromARGB(255, 254, 240, 226),
                           title: RichText(
                             text: const TextSpan(
                               children: [
                                 TextSpan(
                                   text:
-                                      "Q: Is there a limit to the number of reservations I can make?\n",
+                                      "  Q: Is there a limit to the number of reservations I can make?\n",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -243,7 +502,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ),
                                 TextSpan(
                                   text:
-                                      'A: There is no limit to the number of reservations '
+                                      '  A: There is no limit to the number of reservations '
                                       'you can make, as long as the facility is available.',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
@@ -270,8 +529,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const ExpansionTile(
-                    collapsedIconColor: Colors.amber,
-                    iconColor: Colors.green,
+                    collapsedIconColor: primaryOrange,
+                    iconColor: secondaryOrange,
                     title: Text(
                       'Troubleshooting Tips',
                       style: TextStyle(
@@ -285,10 +544,10 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     children: <Widget>[
                       //1 Tips1
                       ExpansionTile(
-                        collapsedIconColor: Colors.amber,
-                        iconColor: Colors.green,
+                        collapsedIconColor: Colors.orangeAccent,
+                        iconColor: primaryOrange,
                         title: Text(
-                          "Can't log in to the app",
+                          "  Can't log in to the app",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
@@ -299,7 +558,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         children: <Widget>[
                           ListTile(
-                              tileColor: Color.fromARGB(255, 214, 135, 185),
+                              tileColor: Color.fromARGB(255, 254, 240, 226),
                               title: Text(
                                 "     If you're having trouble logging in to the app, "
                                 "make sure you're using the correct username and password."
@@ -317,10 +576,10 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       ),
                       //2 Tips2
                       ExpansionTile(
-                        collapsedIconColor: Colors.amber,
-                        iconColor: Colors.green,
+                        collapsedIconColor: Colors.orangeAccent,
+                        iconColor: primaryOrange,
                         title: Text(
-                          "Unable to make a reservation",
+                          "  Unable to make a reservation",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
@@ -331,7 +590,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         children: <Widget>[
                           ListTile(
-                              tileColor: Color.fromARGB(255, 214, 135, 185),
+                              tileColor: Color.fromARGB(255, 254, 240, 226),
                               title: Text(
                                 "     If you're having trouble making a reservation, check "
                                 "that the facility you want to reserve is available.",
@@ -347,10 +606,10 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       ),
                       //3 Tips3
                       ExpansionTile(
-                        collapsedIconColor: Colors.amber,
-                        iconColor: Colors.green,
+                        collapsedIconColor: Colors.orangeAccent,
+                        iconColor: primaryOrange,
                         title: Text(
-                          "Facility not available",
+                          "  Facility not available",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
@@ -361,7 +620,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         children: <Widget>[
                           ListTile(
-                              tileColor: Color.fromARGB(255, 214, 135, 185),
+                              tileColor: Color.fromARGB(255, 254, 240, 226),
                               title: Text(
                                 "     If the facility you want to reserve is not available,"
                                 " try selecting a different date or time. If the facility "
@@ -379,10 +638,10 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       ),
                       //4 Tips4
                       ExpansionTile(
-                        collapsedIconColor: Colors.amber,
-                        iconColor: Colors.green,
+                        collapsedIconColor: Colors.orangeAccent,
+                        iconColor: primaryOrange,
                         title: Text(
-                          "App crashes or freezes",
+                          "  App crashes or freezes",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
@@ -393,7 +652,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         children: <Widget>[
                           ListTile(
-                              tileColor: Color.fromARGB(255, 214, 135, 185),
+                              tileColor: Color.fromARGB(255, 254, 240, 226),
                               title: Text(
                                 "     If the app crashes or freezes, try restarting your"
                                 " device and then launching the app again. If the problem"
@@ -412,10 +671,10 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       ),
                       //5 Tips5
                       ExpansionTile(
-                        collapsedIconColor: Colors.amber,
-                        iconColor: Colors.green,
+                        collapsedIconColor: Colors.orangeAccent,
+                        iconColor: primaryOrange,
                         title: Text(
-                          "Feedback and suggestions",
+                          "  Feedback and suggestions",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
@@ -426,7 +685,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         ),
                         children: <Widget>[
                           ListTile(
-                              tileColor: Color.fromARGB(255, 214, 135, 185),
+                              tileColor: Color.fromARGB(255, 254, 240, 226),
                               title: Text(
                                 "     If you have any feedback or suggestions for the app,"
                                 " please feel free to contact the customer support team. "
@@ -454,8 +713,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ExpansionTile(
-                    collapsedIconColor: Colors.amber,
-                    iconColor: Colors.green,
+                    collapsedIconColor: primaryOrange,
+                    iconColor: secondaryOrange,
                     title: const Text(
                       'Contact Information',
                       style: TextStyle(
@@ -473,7 +732,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     },
                     children: <Widget>[
                       ListTile(
-                        tileColor: Color.fromARGB(255, 214, 135, 185),
+                        tileColor: const Color.fromARGB(255, 254, 240, 226),
                         title: RichText(
                           text: const TextSpan(
                             children: [
