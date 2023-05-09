@@ -47,6 +47,17 @@ class DisableData {
     required this.disableReason,
   });
 }
+class CategoryData {
+  final String categoryId;
+  final String categoryName;
+
+
+  CategoryData({
+    required this.categoryId,
+    required this.categoryName,
+   
+  });
+}
 
 class Booking {
   final String zoneId;

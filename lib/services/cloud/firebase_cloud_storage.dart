@@ -22,6 +22,7 @@ class FirebaseCloudStorage {
   final disable = FirebaseFirestore.instance.collection(disableCollection);
   final device = FirebaseFirestore.instance.collection(deviceCollection);
   final pin = FirebaseFirestore.instance.collection(pinCollection);
+  final category = FirebaseFirestore.instance.collection(categoryCollection);
 
   Future<bool> getUserHasRole(String userId) async {
     try {
@@ -143,6 +144,23 @@ Future<List<Booking>> getBookings() async {
   }
 }
 
+Future<List<CategoryData>> getAllCategorie() async {
+  
+    try {
+      QuerySnapshot snapshot = await category.get();
+      log(snapshot.toString());
+      return snapshot.docs
+          .map((document) => CategoryData(  
+              categoryId: document.id,
+              categoryName: document.get(categoryNameField)))
+          .toList();
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+
+
 Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
   try {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -153,7 +171,14 @@ Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
     throw CouldNotGetException();
   }
 }
-
+// Future<List<String>> getAllCategoryIds() async {
+//     try {
+//       List<DocumentSnapshot> zoneToCategoryDocs = await getAllZoneToCategory();
+//       return zoneToCategoryDocs.map((doc) => doc.id).toList();
+//     } catch (e) {
+//       throw CouldNotGetException();
+//     }
+//   }
 Future<void> pinZone(String zoneId) async {
   try {
     final userId = FirebaseAuth.instance.currentUser!.uid;
@@ -194,6 +219,34 @@ Future<List<String>> getPinnedZones() async {
     throw CouldNotGetException();
   }
 }
+
+Future<List<ZoneData>> getZonesByCategoryId(String categoryId) async {
+  List<String> zoneIds = [];
+  List<ZoneData> zones = [];
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+    .collection(zoneToCategoryCollection)
+    .where(categoryIdField, isEqualTo: categoryId)
+    .get();
+log('Number of documents: ${snapshot.size}');
+for (var document in snapshot.docs) {
+  log(document.get(zoneIdField));
+  zoneIds.add(document.get(zoneIdField));
+} 
+    for (String id in zoneIds) {
+  
+    ZoneData zone = await FirebaseCloudStorage().getZone(id);
+    zones.add(zone);
+  
+}
+    return zones;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+ 
+}
+
+
 
 
 

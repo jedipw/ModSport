@@ -29,15 +29,20 @@ class _HomeViewState extends State<HomeView> {
 
   List<ZoneData> _zoneList = [];
   List<String> _categoryList = [];
+  List<CategoryData> _category = [];
+
   List<bool> _pushPinClickedList = [];
+  List<ZoneData> _filteredZones = [];
+  List<String> _pinnedZones = [];
+  List<DocumentSnapshot> _zonesByCategory = [];
+  // List<ZoneData> filteredZones = _zoneList.where((zone) => zone.categoryId == selectedCategoryId).toList();
+
   bool _isCategoryLoaded = false;
   bool isPinned = true;
   // bool _isPushPinClicked = false;
   bool _isZoneLoaded = false;
   bool _isSearching = false; //detect search bar
   int index = 0;
-  late String
-      _selectedCategory; // assume this state variable stores the currently selected category
 
   TextEditingController _searchController = TextEditingController();
   List<ZoneData> _foundZones = [];
@@ -50,29 +55,46 @@ class _HomeViewState extends State<HomeView> {
     _foundZones = _zoneList;
     fetchData();
     FirebaseCloudStorage().getPinnedZones().then((pinnedZones) {
-    setState(() {
-      _pushPinClickedList = pinnedZones.map((zoneId) => true).toList();
+      setState(() {
+        _pushPinClickedList = pinnedZones.map((zoneId) => true).toList();
+      });
     });
-  });
-  FirebaseCloudStorage().getAllZones().then((zoneList) {
-    setState(() {
-      _zoneList = zoneList;
-      if (_pushPinClickedList.isNotEmpty) {
-        for (int i = 0; i < _pushPinClickedList.length; i++) {
-          if (_pushPinClickedList[i]) {
-            String pinnedZoneId = _zoneList[i].zoneId;
-            int pinnedIndex = _zoneList.indexWhere((zone) => zone.zoneId == pinnedZoneId);
-            ZoneData pinnedZone = _zoneList.removeAt(pinnedIndex);
-            _zoneList.insert(0, pinnedZone);
+    FirebaseCloudStorage().getAllZones().then((zoneList) {
+      setState(() {
+        _zoneList = zoneList;
+        // _filteredZones = zoneList;
+        if (_pushPinClickedList.isNotEmpty) {
+          for (int i = 0; i < _pushPinClickedList.length; i++) {
+            if (_pushPinClickedList[i]) {
+              String pinnedZoneId = _zoneList[i].zoneId;
+              int pinnedIndex =
+                  _zoneList.indexWhere((zone) => zone.zoneId == pinnedZoneId);
+              ZoneData pinnedZone = _zoneList.removeAt(pinnedIndex);
+              _zoneList.insert(0, pinnedZone);
+            }
           }
         }
-      }
+      });
+    }).catchError((e) {
+      // if (e is CouldNotFetchDataException) {
+      //   // Handle exception
+      // }
     });
-  }).catchError((e) {
-    // if (e is CouldNotFetchDataException) {
-    //   // Handle exception
-    // }
-  });
+    _sortZones();
+    FirebaseCloudStorage().getAllCategories().then((categoryIds) {
+      log("hi:" + categoryIds.toString());
+      setState(() {
+        _categoryList = categoryIds;
+        // _category = category;
+      });
+    });
+    FirebaseCloudStorage().getAllZoneToCategory().then((zones) {
+      setState(() {
+        _zonesByCategory = zones;
+      });
+    }).catchError((e) {
+      // print('Error: $e');
+    });
   }
 
   @override
@@ -96,9 +118,37 @@ class _HomeViewState extends State<HomeView> {
         _zoneList = zones;
         _isZoneLoaded = true;
         _foundZones = _zoneList;
-        
+        _sortZones();
         isPinned = false;
+        String categoryId;
         // _isPushPinClicked = false;
+      });
+    } catch (e) {
+      _handleError();
+    }
+  }
+
+  Future<void> _getZonesById(String categoryId) async {
+    try {
+      List<ZoneData> zones =
+          await FirebaseCloudStorage().getZonesByCategoryId(categoryId);
+      setState(() {
+        _zoneList = zones;
+        _isZoneLoaded = true;
+      });
+    } catch (e) {
+      _handleError();
+    }
+  }
+
+  Future<void> _getCategorieData() async {
+    // log(_getCategorieData().toString());
+    try {
+      List<CategoryData> category =
+          await FirebaseCloudStorage().getAllCategorie();
+      log(category.toString());
+      setState(() {
+        _category = category;
       });
     } catch (e) {
       _handleError();
@@ -110,7 +160,7 @@ class _HomeViewState extends State<HomeView> {
     try {
       List<String> categories = await FirebaseCloudStorage().getAllCategories();
       setState(() {
-        _categoryList = categories;
+        // _categoryList = categories;
         _isCategoryLoaded = true;
       });
     } catch (e) {
@@ -140,14 +190,6 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  void _onCategorySelected(String category) {
-    setState(() {
-      _selectedCategory = category;
-    });
-  }
-  
-  
-
 //For push pin
   // void _handlePushPinClick(int index) async {
   //   // Get the zone data for the clicked push pin
@@ -168,26 +210,24 @@ class _HomeViewState extends State<HomeView> {
   //     log("Could not pin zone: $e");
   //   }
   // }
- void _handlePushPinClick(String zoneId) {
-  setState(() {
-    _pushPinClickedMap[zoneId] = true;
-    FirebaseCloudStorage().pinZone(zoneId);
-    
-    // find the index of the zone with the given id
-    int index = _zoneList.indexWhere((zone) => zone.zoneId == zoneId);
-    
-    // remove the zone from the list
-    ZoneData pinnedZone = _zoneList.removeAt(index);
-    
-    // insert the zone at the beginning of the list
-    _zoneList.insert(0, pinnedZone);
-    
-    // update the list of pinned zones
-    _pushPinClickedList.insert(0, true);
-  });
-}
+  void _handlePushPinClick(String zoneId) {
+    setState(() {
+      _pushPinClickedMap[zoneId] = true;
+      FirebaseCloudStorage().pinZone(zoneId);
 
+      // find the index of the zone with the given id
+      int index = _zoneList.indexWhere((zone) => zone.zoneId == zoneId);
 
+      // remove the zone from the list
+      ZoneData pinnedZone = _zoneList.removeAt(index);
+
+      // insert the zone at the beginning of the list
+      _zoneList.insert(0, pinnedZone);
+
+      // update the list of pinned zones
+      _pushPinClickedList.insert(0, true);
+    });
+  }
 
   void _handleUnpinClick(String zoneId) {
     setState(() {
@@ -196,12 +236,55 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  
+  void _filterByCategory(String categoryId) {
+    log(categoryId.toString());
+    setState(() {
+      _filteredZones = _zoneList.where((zone) => zone == categoryId).toList();
+    });
+    log(_filteredZones.toString());
+  }
 
+  void _sortZones() async {
+    setState(() async {
+      _zoneList.sort((a, b) => a.zoneName.compareTo(b.zoneName));
+
+      // get pinned zones and add them to the beginning of the list
+      List<String> pinnedZoneIds =
+          await FirebaseCloudStorage().getPinnedZones();
+      List<ZoneData> pinnedZones = _zoneList
+          .where((zone) => pinnedZoneIds.contains(zone.zoneId))
+          .toList();
+      pinnedZones.forEach((zone) {
+        // check if the zone is already in the list
+        if (!_zoneList.any((z) => z.zoneId == zone.zoneId)) {
+          _zoneList.insert(0, zone);
+        }
+      });
+    });
+  }
+
+  Future<void> _getPinnedZonesData() async {
+    try {
+      List<String> pinnedZones = await FirebaseCloudStorage().getPinnedZones();
+      setState(() {
+        _pinnedZones = pinnedZones;
+      });
+    } catch (e) {
+      _handleError();
+    }
+  }
+// void _filterZonesByCategory(String categoryId) {
+//   setState(() {
+//     _filteredZones = _zoneList.where((zone) => .categoryId == categoryId).toList();
+//   });
+// }
 
   Future<void> fetchData() async {
     await _getZonesData();
-    await _getCategoriesData();
+    await _getCategorieData();
+
+    _getPinnedZonesData();
+    _sortZones();
     // await _getZoneToCategoriesData();
     // await _getZoneToCategoriesData();
   }
@@ -230,7 +313,9 @@ class _HomeViewState extends State<HomeView> {
                               //  bool _isPushPinClicked = false;
                               final index = entry.key;
                               final e = entry.value;
-
+                              //sort by letter
+                              // _zoneList.sort(
+                              //     (a, b) => a.zoneName.compareTo(b.zoneName));
                               if (_pushPinClickedList.length <= index) {
                                 // Set initial value of push pin clicked status for new items
                                 _pushPinClickedList.add(false);
@@ -702,9 +787,14 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // Do something when the button is pressed
                         // For example, show all zones that have not been filtered yet
+                        setState(() {
+                          _isZoneLoaded = false;
+                          _sortZones();
+                        });
+                        await _getZonesData();
                       },
                       style: ButtonStyle(
                         backgroundColor:
@@ -728,8 +818,8 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                   ),
-                  ..._categoryList.map((categoryName) {
-                    log(categoryName);
+                  ..._category.map((e) {
+                    // log(categoryId);
                     return Container(
                       margin: const EdgeInsets.symmetric(
                           vertical: 8.0, horizontal: 10.0),
@@ -746,9 +836,14 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Do something when the button is pressed
-                          // For example, show only zones in this category
+                        onPressed: () async {
+                          log(e.categoryId);
+                          setState(() {
+                            _isZoneLoaded = false;
+                          });
+
+                          await _getZonesById(e.categoryId);
+                          log(_zoneList.toString());
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -761,7 +856,7 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         ),
                         child: Text(
-                          categoryName,
+                          e.categoryName,
                           style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontStyle: FontStyle.normal,
@@ -773,11 +868,15 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     );
                   }).toList(),
+                  ..._filteredZones.map((zone) {
+                    return Text(zone.zoneName);
+                  }).toList(),
                 ],
               ),
             ),
           ),
-          if (_isSearching && _foundZones.isNotEmpty)
+
+          if (_isSearching)
             Visibility(
               visible: true,
               child: Container(
@@ -785,27 +884,72 @@ class _HomeViewState extends State<HomeView> {
                 width: double.infinity,
                 height: double.infinity,
                 child: Container(
-                  padding: const EdgeInsets.only(top: 155),
-                  child: ListView.builder(
-                    itemCount: _foundZones.length,
-                    itemBuilder: (context, index) {
-                      final ZoneData zone = _foundZones[index];
-                      return ListTile(
-                        title: Text(zone.zoneName),
-                        onTap: () {
-                          // do something when user taps on the search result
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ReservationView(zoneId: zone.zoneId),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
+                    padding: const EdgeInsets.only(top: 155),
+                    child: _searchController.text.isNotEmpty ? _foundZones.isNotEmpty
+                        ? ListView.builder(
+                            itemCount: _foundZones.length,
+                            itemBuilder: (context, index) {
+                              final ZoneData zone = _foundZones[index];
+                              return ListTile(
+                                title: Text(
+                                  zone.zoneName,
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 16.0,
+                                    color: primaryGray,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                                onTap: () {
+                                  // do something when user taps on the search result
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ReservationView(zoneId: zone.zoneId),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          )
+                        : Column(
+                          
+                            children: [
+                              const SizedBox(height: 200,),
+                              const SizedBox(
+                                width: 119.0,
+                                height: 119.0,
+                                child: Icon(
+                                  Icons.search,
+                                  size: 80.0,
+                                  color: Color(0xFF808080),
+                                ),
+                              ),
+                              const Text(
+                                'No result found',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: primaryGray,
+                                ),
+                              ),
+                              const SizedBox(height: 8.0),
+                              Text(
+                                'Try searching for something else',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                  fontSize: 16.0,
+                                  color: Colors.grey[400],
+                                ),
+                              ),
+                            ],
+                          ): Container()) ,
               ),
             ),
           //search no found not working yet.
@@ -906,8 +1050,7 @@ class _HomeViewState extends State<HomeView> {
                               ? GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      _searchController =
-                                          TextEditingController();
+                                      _searchController.clear();
                                       _searchText = '';
                                     });
                                   },
