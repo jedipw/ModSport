@@ -11,8 +11,9 @@ import 'package:intl/intl.dart';
 class DetailView extends StatefulWidget {
   final String zoneId;
   final DateTime startDateTime;
+  final String locationId;
 
-  const DetailView({Key? key, required this.zoneId, required this.startDateTime})
+  const DetailView({Key? key, required this.zoneId, required this.startDateTime, required this.locationId})
       : super(key: key);
 
   @override
@@ -35,6 +36,7 @@ class _DetaiViewState extends State<DetailView> {
             .collection('userreservation')
             .where('userId', isEqualTo: userId)
             .where('zoneId', isEqualTo: widget.zoneId)
+            .where('locationId', isEqualTo: widget.locationId)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
@@ -66,6 +68,21 @@ class _DetaiViewState extends State<DetailView> {
 
                     final zoneData = snapshot.data!.data() as Map<String, dynamic>;
                     final String zoneName = zoneData['zoneName'];
+          
+          return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                  .collection('location')
+                  .doc(widget.locationId)
+                  .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    final locationData = snapshot.data!.data() as Map<String, dynamic>;
+                    final String locationName = locationData['locationName'];
 
           return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -86,6 +103,11 @@ class _DetaiViewState extends State<DetailView> {
                                     fontWeight: FontWeight.w400,
                                     fontSize: 12.0,
                                     height: 1.5,),),
+                              Text('Location: $locationName', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),  
                               Text('Date: $formattedDate', style: TextStyle(fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
                                     fontWeight: FontWeight.w400,
@@ -96,12 +118,15 @@ class _DetaiViewState extends State<DetailView> {
                                     fontWeight: FontWeight.w400,
                                     fontSize: 12.0,
                                     height: 1.5,),),
+
+
               if (!isSuccessful && disableReason != null)
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('disable')
                       .where('userId', isEqualTo: userId)
                       .where('zoneId', isEqualTo: widget.zoneId)
+                      .where('locationId', isEqualTo: widget.locationId)
                       .snapshots(),
                   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (!snapshot.hasData) {
@@ -113,7 +138,41 @@ class _DetaiViewState extends State<DetailView> {
                     final disableData = snapshot.data!.docs.first.data() as Map<String, dynamic>;
                     final String disableReason = disableData['disableReason'];
 
-                    return Text('due to $disableReason');
+                    return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
+                            children: [
+                              Icon(Icons.cancel_rounded,color: Colors.red,size: 150.0,),
+                              Text('Canceled', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24.0,
+                                    height: 1.5,
+                                    color: Colors.red,),),
+                              Text('Reason: $disableReason',style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+                              Text('Facility: $zoneName', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+                              Text('Location: $locationName', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),  
+                              Text('Date: $formattedDate', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+                              Text('Time: $formattedTime', style: TextStyle(fontFamily: 'Poppins',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0,
+                                    height: 1.5,),),
+                    ],);
                   },
                 ),
             Stack(
@@ -170,6 +229,10 @@ class _DetaiViewState extends State<DetailView> {
           );
         },
       );
-    }));
+    }
+    );
+  }
+  )
+    );
   }
 }
