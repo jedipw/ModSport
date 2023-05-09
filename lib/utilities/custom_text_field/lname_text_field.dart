@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
-class FnameTextField extends StatelessWidget {
+import '../../constants/color.dart';
+
+class LnameTextField extends StatelessWidget {
   final TextEditingController controller;
-  final bool isFnameValid;
-  const FnameTextField({
+  final bool isLnameValid;
+  const LnameTextField({
     Key? key,
     required this.controller,
-    required this.isFnameValid,
+    required this.isLnameValid,
   }) : super(key: key);
 
   @override
@@ -17,13 +19,13 @@ class FnameTextField extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            "Name",
+            "Surname",
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -42,7 +44,7 @@ class FnameTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            keyboardType: isFnameValid ? TextInputType.name : null,
+            keyboardType: isLnameValid ? TextInputType.name : null,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
@@ -56,9 +58,9 @@ class FnameTextField extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isFnameValid)
+              if (!isLnameValid)
                 const Text(
-                  "Please enter your name using only letters and hyphens (-)",
+                  "Please enter your surname using only letters and hyphens (-)",
                   style: TextStyle(
                     color: Colors.red,
                     fontFamily: 'Poppins',

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:modsport/constants/color.dart';
 
-class PasswordTextField extends StatelessWidget {
-  const PasswordTextField({
+class RegConPasswordField extends StatelessWidget {
+  const RegConPasswordField({
     Key? key,
     required this.passwordController,
+    required this.passwordStat,
     required this.isPasswordOk,
   }) : super(key: key);
 
   final TextEditingController passwordController;
+  final String passwordStat;
   final bool isPasswordOk;
 
   @override
@@ -18,13 +21,13 @@ class PasswordTextField extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            'Password',
+            'Confirm Password',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -57,10 +60,10 @@ class PasswordTextField extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isPasswordOk)
-                const Text(
-                  "Please enter the correct password.",
-                  style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
+              if (!isPasswordOk && passwordStat != "OK")
+                Text(
+                  passwordStat,
+                  style: const TextStyle(color: Colors.red, fontFamily: 'Poppins'),
                 ),
             ],
           ),

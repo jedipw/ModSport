@@ -3,6 +3,13 @@ import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ZoneName extends StatelessWidget {
+  final bool isError;
+
+  final bool isZoneLoaded;
+  final bool isSwipingUp;
+
+  final String zoneName;
+
   const ZoneName({
     super.key,
     required this.isError,
@@ -10,10 +17,6 @@ class ZoneName extends StatelessWidget {
     required this.isZoneLoaded,
     required this.isSwipingUp,
   });
-  final bool isError;
-  final String zoneName;
-  final bool isZoneLoaded;
-  final bool isSwipingUp;
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +36,14 @@ class ZoneName extends StatelessWidget {
                 baseColor: const Color.fromARGB(255, 216, 216, 216),
                 highlightColor: const Color.fromRGBO(173, 173, 173, 0.824),
                 child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.white,
+                  ),
                   width: 150,
                   height: 30.0,
-                  color: Colors.white,
-                ))
+                ),
+              )
             : Opacity(
                 opacity: isSwipingUp ? 0.33 : 1,
                 child: Row(

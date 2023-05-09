@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
-// A StatefulWidget that creates a list of time slots as RadioListTile widgets
 class TimeSlotLoading extends StatelessWidget {
   const TimeSlotLoading({
     super.key,
   });
 
-  // The index of the selected time slot
   @override
   Widget build(BuildContext context) {
     // Set the inactive radio button color
@@ -65,14 +63,18 @@ class TimeSlotLoading extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Shimmer.fromColors(
-                            baseColor: const Color.fromARGB(255, 216, 216, 216),
-                            highlightColor:
-                                const Color.fromRGBO(173, 173, 173, 0.824),
-                            child: Container(
-                              width: 150,
-                              height: 30.0,
+                          baseColor: const Color.fromARGB(255, 216, 216, 216),
+                          highlightColor:
+                              const Color.fromRGBO(173, 173, 173, 0.824),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
                               color: Colors.white,
-                            )),
+                            ),
+                            width: 150,
+                            height: 25.0,
+                          ),
+                        ),
                         Row(
                           children: [
                             const Icon(Icons.people,
@@ -84,9 +86,12 @@ class TimeSlotLoading extends StatelessWidget {
                               highlightColor:
                                   const Color.fromRGBO(173, 173, 173, 0.824),
                               child: Container(
-                                width: 40,
-                                height: 30.0,
-                                color: Colors.white,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.white,
+                                ),
+                                width: 50,
+                                height: 25.0,
                               ),
                             )
                           ],

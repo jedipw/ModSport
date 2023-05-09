@@ -7,3 +7,4 @@ const primaryGreen = Color(0xFF009900);
 const secondaryOrange = Color(0xFFDB611D);
 const authenGray = Color(0xFFF2F2F2);
 const loginGray = Color(0xFFF5F5F5);
+const staffOrange = Color(0xFFDD5726);

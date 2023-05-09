@@ -1,169 +1,200 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-import 'package:modsport/firebase_options.dart';
-import 'package:modsport/services/cloud/cloud_storage_constants.dart';
+// import 'package:modsport/firebase_options.dart';
 import 'package:modsport/utilities/modal.dart';
 // import 'package:dio/dio.dart';
 
-class VerifyEmailView extends StatelessWidget {
-  const VerifyEmailView(
-      {super.key}); // constructor for LoginView, takes an optional key parameter
+class VerifyEmailView extends StatefulWidget {
+  const VerifyEmailView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // required method to build the UI
-    return Scaffold(
-      // scaffold widget provides a basic app bar, drawer and body
-      appBar: AppBar(
-        title: const Text('Verify Email'),
-        backgroundColor: primaryOrange,
-      ), // app bar with a title
-      body: FutureBuilder(
-          future: Firebase.initializeApp(
-              options: DefaultFirebaseOptions.currentPlatform),
+  State<VerifyEmailView> createState() => _VerifyEmailViewState();
+}
 
-          //     Firebase.initializeApp(
-          //     options: const FirebaseOptions(
-          //     apiKey: "AIzaSyCauS1xIFq7AjwY8VbyzdTlsY2_HX7yzDc",
-          //     appId: "AIzaSyDwYCWAgRuX_sWYhvNJGOFWFf-F9hNzlY0",
-          //     messagingSenderId: "692593899826",
-          //     projectId: "modsport-702fa",
-          //     storageBucket: "modsport-702fa.appspot.com",
-          //     // add the X-Firebase-Locale header here
-          //     // headers: <String, String>{
-          //     //   'X-Firebase-Locale': 'th', // replace 'en' with your desired locale
-          //     // },
-          //   ),
-          // ),
+class _VerifyEmailViewState extends State<VerifyEmailView> {
+  final User? user = FirebaseAuth.instance.currentUser;
+  final FocusScopeNode _node = FocusScopeNode();
 
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                final user = FirebaseAuth.instance.currentUser;
-                print(user);
-                if (user?.emailVerified ?? false) {
-                  return const Text("You are a verified user.");
-                } else {
-                  return const VerifyEmailViewComponent();
-                }
-              default:
-                return const Text("Loading...");
-            }
-          }),
-    );
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserEmailVerification();
+    _node.unfocus();
   }
-}
 
-class VerifyEmailViewComponent extends StatefulWidget {
-  const VerifyEmailViewComponent({super.key});
+  Future<void> _checkUserEmailVerification() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // User is already signed in
+      if (user.emailVerified) {
+        await Navigator.of(context).pushNamedAndRemoveUntil(
+          // navigates to homeRoute screen and removes previous routes
+          homeRoute,
+          (route) => false,
+        );
+      }
+    }
+  }
 
-  @override
-  State<VerifyEmailViewComponent> createState() =>
-      _VerifyEmailViewComponentState();
-}
-
-class _VerifyEmailViewComponentState extends State<VerifyEmailViewComponent> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          "Verify your email address",
-          style: TextStyle(
-            fontFamily: "Poppins",
-            fontWeight: FontWeight.w600,
-            fontSize: 21,
-            height: 1.0,
-            color: primaryOrange,
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return const Text("Loading...");
+    } else {
+      return MaterialApp(
+        navigatorKey: navigatorKey,
+        home: FocusScope(
+          node: _node,
+          child: Scaffold(
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(32, 59, 0, 20),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          await signOut().then((value) =>
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                // navigates to homeRoute screen and removes previous routes
+                                registerRoute,
+                                (route) => false,
+                              ));
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: primaryOrange,
+                          size: 38,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // SingleChildScrollView(
+                // child:
+                // Expanded(
+                //   child:
+                SingleChildScrollView(
+                    child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 80),
+                      Container(
+                        width: 200,
+                        height: 200,
+                        margin: const EdgeInsets.only(
+                          bottom: 32,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: primaryOrange,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.mail,
+                          size: 128,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Text(
+                        "Verify your email address",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 21,
+                          height: 1.0,
+                          color: primaryOrange,
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                      const Text("We will send a verification email to"),
+                      const SizedBox(height: 8),
+                      Text(FirebaseAuth.instance.currentUser!.email.toString()),
+                      const SizedBox(height: 8),
+                      const Text("Please check your email to verify"),
+                      const SizedBox(height: 25),
+                      TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(primaryOrange),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            )),
+                            minimumSize:
+                                MaterialStateProperty.all(const Size(170, 60)),
+                            side: MaterialStateProperty.all(const BorderSide(
+                              color: primaryOrange,
+                            )),
+                            overlayColor: MaterialStateProperty.all(
+                                const Color(0x1FE17325)),
+                            shadowColor: MaterialStateProperty.all(
+                                const Color(0x3D000000)),
+                            elevation: MaterialStateProperty.all(4),
+                          ),
+                          // onPressed: () => (_) => Navigator.of(context).pushNamedAndRemoveUntil(
+                          //   // navigates to homeRoute screen and removes previous routes
+                          //   loginRoute,
+                          //   (route) => false,
+                          // ),
+                          onPressed: () async {
+                            // final user = FirebaseAuth.instance.currentUser;
+                            try {
+                              verifyEmail().then((value) =>
+                                  showSuccessMailModal(context, true));
+                             
+                            } on FirebaseAuthException catch (_) {
+                              (_) => {Navigator.of(context).pop()};
+                              // log(e.toString());
+                            }
+                          },
+                          child: const Text(
+                            // "Resend email",
+                            "Send email",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 21,
+                              height: 1,
+                              color: Colors.white,
+                            ),
+                          ))
+                    ],
+                  ),
+                )),
+                // ),
+                // ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 25),
-        const Text("We have sent a verification email to"),
-        Text(FirebaseAuth.instance.currentUser!.email.toString()),
-        const Text("Please check your email to verify"),
-        const SizedBox(height: 25),
-        TextButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(primaryOrange),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
-              )),
-              minimumSize: MaterialStateProperty.all(const Size(208, 60)),
-              side: MaterialStateProperty.all(const BorderSide(
-                color: primaryOrange,
-              )),
-              overlayColor: MaterialStateProperty.all(const Color(0x1FE17325)),
-              shadowColor: MaterialStateProperty.all(const Color(0x3D000000)),
-              elevation: MaterialStateProperty.all(4),
-            ),
-            onPressed: () => (_) => Navigator.of(context).pushNamedAndRemoveUntil(
-              // navigates to homeRoute screen and removes previous routes
-              loginRoute,
-              (route) => false,
-            ),
-            // onPressed: () async {
-            //   final user = FirebaseAuth.instance.currentUser;
-            //   log(user.toString());
-            //   showLoadModal(context);
-            //   // await Dio().get(
-            //   //   'https://firebase.google.com',
-            //   //   options: Options(headers: {'X-Firebase-Locale': 'th'}),
-            //   // );
-            //   try {
-            //     await user!.sendEmailVerification()
-            //     .then((_) => {Navigator.of(context).pop()});
-            //   } on FirebaseAuthException catch (e) {
-            //     (_) => {Navigator.of(context).pop()};
-            //     rethrow;
-            //   }
-            // },
-            child: const Text(
-              // "Resend email",
-              "Click to go next",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-                fontSize: 22,
-                height: 1,
-                color: Colors.white,
-              ),
-            ))
-      ],
-    ));
+      );
+    }
+  }
+
+  Future<void> verifyEmail() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (!(user!.emailVerified)) {
+      await user.sendEmailVerification();
+    }
+  }
+
+  Future<void> signOut() async {
+    await FirebaseAuth.instance
+        .signOut()
+        .then((value) => Future.delayed(Duration.zero, () async {
+              await Navigator.of(context).pushNamedAndRemoveUntil(
+                // navigates to login screen and removes previous routes
+                loginRoute,
+                (route) => false,
+              );
+            }));
   }
 }
-
-///////////////////// The nav part /////////////////////
-// Center(
-//         // centers child widget in the screen
-//         child: TextButton(
-//           // a flat button with a text label
-//           style: ButtonStyle(
-//               // style the button
-//               backgroundColor: MaterialStateProperty.all(
-//                   primaryOrange)), // set button background color
-//           onPressed: () {
-//             // method called when button is pressed
-//             Navigator.of(context).pushNamedAndRemoveUntil(
-//               // navigates to homeRoute screen and removes previous routes
-//               loginRoute,
-//               (route) => false,
-//             );
-//           },
-//           child: const Text(
-//             // label text for the button
-//             "Login!",
-//             style: TextStyle(
-//               color: Colors.white,
-//             ),
-//           ),
-//         ),
-//       ),

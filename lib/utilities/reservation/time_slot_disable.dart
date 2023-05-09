@@ -6,6 +6,13 @@ import 'package:modsport/utilities/reservation/function.dart';
 typedef OnChangedCallback = void Function(int index, bool? value);
 
 class TimeSlotDisable extends StatelessWidget {
+  final List<DisableData> disabledReservation;
+  final List<ReservationData> reservation;
+  final List<UserReservationData> userReservation;
+  final List<bool?> selectedTimeSlots;
+
+  final OnChangedCallback onChanged;
+
   const TimeSlotDisable({
     super.key,
     required this.reservation,
@@ -14,12 +21,6 @@ class TimeSlotDisable extends StatelessWidget {
     required this.selectedTimeSlots,
     required this.onChanged,
   });
-  final List<DisableData> disabledReservation;
-  final List<ReservationData> reservation;
-  final List<UserReservationData> userReservation;
-  final List<bool?> selectedTimeSlots;
-
-  final OnChangedCallback onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class TimeSlotDisable extends StatelessWidget {
             child: Row(
               children: [
                 Checkbox(
-                  activeColor: primaryOrange,
+                  activeColor: staffOrange,
                   value: isDisable(
                           reservation[index].startTime, disabledReservation)
                       ? !selectedTimeSlots[index]!
@@ -67,12 +68,12 @@ class TimeSlotDisable extends StatelessWidget {
                   fillColor: MaterialStateProperty.resolveWith<Color?>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.disabled)) {
-                        return primaryOrange;
+                        return staffOrange;
                       }
                       return isDisable(
                               reservation[index].startTime, disabledReservation)
                           ? primaryGray
-                          : primaryOrange;
+                          : staffOrange;
                     },
                   ),
                   shape: RoundedRectangleBorder(
@@ -81,8 +82,8 @@ class TimeSlotDisable extends StatelessWidget {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   visualDensity:
                       const VisualDensity(horizontal: 1, vertical: 1),
-                  hoverColor: primaryOrange.withOpacity(0.04),
-                  focusColor: primaryOrange.withOpacity(0.12),
+                  hoverColor: staffOrange.withOpacity(0.04),
+                  focusColor: staffOrange.withOpacity(0.12),
                 ),
                 const SizedBox(
                   width: 9,
@@ -105,7 +106,7 @@ class TimeSlotDisable extends StatelessWidget {
                             color: isDisable(reservation[index].startTime,
                                     disabledReservation)
                                 ? primaryGray
-                                : primaryOrange,
+                                : staffOrange,
                           ),
                         ),
                         Row(

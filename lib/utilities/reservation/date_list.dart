@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
+
 import 'package:modsport/constants/color.dart';
 
 const int numOfStaffDay = 30;
@@ -8,12 +10,14 @@ class DateList extends StatelessWidget {
   final int numOfUserDay;
   final int
       selectedIndex; // The index of the currently selected date in the list.
-  final ValueChanged<int>
-      onSelected; // A callback function that is called when a date is selected.
+
   final bool hasRole;
   final bool isDisableMenu;
   final bool isError;
   final bool isEverythingLoaded;
+
+  final ValueChanged<int>
+      onSelected; // A callback function that is called when a date is selected.
 
   const DateList({
     Key? key,
@@ -30,9 +34,11 @@ class DateList extends StatelessWidget {
   Widget build(BuildContext context) {
     final int numOfDay =
         hasRole && isDisableMenu ? numOfStaffDay : numOfUserDay;
+
     final today = DateTime.now(); // Get the current date.
     final endDate = today
         .add(Duration(days: numOfDay)); // Calculate the end date of the list.
+        
     final dateList = List.generate(
       endDate
           .difference(today)
@@ -73,7 +79,9 @@ class DateList extends StatelessWidget {
                           fontSize: 14,
                           color: isError || !isEverythingLoaded
                               ? primaryGray
-                              : primaryOrange,
+                              : isDisableMenu
+                                  ? staffOrange
+                                  : primaryOrange,
                         ),
                       )
                     : Container(),
@@ -84,14 +92,18 @@ class DateList extends StatelessWidget {
                       selectedIndex == index
                           ? isError || !isEverythingLoaded
                               ? primaryGray
-                              : primaryOrange
+                              : isDisableMenu
+                                  ? staffOrange
+                                  : primaryOrange
                           : Colors.white, // Highlight the selected date.
                     ),
                     side: MaterialStateProperty.all(
                       BorderSide(
                         color: isError || !isEverythingLoaded
                             ? primaryGray
-                            : primaryOrange, // Set the border color here.
+                            : isDisableMenu
+                                ? staffOrange
+                                : primaryOrange, // Set the border color here.
                         width: 1, // Set the border width here.
                       ),
                     ),
@@ -124,7 +136,9 @@ class DateList extends StatelessWidget {
                               ? Colors.white
                               : isError || !isEverythingLoaded
                                   ? primaryGray
-                                  : primaryOrange,
+                                  : isDisableMenu
+                                      ? staffOrange
+                                      : primaryOrange,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -140,7 +154,9 @@ class DateList extends StatelessWidget {
                               ? Colors.white
                               : isError || !isEverythingLoaded
                                   ? primaryGray
-                                  : primaryOrange,
+                                  : isDisableMenu
+                                      ? staffOrange
+                                      : primaryOrange,
                         ),
                       ),
                     ],

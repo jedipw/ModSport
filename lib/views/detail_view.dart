@@ -45,26 +45,28 @@ class _DetaiViewState extends State<DetailView> {
             );
           }
 
-          final data = snapshot.data!.docs.first.data() as Map<String, dynamic>;
-          final startDateTime = widget.startDateTime;
-          final formattedDate =
-              DateFormat('d MMM y').format(startDateTime); // Example date format
-          final formattedTime =
-              DateFormat('HH:mm').format(startDateTime); // Example time format
-          final bool isSuccessful = data['isSuccessful'] ?? true;
-          final String? disableReason = data['disableReason'];
+              final data =
+                  snapshot.data!.docs.first.data() as Map<String, dynamic>;
+              final startDateTime = widget.startDateTime;
+              final formattedDate = DateFormat('d MMM y')
+                  .format(startDateTime); // Example date format
+              final formattedTime = DateFormat('HH:mm')
+                  .format(startDateTime); // Example time format
+              final bool isSuccessful = data['isSuccessful'] ?? true;
+              final String? disableReason = data['disableReason'];
 
-          return StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
+              return StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
                     .collection('zone')
                     .doc(widget.zoneId)
                     .snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
 
                     final zoneData = snapshot.data!.data() as Map<String, dynamic>;
                     final String zoneName = zoneData['zoneName'];
@@ -135,8 +137,10 @@ class _DetaiViewState extends State<DetailView> {
                       );
                     }
 
-                    final disableData = snapshot.data!.docs.first.data() as Map<String, dynamic>;
-                    final String disableReason = disableData['disableReason'];
+                                  final disableData = snapshot.data!.docs.first
+                                      .data() as Map<String, dynamic>;
+                                  final String disableReason =
+                                      disableData['disableReason'];
 
                     return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
                             children: [

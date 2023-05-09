@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 
 class GoBackButton extends StatelessWidget {
+  final bool isSwipingUp;
+  final bool isError;
+  final bool isEverythingLoaded;
+  final bool isDisableMenu;
+
   const GoBackButton({
     super.key,
     required this.isSwipingUp,
@@ -9,10 +14,6 @@ class GoBackButton extends StatelessWidget {
     required this.isEverythingLoaded,
     required this.isDisableMenu,
   });
-  final bool isSwipingUp;
-  final bool isError;
-  final bool isEverythingLoaded;
-  final bool isDisableMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class GoBackButton extends StatelessWidget {
             ? isError || !isEverythingLoaded
                 ? primaryGray
                 : isDisableMenu
-                    ? primaryRed
+                    ? staffOrange
                     : primaryOrange
             : primaryOrange,
         shape: const CircleBorder(),

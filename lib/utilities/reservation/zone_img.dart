@@ -3,9 +3,15 @@ import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ZoneImg extends StatelessWidget {
-  const ZoneImg({super.key, required this.isError, required this.imgUrl});
   final bool isError;
+
   final String imgUrl;
+
+  const ZoneImg({
+    super.key,
+    required this.isError,
+    required this.imgUrl,
+  });
 
   @override
   Widget build(BuildContext context) {

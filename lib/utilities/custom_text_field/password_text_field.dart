@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
 
-class EmailTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final bool isObscure;
-  final bool isEmailValid;
-  const EmailTextField({
+import '../../constants/color.dart';
+
+class PasswordTextField extends StatelessWidget {
+  const PasswordTextField({
     Key? key,
-    required this.controller,
-    this.isObscure = false,
-    required this.isEmailValid,
+    required this.passwordController,
+    required this.isPasswordOk,
+    this.text = 'Password',
   }) : super(key: key);
+
+  final TextEditingController passwordController;
+  final bool isPasswordOk;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 3),
+         Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 0, 3),
           child: Text(
-            "Email",
-            style: TextStyle(
+            text,
+            style: const TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               fontSize: 17,
               height: 1.5,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: primaryGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -43,30 +46,25 @@ class EmailTextField extends StatelessWidget {
             ],
           ),
           child: TextField(
-            controller: controller,
-            keyboardType: isEmailValid ? TextInputType.emailAddress : null,
-            obscureText: isObscure,
+            controller: passwordController,
             style: const TextStyle(
               fontFamily: 'Poppins',
             ),
             decoration: const InputDecoration(
-              hintText: "user12345@kmutt.ac.th" ,
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
+            obscureText: true,
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              if (!isEmailValid)
+              if (!isPasswordOk)
                 const Text(
-                  "Please enter a valid email.",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontFamily: 'Poppins',
-                  ),
+                  "Please enter the correct password.",
+                  style: TextStyle(color: Colors.red, fontFamily: 'Poppins'),
                 ),
             ],
           ),
