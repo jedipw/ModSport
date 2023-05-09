@@ -58,3 +58,23 @@ class CategoryData {
    
   });
 }
+
+class Booking {
+  final String zoneId;
+  final String zoneName;
+  final String date;
+  final String time;
+  final DateTime dateTime;
+  final String endTime;
+  final bool isSuccessful;
+
+  Booking({
+    required this.zoneId,
+    required this.zoneName,
+    required this.date,
+    required this.time,
+    required this.dateTime,
+    required this.endTime,
+    required this.isSuccessful,
+  });
+}
