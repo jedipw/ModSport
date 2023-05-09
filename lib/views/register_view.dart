@@ -265,9 +265,12 @@ class _RegisterViewState extends State<RegisterView> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context).pushNamed(
-                                          loginRoute,
-                                        );
+                                        Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                            // navigates to homeRoute screen and removes previous routes
+                                            loginRoute,
+                                            (route) => false,
+                                          );
                                       },
                                       child: const Text(
                                         "Sign in",
