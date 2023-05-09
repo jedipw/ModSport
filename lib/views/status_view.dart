@@ -84,10 +84,10 @@ class _StatusViewState extends State<StatusView> {
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontStyle: FontStyle.normal,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.0,
                                   height: 1.5,
-                                  color: Colors.grey,
+                                  color: primaryGray,
                                 ),
                               ),
                             ],
