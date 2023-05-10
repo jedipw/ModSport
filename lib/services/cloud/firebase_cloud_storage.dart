@@ -4,13 +4,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/services/cloud/cloud_storage_constants.dart';
 import 'package:modsport/services/cloud/cloud_storage_exceptions.dart';
 import 'package:modsport/utilities/types.dart';
-import 'package:modsport/views/reservation_view.dart';
 
 class FirebaseCloudStorage {
   final user = FirebaseFirestore.instance.collection(userCollection);
@@ -105,6 +103,65 @@ class FirebaseCloudStorage {
       bookingsList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
       return bookingsList;
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<String> getIsDisabled(String zoneId, DateTime startDateTime) async {
+    try {
+      final snapshot = await disable
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first[disableReasonField];
+      } else {
+        return '';
+      }
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<bool> getIsSuccessful(
+      String zoneId, DateTime startDateTime, String userId) async {
+    try {
+      final snapshot = await userRes
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .where(userIdField, isEqualTo: userId)
+          .get();
+
+      return snapshot.docs.first[isSuccessfulField];
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<DateTime> getEndTime(String zoneId, DateTime startDateTime) async {
+    try {
+      String resId = '';
+
+      final resSnapshot = await res.where(zoneIdField, isEqualTo: zoneId).get();
+      for (final reservation in resSnapshot.docs) {
+        final resData = reservation.data();
+        final startTime = DateTime.fromMillisecondsSinceEpoch(
+            resData[startTimeField].millisecondsSinceEpoch);
+
+        if (startDateTime.second == startTime.second &&
+            startDateTime.minute == startTime.minute &&
+            startDateTime.hour == startTime.hour &&
+            DateFormat('EEEE', 'en_US').format(startDateTime) ==
+                DateFormat('EEEE', 'en_US').format(startTime)) {
+          resId = reservation.id;
+        }
+      }
+      final resDoc = await res.doc(resId).get();
+      final resData = resDoc.data() as Map<String, dynamic>;
+      final endDateTime = DateTime.fromMillisecondsSinceEpoch(
+          resData[endTimeField].millisecondsSinceEpoch);
+      return endDateTime;
     } catch (e) {
       throw CouldNotGetException();
     }
