@@ -266,7 +266,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   "      6)	Select time slot to disable\n"
                                   "      7)	Press 'DISABLE' button\n"
                                   "      8)	Type Reason to disable\n"
-                                  "      9) Press 'RESERVE' button",
+                                  "      9) Press 'DONE' button\n"
+                                  "      10)Press 'Done' to confirm disable",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -411,7 +412,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: '  A: Yes, you can.',
+                                    text:
+                                        "  A: No, you can't because to reserve a sport facility you need to use your own account to make a reservation.",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
@@ -444,8 +446,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   ),
                                   TextSpan(
                                     text:
-                                        '  A: Yes, you can cancel a reservation as long as'
-                                        ' before reserved time coming.',
+                                        '  A: Yes, you can cancel your reservation until the end of the sport facility usage time you have reserved.',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
@@ -478,7 +479,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   ),
                                   TextSpan(
                                     text:
-                                        '  A: To view your reservation history, go to the "Status"'
+                                        '  A: To view your reservation result, go to the "Status"'
                                         ' in menu bar of the app. Here you can see your status reservatons.',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
@@ -512,8 +513,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   ),
                                   TextSpan(
                                     text:
-                                        '  A: There is no limit to the number of reservations '
-                                        'you can make, as long as the facility is available.',
+                                        '  A: Yes, there is a limited number of reservations. You can reserve to 1 time slot/1 sport facility/day.',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
