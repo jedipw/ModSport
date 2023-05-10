@@ -108,6 +108,65 @@ class FirebaseCloudStorage {
     }
   }
 
+  Future<String> getIsDisabled(String zoneId, DateTime startDateTime) async {
+    try {
+      final snapshot = await disable
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first[disableReasonField];
+      } else {
+        return '';
+      }
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<bool> getIsSuccessful(
+      String zoneId, DateTime startDateTime, String userId) async {
+    try {
+      final snapshot = await userRes
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .where(userIdField, isEqualTo: userId)
+          .get();
+
+      return snapshot.docs.first[isSuccessfulField];
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<DateTime> getEndTime(String zoneId, DateTime startDateTime) async {
+    try {
+      String resId = '';
+
+      final resSnapshot = await res.where(zoneIdField, isEqualTo: zoneId).get();
+      for (final reservation in resSnapshot.docs) {
+        final resData = reservation.data();
+        final startTime = DateTime.fromMillisecondsSinceEpoch(
+            resData[startTimeField].millisecondsSinceEpoch);
+
+        if (startDateTime.second == startTime.second &&
+            startDateTime.minute == startTime.minute &&
+            startDateTime.hour == startTime.hour &&
+            DateFormat('EEEE', 'en_US').format(startDateTime) ==
+                DateFormat('EEEE', 'en_US').format(startTime)) {
+          resId = reservation.id;
+        }
+      }
+      final resDoc = await res.doc(resId).get();
+      final resData = resDoc.data() as Map<String, dynamic>;
+      final endDateTime = DateTime.fromMillisecondsSinceEpoch(
+          resData[endTimeField].millisecondsSinceEpoch);
+      return endDateTime;
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
   Future<List<ZoneData>> getAllZones() async {
     try {
       QuerySnapshot snapshot = await zone.get();
