@@ -1,10 +1,8 @@
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:modsport/constants/routes.dart';
-import 'package:modsport/main.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
