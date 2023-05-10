@@ -102,12 +102,12 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ListTile(
                                     // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
-                                  "      1) Menu bar\n"
-                                  "      2) Reserve Page\n"
-                                  "      3) Select sport facility\n"
-                                  "      4) Select date to reserve\n"
-                                  "      5) Select time slot to reserve\n"
-                                  "      6) Press 'RESERVE' button",
+                                  "      1) Press the Menu bar\n"
+                                  "      2) Navigate to the Reserve Page\n"
+                                  "      3) Select a sport facility\n"
+                                  "      4) Choose a date for reservation\n"
+                                  "      5) Select the desired time slot\n"
+                                  "      6) Press the 'RESERVE' button",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -137,13 +137,13 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ListTile(
                                     // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
-                                  "      1) Menu bar\n"
-                                  "      2) Reserve Page\n"
-                                  "      3) Select reserved sport facility\n"
-                                  "      4) Select reserved date\n"
-                                  "      5) Select reserved time slot\n"
-                                  "      6) Press 'CANCEL' button\n"
-                                  "      7) Press 'Yes' to confirm cancel reservation",
+                                  "      1) Press the Menu bar\n"
+                                  "      2) Navigate to the Reserve Page\n"
+                                  "      3) Select the reserved sport facility\n"
+                                  "      4) Choose the reserved date\n"
+                                  "      5) Select the reserved time slot\n"
+                                  "      6) Press the 'CANCEL' button\n"
+                                  "      7) Press 'Yes' to confirm the cancellation",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -173,9 +173,9 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ListTile(
                                     // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
-                                  "      1) Menu bar\n"
-                                  "      2) Status Page\n"
-                                  "      3)	Press the reservation box to view details",
+                                  "      1) Press the Menu bar\n"
+                                  "      2) Navigate to the Status Page\n"
+                                  "      3)	Press the reservation box to view the details",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -191,7 +191,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               collapsedIconColor: Colors.orangeAccent,
                               iconColor: primaryOrange,
                               title: Text(
-                                "    How to Change Password",
+                                "    How to Change the Password",
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontStyle: FontStyle.normal,
@@ -205,12 +205,12 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ListTile(
                                     // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
-                                  "      1) Menu bar\n"
-                                  "      2)	Change Password Page\n"
-                                  "      3)	Type your Current Password\n"
-                                  "      4)	Type your New Password\n"
-                                  "      5)	Type your New Password again to 'Confirm Password'\n"
-                                  "      6)	Press 'Save' button",
+                                  "      1) Press the Menu bar\n"
+                                  "      2)	Navigate to the Change Password Page\n"
+                                  "      3)	Enter your current Password\n"
+                                  "      4)	Enter your new Password\n"
+                                  "      5)	Re-enter your new Password to confirm\n"
+                                  "      6)	Press the 'Save' button",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -244,7 +244,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               collapsedIconColor: Colors.orangeAccent,
                               iconColor: primaryOrange,
                               title: Text(
-                                "    How to disable reservation",
+                                "    How to Disable Reservation",
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontStyle: FontStyle.normal,
@@ -258,16 +258,16 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ListTile(
                                     // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
-                                  "      1) Menu bar\n"
-                                  "      2) Reserve Page\n"
-                                  "      3) Press toggle button to switch to Staff view\n"
-                                  "      4)	Select sport facility\n"
-                                  "      5)	Select date to disable\n"
-                                  "      6)	Select time slot to disable\n"
-                                  "      7)	Press 'DISABLE' button\n"
-                                  "      8)	Type Reason to disable\n"
-                                  "      9) Press 'DONE' button\n"
-                                  "      10)Press 'Done' to confirm disable",
+                                  "      1) Press the Menu bar\n"
+                                  "      2) Navigate to the Reserve Page\n"
+                                  "      3) Toggle the button to switch to Staff view\n"
+                                  "      4)	Select the sport facility\n"
+                                  "      5)	Choose the date to disable\n"
+                                  "      6)	Select the time slot to disable\n"
+                                  "      7)	Press the 'DISABLE' button\n"
+                                  "      8)	Enter the reason to disable\n"
+                                  "      9) Press the 'DONE' button\n"
+                                  "      10) Press 'Done' to confirm",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -297,17 +297,17 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ListTile(
                                     // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
-                                  "      1) Menu bar\n"
-                                  "      2) Reserve Page\n"
-                                  "      3) Press toggle button to switch to Staff view\n"
-                                  "      4)	Select sport facility\n"
-                                  "      5)	Select date to edit disable\n"
+                                  "      1) Press the Menu bar\n"
+                                  "      2) Navigate to the Reserve Page\n"
+                                  "      3) Toggle the button to switch to Staff view\n"
+                                  "      4)	Select the sport facility\n"
+                                  "      5)	Select the date to edit the disable reasons\n"
                                   "      6)	Press 'EDIT' icon\n"
-                                  "      7)	Select time slot to edit disable\n"
+                                  "      7)	Select time slots to edit disable\n"
                                   "      8)	Press 'EDIT' button\n"
-                                  "      9) Type reason to edit disable\n"
-                                  "      10) Press 'SAVE' button\n"
-                                  "      11) Press 'Yes' to confirm edit reason",
+                                  "      9) Type the new reason\n"
+                                  "      10) Press the 'SAVE' button\n"
+                                  "      11) Press 'Yes' to confirm",
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontStyle: FontStyle.normal,
@@ -337,12 +337,12 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ListTile(
                                     // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
-                                  "      1) Menu bar\n"
-                                  "      2) Reserve Page\n"
-                                  "      3) Press toggle button to switch to Staff view\n"
-                                  "      4)	Select sport facility\n"
-                                  "      5)	Select date to enable\n"
-                                  "      6)	Press 'EDIT' icon\n"
+                                  "      1) Press the Menu bar\n"
+                                  "      2) Navigate to the Reserve Page\n"
+                                  "      3) Toggle the button to switch to Staff view\n"
+                                  "      4)	Select the sport facility\n"
+                                  "      5)	Select the date to enable reservations\n"
+                                  "      6)	Press the 'EDIT' icon\n"
                                   "      7)	Select time slot to enable\n"
                                   "      8)	Press 'ENABLE' button\n"
                                   "      9) Press 'Yes' to confirm edit reason",
@@ -413,7 +413,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   ),
                                   TextSpan(
                                     text:
-                                        "  A: No, you can't because to reserve a sport facility you need to use your own account to make a reservation.",
+                                        "  A: No, you cannot make a reservation for someone else. Reservations for sport facilities are typically linked to individual user accounts, and each user needs to make their own reservation using their own account.",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
@@ -446,7 +446,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   ),
                                   TextSpan(
                                     text:
-                                        '  A: Yes, you can cancel your reservation until the end of the sport facility usage time you have reserved.',
+                                        '  A: Yes, you can cancel your reservation as long as it is before the scheduled usage time of the sport facility you have reserved.',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
@@ -480,7 +480,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   TextSpan(
                                     text:
                                         '  A: To view your reservation result, go to the "Status"'
-                                        ' in menu bar of the app. Here you can see your status reservatons.',
+                                        ' option in the menu bar of the app. Here, you can see the status of your reservations.',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
@@ -513,7 +513,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                   ),
                                   TextSpan(
                                     text:
-                                        '  A: Yes, there is a limited number of reservations. You can reserve to 1 time slot/1 sport facility/day.',
+                                        '  A: Yes, there is a limit to the number of reservations you can make for each day at a specific sport facility. You can reserve one time slot per day at a given sport facility. However, if you switch to a different day, you can make another reservation for that day at the same or different sport facility. If the time for a specific reservation has already passed, you are still able to make another reservation for the same day. Additionally, you have the option to make reservations for different sport facilities within the same day. There is no restriction on the number of reservations you can make as long as they are within the available time slots and sport facilities.',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontStyle: FontStyle.normal,
@@ -570,10 +570,10 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                             ListTile(
                                 // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
-                              "     If you're having trouble logging in to the app, "
-                              "make sure you're using the correct username and password."
-                              "If you forgot your password, you can reset it by clicking "
-                              "on the 'Forget password?' on the LOG IN page.",
+                              "     If you are unable to log in to the app, "
+                              "please ensure that you are using the correct username and password."
+                              "If you have forgotten your password, you can reset it by clicking "
+                              "on the \"Forgot password?\" option on the login page.",
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontStyle: FontStyle.normal,
@@ -632,10 +632,10 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                             ListTile(
                                 // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
-                              "     If the facility you want to reserve is not available,"
-                              " try selecting a different date or time. If the facility "
-                              "is still not available, it may be reserved by someone else"
-                              " or temporarily closed.",
+                              "     If the facility you wish to reserve is unavailable,"
+                              " please consider selecting a different date or time. If the facility "
+                              "remains unavailable, it is possible that it has been reserved by another individual"
+                              " or is temporarily closed.",
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontStyle: FontStyle.normal,
@@ -667,7 +667,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               "     If the app crashes or freezes, try restarting your"
                               " device and then launching the app again. If the problem"
                               " persists, try uninstalling and reinstalling the app. If "
-                              "that still doesn't work, contact the customer support team"
+                              "that still doesn't work, please contact the customer support team"
                               " for assistance.",
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -698,9 +698,9 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
                               "     If you have any feedback or suggestions for the app,"
-                              " please feel free to contact the customer support team. "
-                              "They would be happy to hear from you and will do their best"
-                              " to address any issues or concerns you may have.",
+                              " please don't hesitate to reach out to our customer support team. "
+                              "They are eager to receive your input and will make every effort to"
+                              " resolve any problems or address any concerns you may have.",
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontStyle: FontStyle.normal,
