@@ -5,7 +5,6 @@ import 'package:modsport/views/detail_view.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:modsport/utilities/reservation/error_message.dart';
 
 import '../utilities/types.dart';
 
@@ -101,89 +100,97 @@ class _StatusViewState extends State<StatusView> {
                             itemBuilder: (BuildContext context, int index) {
                               final booking = validBookings[index];
                               return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DetailView(
-                                          zoneId: booking.zoneId,
-                                          startDateTime: booking.dateTime,
-                                        ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailView(
+                                        zoneId: booking.zoneId,
+                                        startDateTime: booking.dateTime,
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 10.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        spreadRadius: -3,
+                                        blurRadius: 4,
+                                        offset: const Offset(
+                                            5, 5), // changes position of shadow
+                                      ),
+                                    ],
+                                  ),
                                   child: Container(
-                                    margin: const EdgeInsets.only(bottom: 10.0),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          spreadRadius: -3,
+                                          color: Colors.black.withOpacity(0.25),
                                           blurRadius: 4,
-                                          offset: const Offset(5,
-                                              5), // changes position of shadow
+                                          offset: const Offset(0, 4),
                                         ),
                                       ],
                                     ),
-                                    child: Card(
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(13.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  booking.zoneName,
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontStyle: FontStyle.normal,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 20.0,
-                                                    height: 20.0 / 13.0,
-                                                    color: Color.fromRGBO(
-                                                        0, 0, 0, 0.7),
-                                                  ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(13.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                booking.zoneName,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  fontStyle: FontStyle.normal,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 20.0,
+                                                  height: 20.0 / 13.0,
+                                                  color: Color.fromRGBO(
+                                                      0, 0, 0, 0.7),
                                                 ),
-                                                Text(
-                                                  '${booking.date}\n${booking.time} - ${booking.endTime}',
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontStyle: FontStyle.normal,
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 16.0,
-                                                    height: 20.0 / 13.0,
-                                                    color: Color.fromRGBO(
-                                                        0, 0, 0, 0.7),
-                                                  ),
+                                              ),
+                                              Text(
+                                                '${booking.date}\n${booking.time} - ${booking.endTime}',
+                                                style: const TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  fontStyle: FontStyle.normal,
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 16.0,
+                                                  height: 20.0 / 13.0,
+                                                  color: Color.fromRGBO(
+                                                      0, 0, 0, 0.7),
                                                 ),
-                                              ],
-                                            ),
-                                            booking.isSuccessful
-                                                ? const Icon(
-                                                    Icons.check_circle,
-                                                    color: Colors.green,
-                                                    size: 70.0,
-                                                  )
-                                                : const Icon(
-                                                    Icons.cancel_rounded,
-                                                    color: Colors.red,
-                                                    size: 70.0,
-                                                  ),
-                                          ],
-                                        ),
+                                              ),
+                                            ],
+                                          ),
+                                          booking.isSuccessful
+                                              ? const Icon(
+                                                  Icons.check_circle,
+                                                  color: primaryGreen,
+                                                  size: 70.0,
+                                                )
+                                              : const Icon(
+                                                  Icons.cancel_rounded,
+                                                  color: primaryRed,
+                                                  size: 70.0,
+                                                ),
+                                        ],
                                       ),
                                     ),
-                                  ));
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         )
@@ -209,11 +216,18 @@ class _StatusViewState extends State<StatusView> {
                                   ),
                                 ],
                               ),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                elevation: 0,
                                 child: Shimmer.fromColors(
                                   baseColor:
                                       const Color.fromARGB(255, 216, 216, 216),
@@ -294,11 +308,18 @@ class _StatusViewState extends State<StatusView> {
                                   ),
                                 ],
                               ),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                elevation: 0,
                                 child: Shimmer.fromColors(
                                   baseColor:
                                       const Color.fromARGB(255, 216, 216, 216),
@@ -379,11 +400,18 @@ class _StatusViewState extends State<StatusView> {
                                   ),
                                 ],
                               ),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                elevation: 0,
                                 child: Shimmer.fromColors(
                                   baseColor:
                                       const Color.fromARGB(255, 216, 216, 216),
@@ -464,11 +492,18 @@ class _StatusViewState extends State<StatusView> {
                                   ),
                                 ],
                               ),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                elevation: 0,
                                 child: Shimmer.fromColors(
                                   baseColor:
                                       const Color.fromARGB(255, 216, 216, 216),
@@ -549,11 +584,18 @@ class _StatusViewState extends State<StatusView> {
                                   ),
                                 ],
                               ),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                elevation: 0,
                                 child: Shimmer.fromColors(
                                   baseColor:
                                       const Color.fromARGB(255, 216, 216, 216),

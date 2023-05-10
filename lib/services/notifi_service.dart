@@ -1,10 +1,15 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:modsport/constants/routes.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  NotificationService({required this.navigatorKey});
 
   Future<void> initNotification() async {
     AndroidInitializationSettings initializationSettingsAndroid =
@@ -15,7 +20,10 @@ class NotificationService {
         requestBadgePermission: true,
         requestSoundPermission: true,
         onDidReceiveLocalNotification:
-            (int id, String? title, String? body, String? payload) async {});
+            (int id, String? title, String? body, String? payload) async {
+          navigatorKey.currentState!
+              .pushNamedAndRemoveUntil(statusRoute, (route) => false);
+        });
 
     var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
@@ -25,7 +33,10 @@ class NotificationService {
     await notificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse:
-          (NotificationResponse notificationResponse) async {},
+          (NotificationResponse notificationResponse) async {
+        navigatorKey.currentState!
+            .pushNamedAndRemoveUntil(statusRoute, (route) => false);
+      },
     );
 
     // Request notification permissions on Android
