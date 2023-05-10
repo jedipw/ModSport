@@ -67,3 +67,23 @@ class Booking {
     required this.isSuccessful,
   });
 }
+
+class BookingDetail {
+  final String zoneName;
+  final String locationName;
+  final String date;
+  final String startTime;
+  final String endTime;
+  final bool isSuccessful;
+  final String disableReason;
+
+  BookingDetail({
+    required this.zoneName,
+    required this.locationName,
+    required this.date,
+    required this.startTime,
+    required this.endTime,
+    required this.isSuccessful,
+    required this.disableReason,
+  });
+}
