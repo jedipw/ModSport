@@ -38,6 +38,22 @@ class ZoneData {
   });
 }
 
+class ZoneWithLocationData {
+  final String zoneId;
+  final String locationId;
+  final String zoneName;
+  final String imgUrl;
+  final String locationName;
+
+  ZoneWithLocationData({
+    required this.zoneId,
+    required this.locationId,
+    required this.zoneName,
+    required this.imgUrl,
+    required this.locationName,
+  });
+}
+
 class DisableData {
   final String disableId;
   final DateTime startDateTime;

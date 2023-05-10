@@ -167,17 +167,23 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<List<ZoneData>> getAllZones() async {
+  Future<List<ZoneWithLocationData>> getAllZones() async {
     try {
-      QuerySnapshot snapshot = await zone.get();
-      log(snapshot.toString());
-      return snapshot.docs
-          .map((document) => ZoneData(
-              zoneId: document.id,
-              imgUrl: document.get(imgUrlField),
-              locationId: document.get(locationIdField),
-              zoneName: document.get(zoneNameField)))
-          .toList();
+      QuerySnapshot snapshots = await zone.get();
+      log(snapshots.toString());
+      List<ZoneWithLocationData> zoneWithLocation = [];
+
+      for(final snapshot in snapshots.docs) {
+        String location = await getLocation(snapshot.get(locationIdField));
+        zoneWithLocation.add(ZoneWithLocationData(
+              zoneId: snapshot.id,
+              imgUrl: snapshot.get(imgUrlField),
+              locationId: snapshot.get(locationIdField),
+              zoneName: snapshot.get(zoneNameField),
+              locationName: location
+        ));
+      }
+      return zoneWithLocation;
     } catch (e) {
       throw CouldNotGetException();
     }
@@ -281,9 +287,9 @@ Future<List<String>> getPinnedZones() async {
     throw CouldNotGetException();
   }
 }
-Future<List<ZoneData>> getZonesByCategoryId(String categoryId) async {
+Future<List<ZoneWithLocationData>> getZonesByCategoryId(String categoryId) async {
   List<String> zoneIds = [];
-  List<ZoneData> zones = [];
+  List<ZoneWithLocationData> zones = [];
   try {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
     .collection(zoneToCategoryCollection)
@@ -297,7 +303,8 @@ for (var document in snapshot.docs) {
     for (String id in zoneIds) {
   
     ZoneData zone = await FirebaseCloudStorage().getZone(id);
-    zones.add(zone);
+    String location = await getLocation(zone.locationId);
+    zones.add(ZoneWithLocationData(zoneId: zone.zoneId, locationId: zone.locationId, zoneName: zone.zoneName, imgUrl: zone.imgUrl, locationName: location));
   
 }
     return zones;
