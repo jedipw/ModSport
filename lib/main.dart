@@ -44,13 +44,8 @@ void main() async {
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    NotificationService().showNotification(
-        title: message.notification!.title, body: message.notification!.body);
-  });
-
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  NotificationService().initNotification();
+
   runApp(const MainApp());
   // Running the app
 }
@@ -66,6 +61,9 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   late final TextEditingController email;
   late final TextEditingController password;
+
+  static final navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   void initState() {
     email = TextEditingController();
@@ -85,7 +83,14 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      NotificationService(navigatorKey: navigatorKey).showNotification(
+          title: message.notification!.title, body: message.notification!.body);
+    });
+
+    NotificationService(navigatorKey: navigatorKey).initNotification();
     return MaterialApp(
+      navigatorKey: navigatorKey,
       // Setting the initial route for the app
       initialRoute: loginRoute,
       // Generating routes for each screen/view in the app
