@@ -1,6 +1,6 @@
-//search ได้ list ได้
 // Import firebase cloud storage
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 
 import 'package:flutter/material.dart';
@@ -43,6 +43,7 @@ class _HomeViewState extends State<HomeView> {
   bool _isZoneLoaded = false;
   bool _isSearching = false; //detect search bar
   int index = 0;
+  CategoryData? _selectedCategory;
 
   TextEditingController _searchController = TextEditingController();
   List<ZoneData> _foundZones = [];
@@ -54,11 +55,7 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     _foundZones = _zoneList;
     fetchData();
-    FirebaseCloudStorage().getPinnedZones().then((pinnedZones) {
-      setState(() {
-        _pushPinClickedList = pinnedZones.map((zoneId) => true).toList();
-      });
-    });
+
     FirebaseCloudStorage().getAllZones().then((zoneList) {
       setState(() {
         _zoneList = zoneList;
@@ -75,26 +72,18 @@ class _HomeViewState extends State<HomeView> {
           }
         }
       });
-    }).catchError((e) {
-      // if (e is CouldNotFetchDataException) {
-      //   // Handle exception
-      // }
-    });
+    }).catchError((e) {});
     _sortZones();
     FirebaseCloudStorage().getAllCategories().then((categoryIds) {
-      log("hi:" + categoryIds.toString());
       setState(() {
         _categoryList = categoryIds;
-        // _category = category;
       });
     });
     FirebaseCloudStorage().getAllZoneToCategory().then((zones) {
       setState(() {
         _zonesByCategory = zones;
       });
-    }).catchError((e) {
-      // print('Error: $e');
-    });
+    }).catchError((e) {});
   }
 
   @override
@@ -113,15 +102,12 @@ class _HomeViewState extends State<HomeView> {
   Future<void> _getZonesData() async {
     try {
       List<ZoneData> zones = await FirebaseCloudStorage().getAllZones();
-      log(zones.toString());
       setState(() {
         _zoneList = zones;
         _isZoneLoaded = true;
         _foundZones = _zoneList;
         _sortZones();
         isPinned = false;
-        String categoryId;
-        // _isPushPinClicked = false;
       });
     } catch (e) {
       _handleError();
@@ -135,6 +121,7 @@ class _HomeViewState extends State<HomeView> {
       setState(() {
         _zoneList = zones;
         _isZoneLoaded = true;
+        _sortZones();
       });
     } catch (e) {
       _handleError();
@@ -142,26 +129,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> _getCategorieData() async {
-    // log(_getCategorieData().toString());
     try {
       List<CategoryData> category =
           await FirebaseCloudStorage().getAllCategorie();
-      log(category.toString());
       setState(() {
         _category = category;
-      });
-    } catch (e) {
-      _handleError();
-    }
-  }
-
-//For category
-  Future<void> _getCategoriesData() async {
-    try {
-      List<String> categories = await FirebaseCloudStorage().getAllCategories();
-      setState(() {
-        // _categoryList = categories;
-        _isCategoryLoaded = true;
       });
     } catch (e) {
       _handleError();
@@ -172,44 +144,6 @@ class _HomeViewState extends State<HomeView> {
     // Handle the error in a way that makes sense for your app
   }
 
-  Future<void> _getZoneToCategoriesData() async {
-    try {
-      List<DocumentSnapshot<Object?>> zoneToCategories =
-          await FirebaseCloudStorage().getAllZoneToCategory();
-
-      List<String> categories = zoneToCategories
-          .map((doc) => doc.get("categoryName").toString())
-          .toList();
-
-      setState(() {
-        _categoryList = categories;
-        _isCategoryLoaded = true;
-      });
-    } catch (e) {
-      _handleError();
-    }
-  }
-
-//For push pin
-  // void _handlePushPinClick(int index) async {
-  //   // Get the zone data for the clicked push pin
-  //   ZoneData clickedZone = _zoneList[index];
-  //   // Remove the clicked zone data from the list
-  //   _zoneList.removeAt(index);
-  //   // Add the clicked zone data back to the list at the beginning
-  //   _zoneList.insert(0, clickedZone);
-  //   // log("Hi: " + clickedZone.zoneName.toString());
-
-  //   // Set the state to trigger a re-render of the list
-  //   setState(() {});
-
-  //   // Pin the zone in the database
-  //   try {
-  //     await FirebaseCloudStorage().pinZone(clickedZone.zoneId);
-  //   } catch (e) {
-  //     log("Could not pin zone: $e");
-  //   }
-  // }
   void _handlePushPinClick(String zoneId) {
     setState(() {
       _pushPinClickedMap[zoneId] = true;
@@ -236,57 +170,74 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  void _filterByCategory(String categoryId) {
-    log(categoryId.toString());
-    setState(() {
-      _filteredZones = _zoneList.where((zone) => zone == categoryId).toList();
-    });
-    log(_filteredZones.toString());
-  }
-
   void _sortZones() async {
-    setState(() async {
-      _zoneList.sort((a, b) => a.zoneName.compareTo(b.zoneName));
+  setState(() async {
+    // get pinned zones and sort them by name
+    List<String> pinnedZoneIds = await FirebaseCloudStorage().getPinnedZones();
+    List<ZoneData> pinnedZones = _zoneList.where((zone) => pinnedZoneIds.contains(zone.zoneId)).toList();
+    pinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
 
-      // get pinned zones and add them to the beginning of the list
-      List<String> pinnedZoneIds =
-          await FirebaseCloudStorage().getPinnedZones();
-      List<ZoneData> pinnedZones = _zoneList
-          .where((zone) => pinnedZoneIds.contains(zone.zoneId))
-          .toList();
-      pinnedZones.forEach((zone) {
-        // check if the zone is already in the list
-        if (!_zoneList.any((z) => z.zoneId == zone.zoneId)) {
-          _zoneList.insert(0, zone);
-        }
-      });
-    });
-  }
+    // sort the remaining zones by name
+    List<ZoneData> unpinnedZones = _zoneList.where((zone) => !pinnedZoneIds.contains(zone.zoneId)).toList();
+    unpinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
 
-  Future<void> _getPinnedZonesData() async {
-    try {
-      List<String> pinnedZones = await FirebaseCloudStorage().getPinnedZones();
-      setState(() {
-        _pinnedZones = pinnedZones;
-      });
-    } catch (e) {
-      _handleError();
-    }
-  }
-// void _filterZonesByCategory(String categoryId) {
+    // merge the two lists, with pinned zones first
+    _zoneList.clear();
+    _zoneList.addAll(pinnedZones);
+    _zoneList.addAll(unpinnedZones);
+  });
+}
+
+
+  // Future<void> _fetchPinnedZones() async {
+  //   final userId = FirebaseAuth.instance.currentUser!.uid;
+
+  //   QuerySnapshot<Map<String, dynamic>> querySnapshot =
+  //       await FirebaseCloudStorage().getPin("", userId);
+  //   List<String> pinnedZones = querySnapshot.docs
+  //       .map((doc) => doc.get(zoneIdField) as String)
+  //       .toList();
+
+  //   setState(() {
+  //     _pinnedZones = pinnedZones;
+  //   });
+  //   log("This is pin: " + _pinnedZones.toString());
+  // }
+
+//   Future<void> _fetchPinnedZones() async {
+//   final userId = FirebaseAuth.instance.currentUser!.uid;
+
+//   QuerySnapshot<Map<String, dynamic>> querySnapshot =
+//       await FirebaseCloudStorage().getPin("", userId);
+//   List<String> pinnedZoneIds = querySnapshot.docs
+//       .map((doc) => doc.get(zoneIdField) as String)
+//       .toList();
+
+//   // Retrieve the details of the pinned zones from the Firestore database
+//   List<ZoneData> pinnedZones = await FirebaseCloudStorage().getZone(pinnedZoneIds);
+
 //   setState(() {
-//     _filteredZones = _zoneList.where((zone) => .categoryId == categoryId).toList();
+//     _pinnedZones = pinnedZones;
 //   });
 // }
+
+  // Future<void> _getPinnedZonesData() async {
+  //   try {
+  //     List<String> pinnedZones = await FirebaseCloudStorage().getPinnedZones();
+  //     setState(() {
+  //       _pinnedZones = pinnedZones;
+  //     });
+  //   } catch (e) {
+  //     _handleError();
+  //   }
+  // }
 
   Future<void> fetchData() async {
     await _getZonesData();
     await _getCategorieData();
 
-    _getPinnedZonesData();
+    // _getPinnedZonesData();
     _sortZones();
-    // await _getZoneToCategoriesData();
-    // await _getZoneToCategoriesData();
   }
 
   @override
@@ -322,7 +273,6 @@ class _HomeViewState extends State<HomeView> {
                               }
                               bool isPushPinClicked =
                                   _pushPinClickedList[index];
-                              log(index.toString());
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -450,50 +400,110 @@ class _HomeViewState extends State<HomeView> {
                                                             FontWeight.w600,
                                                       ),
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
+                                                    // GestureDetector(
+                                                    //   onTap: () {
+                                                    //     log(e.zoneName +
+                                                    //         " " +
+                                                    //         _pushPinClickedMap[
+                                                    //                 e.zoneId]
+                                                    //             .toString());
+                                                    //     setState(() {
+                                                    //       _pushPinClickedMap[
+                                                    //               e.zoneId] =
+                                                    //           _pushPinClickedMap[e
+                                                    //                       .zoneId] ==
+                                                    //                   null
+                                                    //               ? true
+                                                    //               : !_pushPinClickedMap[
+                                                    //                   e.zoneId]!;
+                                                    //       if (_pushPinClickedMap[
+                                                    //           e.zoneId]!) {
+                                                    //         _handlePushPinClick(
+                                                    //             e.zoneId);
+                                                    //       } else {
+                                                    //         FirebaseCloudStorage()
+                                                    //             .unpinZone(
+                                                    //                 e.zoneId);
+                                                    //       }
+                                                    //     });
+                                                    //   },
+
+                                                    Transform.rotate(
+                                                      angle: 45 * 3.14 / 180,
+                                                      child:
+                                                          FutureBuilder<String>(
+                                                        future:
+                                                            FirebaseCloudStorage()
+                                                                .getPin(
+                                                                    e.zoneId),
+                                                        initialData: '',
+                                                        builder: (BuildContext
+                                                                context,
+                                                            AsyncSnapshot<
+                                                                    String>
+                                                                snapshot) {
+                                                          String pinId =
+                                                              snapshot.data ??
+                                                                  '';
+
+                                                          // Set the initial state of _pushPinClickedMap based on the pinId
+
                                                           _pushPinClickedMap[
                                                                   e.zoneId] =
+                                                              (pinId != '');
+
+                                                          return GestureDetector(
+                                                            onTap: () {
+                                                              
+                                                                _pushPinClickedMap[
+                                                                        e.zoneId] =
+                                                                    !_pushPinClickedMap[
+                                                                        e.zoneId]!;
+                                                                if (_pushPinClickedMap[
+                                                                    e.zoneId]!) {
+                                                                  _handlePushPinClick(
+                                                                      e.zoneId);
+                                                                } else {
+                                                                  FirebaseCloudStorage()
+                                                                      .unpinZone(e
+                                                                          .zoneId)
+                                                                      .then(
+                                                                          (_) {
+                                                                    setState(
+                                                                        () {
+                                                                      _pushPinClickedMap[
+                                                                              e.zoneId] =
+                                                                          false;
+                                                                    });
+                                                                  });
+                                                                }
+                                                              
+                                                            },
+                                                            child: Icon(
                                                               _pushPinClickedMap[e
-                                                                          .zoneId] ==
-                                                                      null
-                                                                  ? true
-                                                                  : !_pushPinClickedMap[
-                                                                      e.zoneId]!;
-                                                          if (_pushPinClickedMap[
-                                                              e.zoneId]!) {
-                                                            _handlePushPinClick(
-                                                                e.zoneId);
-                                                          } else {
-                                                            FirebaseCloudStorage()
-                                                                .unpinZone(
-                                                                    e.zoneId);
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Transform.rotate(
-                                                        angle: 45 * 3.14 / 180,
-                                                        child: Icon(
-                                                          _pushPinClickedMap[e
-                                                                          .zoneId] ==
-                                                                      null ||
-                                                                  !_pushPinClickedMap[
-                                                                      e.zoneId]!
-                                                              ? Icons
-                                                                  .push_pin_outlined
-                                                              : Icons.push_pin,
-                                                          size: 24,
-                                                          color: _pushPinClickedMap[e
-                                                                          .zoneId] ==
-                                                                      null ||
-                                                                  !_pushPinClickedMap[
-                                                                      e.zoneId]!
-                                                              ? primaryGray
-                                                              : primaryOrange,
-                                                        ),
+                                                                              .zoneId] !=
+                                                                          null &&
+                                                                      snapshot.data !=
+                                                                          ''
+                                                                  ? Icons
+                                                                      .push_pin
+                                                                  : Icons
+                                                                      .push_pin_outlined,
+                                                              size: 24,
+                                                              color: _pushPinClickedMap[e
+                                                                              .zoneId] !=
+                                                                          null &&
+                                                                      snapshot.data !=
+                                                                          ''
+                                                                  ? primaryOrange
+                                                                  : primaryGray,
+                                                            ),
+                                                          );
+                                                        },
                                                       ),
-                                                    )
+                                                    ),
+
+                                                    // )
                                                   ],
                                                 ),
                                                 const SizedBox(height: 8),
@@ -819,7 +829,6 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                   ..._category.map((e) {
-                    // log(categoryId);
                     return Container(
                       margin: const EdgeInsets.symmetric(
                           vertical: 8.0, horizontal: 10.0),
@@ -837,13 +846,11 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       child: ElevatedButton(
                         onPressed: () async {
-                          log(e.categoryId);
                           setState(() {
                             _isZoneLoaded = false;
+                            _selectedCategory = e;
                           });
-
                           await _getZonesById(e.categoryId);
-                          log(_zoneList.toString());
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -852,6 +859,11 @@ class _HomeViewState extends State<HomeView> {
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
+                              // side: BorderSide(
+                              //   color: _selectedCategory == e
+                              //       ? primaryOrange
+                              //       : Colors.transparent,
+                              // ),
                             ),
                           ),
                         ),
@@ -875,7 +887,6 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
           ),
-
           if (_isSearching)
             Visibility(
               visible: true,
@@ -885,100 +896,76 @@ class _HomeViewState extends State<HomeView> {
                 height: double.infinity,
                 child: Container(
                     padding: const EdgeInsets.only(top: 155),
-                    child: _searchController.text.isNotEmpty ? _foundZones.isNotEmpty
-                        ? ListView.builder(
-                            itemCount: _foundZones.length,
-                            itemBuilder: (context, index) {
-                              final ZoneData zone = _foundZones[index];
-                              return ListTile(
-                                title: Text(
-                                  zone.zoneName,
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 16.0,
-                                    color: primaryGray,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                                onTap: () {
-                                  // do something when user taps on the search result
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ReservationView(zoneId: zone.zoneId),
+                    child: _searchController.text.isNotEmpty
+                        ? _foundZones.isNotEmpty
+                            ? ListView.builder(
+                                itemCount: _foundZones.length,
+                                itemBuilder: (context, index) {
+                                  final ZoneData zone = _foundZones[index];
+                                  return ListTile(
+                                    title: Text(
+                                      zone.zoneName,
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontStyle: FontStyle.normal,
+                                        fontSize: 16.0,
+                                        color: primaryGray,
+                                        fontWeight: FontWeight.w300,
+                                      ),
                                     ),
+                                    onTap: () {
+                                      // do something when user taps on the search result
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ReservationView(
+                                              zoneId: zone.zoneId),
+                                        ),
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                          )
-                        : Column(
-                          
-                            children: [
-                              const SizedBox(height: 200,),
-                              const SizedBox(
-                                width: 119.0,
-                                height: 119.0,
-                                child: Icon(
-                                  Icons.search,
-                                  size: 80.0,
-                                  color: Color(0xFF808080),
-                                ),
-                              ),
-                              const Text(
-                                'No result found',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                    fontStyle: FontStyle.normal,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: primaryGray,
-                                ),
-                              ),
-                              const SizedBox(height: 8.0),
-                              Text(
-                                'Try searching for something else',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w400,
-                                  fontSize: 16.0,
-                                  color: Colors.grey[400],
-                                ),
-                              ),
-                            ],
-                          ): Container()) ,
+                              )
+                            : Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 200,
+                                  ),
+                                  const SizedBox(
+                                    width: 119.0,
+                                    height: 119.0,
+                                    child: Icon(
+                                      Icons.search,
+                                      size: 80.0,
+                                      color: Color(0xFF808080),
+                                    ),
+                                  ),
+                                  const Text(
+                                    'No result found',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: primaryGray,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  Text(
+                                    'Try searching for something else',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 16.0,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ],
+                              )
+                        : Container()),
               ),
             ),
-          //search no found not working yet.
-          // if (_isSearching && _foundZones.isEmpty)
-          //           Center(
-          //             child: Column(
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               children: [
-          //                 const Icon(
-          //                   Icons.search,
-          //                   size: 100,
-          //                   color: Colors.grey,
-          //                 ),
-          //                 const SizedBox(height: 16),
-          //                 const Text(
-          //                   'No results found',
-          //                   style: TextStyle(
-          //                     fontSize: 24,
-          //                     fontWeight: FontWeight.w400,
-          //                     color: Colors.grey,
-          //                   ),
-          //                 ),
-
-          // _isSearching ? Visibility(
-          //   visible: _isSearching,
-
-          //   child: Container(
-          //     color: Colors.white,
-          //   )):
           Stack(
             children: [
               Container(

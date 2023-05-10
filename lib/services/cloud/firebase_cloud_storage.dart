@@ -171,14 +171,7 @@ Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
     throw CouldNotGetException();
   }
 }
-// Future<List<String>> getAllCategoryIds() async {
-//     try {
-//       List<DocumentSnapshot> zoneToCategoryDocs = await getAllZoneToCategory();
-//       return zoneToCategoryDocs.map((doc) => doc.id).toList();
-//     } catch (e) {
-//       throw CouldNotGetException();
-//     }
-//   }
+
 Future<void> pinZone(String zoneId) async {
   try {
     final userId = FirebaseAuth.instance.currentUser!.uid;
@@ -208,6 +201,22 @@ Future<void> unpinZone(String zoneId) async {
     throw CouldNotDeleteException();
   }
 }
+Future<String> getPin(String zoneId) async {
+ 
+  try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await pin
+        .where(zoneIdField, isEqualTo: zoneId)
+        .where(userIdField, isEqualTo: userId)
+        .get();
+    String pinId = querySnapshot.docs.isNotEmpty ? querySnapshot.docs[0].id : "";
+    print("getPin result: $pinId");
+    return pinId;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
 Future<List<String>> getPinnedZones() async {
   final userId = FirebaseAuth.instance.currentUser!.uid;
   try {
@@ -219,7 +228,6 @@ Future<List<String>> getPinnedZones() async {
     throw CouldNotGetException();
   }
 }
-
 Future<List<ZoneData>> getZonesByCategoryId(String categoryId) async {
   List<String> zoneIds = [];
   List<ZoneData> zones = [];
@@ -245,10 +253,6 @@ for (var document in snapshot.docs) {
   }
  
 }
-
-
-
-
 
   Future<ZoneData> getZone(String zoneId) async {
     try {
