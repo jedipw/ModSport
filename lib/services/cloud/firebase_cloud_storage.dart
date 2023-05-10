@@ -212,33 +212,30 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
-    try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection(zoneToCategoryCollection)
-          .get();
-      return snapshot.docs;
-    } catch (e) {
-      throw CouldNotGetException();
-    }
-  }
 
-// Future<List<String>> getAllCategoryIds() async {
-//     try {
-//       List<DocumentSnapshot> zoneToCategoryDocs = await getAllZoneToCategory();
-//       return zoneToCategoryDocs.map((doc) => doc.id).toList();
-//     } catch (e) {
-//       throw CouldNotGetException();
-//     }
-//   }
-  Future<void> pinZone(String zoneId) async {
-    try {
-      final userId = FirebaseAuth.instance.currentUser!.uid;
-      await pin.add({zoneIdField: zoneId, userIdField: userId});
-    } catch (e) {
-      throw CouldNotCreateException();
-    }
+
+Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection(zoneToCategoryCollection)
+        .get();
+    return snapshot.docs;
+  } catch (e) {
+    throw CouldNotGetException();
   }
+}
+
+Future<void> pinZone(String zoneId) async {
+  try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    await pin.add({
+      zoneIdField: zoneId,
+      userIdField : userId
+    });
+  } catch (e) {
+    throw CouldNotCreateException();
+  }
+}
 
   Future<void> unpinZone(String zoneId) async {
     try {
@@ -248,51 +245,67 @@ class FirebaseCloudStorage {
           .where(userIdField, isEqualTo: userId)
           .get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        await Future.wait(querySnapshot.docs.map((doc) async {
-          return doc.reference.delete();
-        }));
-      }
-    } catch (e) {
-      throw CouldNotDeleteException();
+    if (querySnapshot.docs.isNotEmpty) {
+      await Future.wait(querySnapshot.docs.map((doc) async {
+        return doc.reference.delete();
+      }));
     }
+  } catch (e) {
+    throw CouldNotDeleteException();
   }
-
-  Future<List<String>> getPinnedZones() async {
+}
+Future<String> getPin(String zoneId) async {
+ 
+  try {
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    try {
-      final querySnapshot =
-          await pin.where(userIdField, isEqualTo: userId).get();
-      return querySnapshot.docs
-          .map((doc) => doc.data()[zoneIdField] as String)
-          .toList();
-    } catch (e) {
-      throw CouldNotGetException();
-    }
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await pin
+        .where(zoneIdField, isEqualTo: zoneId)
+        .where(userIdField, isEqualTo: userId)
+        .get();
+    String pinId = querySnapshot.docs.isNotEmpty ? querySnapshot.docs[0].id : "";
+    print("getPin result: $pinId");
+    return pinId;
+  } catch (e) {
+    throw CouldNotGetException();
   }
+}
 
-  Future<List<ZoneData>> getZonesByCategoryId(String categoryId) async {
-    List<String> zoneIds = [];
-    List<ZoneData> zones = [];
-    try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection(zoneToCategoryCollection)
-          .where(categoryIdField, isEqualTo: categoryId)
-          .get();
-      log('Number of documents: ${snapshot.size}');
-      for (var document in snapshot.docs) {
-        log(document.get(zoneIdField));
-        zoneIds.add(document.get(zoneIdField));
-      }
-      for (String id in zoneIds) {
-        ZoneData zone = await FirebaseCloudStorage().getZone(id);
-        zones.add(zone);
-      }
-      return zones;
-    } catch (e) {
-      throw CouldNotGetException();
-    }
+Future<List<String>> getPinnedZones() async {
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  try {
+    final querySnapshot = await pin
+        .where(userIdField, isEqualTo: userId)
+        .get();
+    return querySnapshot.docs.map((doc) => doc.data()[zoneIdField] as String).toList();
+  } catch (e) {
+    throw CouldNotGetException();
   }
+}
+Future<List<ZoneData>> getZonesByCategoryId(String categoryId) async {
+  List<String> zoneIds = [];
+  List<ZoneData> zones = [];
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+    .collection(zoneToCategoryCollection)
+    .where(categoryIdField, isEqualTo: categoryId)
+    .get();
+log('Number of documents: ${snapshot.size}');
+for (var document in snapshot.docs) {
+  log(document.get(zoneIdField));
+  zoneIds.add(document.get(zoneIdField));
+} 
+    for (String id in zoneIds) {
+  
+    ZoneData zone = await FirebaseCloudStorage().getZone(id);
+    zones.add(zone);
+  
+}
+    return zones;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+ 
+}
 
   Future<ZoneData> getZone(String zoneId) async {
     try {

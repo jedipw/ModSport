@@ -15,6 +15,7 @@ const locationIdField = 'locationId';
 const zoneIdField = 'zoneId';
 const userIdField = 'userId';
 const categoryIdField = 'categoryId';
+const pinIdField = 'pinId';
 
 // Location field
 const locationNameField = 'locationName';
