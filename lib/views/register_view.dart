@@ -193,7 +193,7 @@ class _RegisterViewState extends State<RegisterView> {
                                             (route) => false,
                                           ));
                                 } catch (e) {
-                                  showErrorModal(
+                                  showErrorEmailModal(
                                     context,
                                     () {
                                       Navigator.of(context).pop();
