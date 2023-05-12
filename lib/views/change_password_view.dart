@@ -225,6 +225,7 @@ class _CustomPageViewState extends State<CustomPageView> {
                 if (mounted) {
                   setState(() {
                     _isPasswordValid = true;
+                    _isCorrectPassword = true;
                   });
                 }
                 if (_isCorrectPassword) {
