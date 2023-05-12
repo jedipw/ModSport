@@ -120,9 +120,17 @@ class _CustomPageViewState extends State<CustomPageView> {
                     _isEmailValid = true;
                   });
                 }
-                await FirebaseAuth.instance
-                    .sendPasswordResetEmail(email: emailController.text)
-                    .then((value) => showSuccessForgetModal(context, true));
+                try {
+                  await FirebaseAuth.instance
+                      .sendPasswordResetEmail(email: emailController.text)
+                      .then((value) => showSuccessForgetModal(context, true));
+                } catch (_) {
+                  if (mounted) {
+                    setState(() {
+                      _isEmailValid = false;
+                    });
+                  }
+                }
               } else {
                 if (mounted) {
                   setState(() {
