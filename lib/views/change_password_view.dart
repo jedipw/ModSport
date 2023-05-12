@@ -103,7 +103,8 @@ class _CustomPageViewState extends State<CustomPageView> {
                       _currentPasswordController = TextEditingController();
                     })
                   }
-              });
+              })
+          .then((value) => showSuccessPasswordModal(context, true));
     } catch (error) {
       // log(error.toString());
       if (mounted) {
@@ -225,7 +226,6 @@ class _CustomPageViewState extends State<CustomPageView> {
                   setState(() {
                     _isPasswordValid = true;
                   });
-                  showSuccessPasswordModal(context, true);
                 }
                 if (_isCorrectPassword) {
                   changePassword(_currentPasswordController.text.toString(),
