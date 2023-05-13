@@ -102,7 +102,8 @@ class _HomeViewState extends State<HomeView> {
 //For
   Future<void> _getZonesData() async {
     try {
-      List<ZoneWithLocationData> zones = await FirebaseCloudStorage().getAllZones();
+      List<ZoneWithLocationData> zones =
+          await FirebaseCloudStorage().getAllZones();
       setState(() {
         _zoneList = zones;
         _isZoneLoaded = true;
@@ -194,11 +195,10 @@ class _HomeViewState extends State<HomeView> {
       // merge the two lists, with pinned zones first
       _zoneList.clear();
       setState(() {
-              _zoneList.addAll(pinnedZones);
-      _zoneList.addAll(unpinnedZones);
+        _zoneList.addAll(pinnedZones);
+        _zoneList.addAll(unpinnedZones);
         isSortZone = true;
       });
-
     });
   }
 
@@ -246,23 +246,24 @@ class _HomeViewState extends State<HomeView> {
   // }
 
   Future<void> fetchData() async {
-    await _getZonesData().then((_) => _getCategorieData()).then((_) => _sortZones());
+    await _getZonesData()
+        .then((_) => _getCategorieData())
+        .then((_) => _sortZones());
 
     // _getPinnedZonesData();
-    
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-  FocusScope.of(context).unfocus();
-  setState(() {
-    _isSearching = false;
-    _searchController.clear();
-    _searchText = '';
-  });
-},
+        FocusScope.of(context).unfocus();
+        setState(() {
+          _isSearching = false;
+          _searchController.clear();
+          _searchText = '';
+        });
+      },
       child: Scaffold(
         key: _scaffoldKey,
         drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
@@ -315,22 +316,21 @@ class _HomeViewState extends State<HomeView> {
                         child: Column(
                           children: [
                             const SizedBox(height: 230),
-        
+
                             // Start writing your code here
-        
+
                             _isZoneLoaded && isSortZone
                                 ? Container(
                                     padding: const EdgeInsets.only(top: 35),
                                     child: Column(
-                                      children:
-                                          _zoneList.asMap().entries.map((entry) {
-                                        //  bool _isPushPinClicked = false;
+                                      children: _zoneList
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
                                         final index = entry.key;
                                         final e = entry.value;
-                                        //sort by letter
-                                        // _zoneList.sort(
-                                        //     (a, b) => a.zoneName.compareTo(b.zoneName));
-                                        if (_pushPinClickedList.length <= index) {
+                                        if (_pushPinClickedList.length <=
+                                            index) {
                                           // Set initial value of push pin clicked status for new items
                                           _pushPinClickedList.add(false);
                                         }
@@ -359,7 +359,8 @@ class _HomeViewState extends State<HomeView> {
                                                       color: Colors.black
                                                           .withOpacity(0.25),
                                                       blurRadius: 4,
-                                                      offset: const Offset(0, 4))
+                                                      offset:
+                                                          const Offset(0, 4))
                                                 ],
                                                 borderRadius:
                                                     BorderRadius.circular(30),
@@ -369,14 +370,12 @@ class _HomeViewState extends State<HomeView> {
                                                   Stack(
                                                     children: [
                                                       Shimmer.fromColors(
-                                                        baseColor:
-                                                            const Color.fromARGB(
-                                                                255,
-                                                                216,
-                                                                216,
-                                                                216),
+                                                        baseColor: const Color
+                                                                .fromARGB(
+                                                            255, 216, 216, 216),
                                                         highlightColor:
-                                                            const Color.fromRGBO(
+                                                            const Color
+                                                                    .fromRGBO(
                                                                 173,
                                                                 173,
                                                                 173,
@@ -388,15 +387,14 @@ class _HomeViewState extends State<HomeView> {
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .only(
-                                                              topRight:
-                                                                  Radius.circular(
-                                                                      30),
-                                                              topLeft:
-                                                                  Radius.circular(
-                                                                      30),
+                                                              topRight: Radius
+                                                                  .circular(30),
+                                                              topLeft: Radius
+                                                                  .circular(30),
                                                             ),
                                                           ),
-                                                          width: double.infinity,
+                                                          width:
+                                                              double.infinity,
                                                           height: 164,
                                                         ),
                                                       ),
@@ -414,7 +412,8 @@ class _HomeViewState extends State<HomeView> {
                                                                 Radius.circular(
                                                                     30),
                                                           ),
-                                                          child: e.imgUrl.isEmpty
+                                                          child: e.imgUrl
+                                                                  .isEmpty
                                                               ? Container(
                                                                   color:
                                                                       primaryGray,
@@ -429,13 +428,13 @@ class _HomeViewState extends State<HomeView> {
                                                                     return Image
                                                                         .network(
                                                                       e.imgUrl,
-                                                                      height: 164,
+                                                                      height:
+                                                                          164,
                                                                       width: double
                                                                           .infinity,
                                                                       fit: BoxFit
                                                                           .cover,
-                                                                      errorBuilder: (BuildContext
-                                                                              context,
+                                                                      errorBuilder: (BuildContext context,
                                                                           Object
                                                                               exception,
                                                                           StackTrace?
@@ -460,9 +459,11 @@ class _HomeViewState extends State<HomeView> {
                                                       decoration:
                                                           const BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius.vertical(
+                                                            BorderRadius
+                                                                .vertical(
                                                           bottom:
-                                                              Radius.circular(30),
+                                                              Radius.circular(
+                                                                  30),
                                                         ),
                                                         color: Colors.white,
                                                       ),
@@ -485,7 +486,8 @@ class _HomeViewState extends State<HomeView> {
                                                                   fontStyle:
                                                                       FontStyle
                                                                           .normal,
-                                                                  fontSize: 22.0,
+                                                                  fontSize:
+                                                                      22.0,
                                                                   color:
                                                                       primaryOrange,
                                                                   fontWeight:
@@ -493,7 +495,7 @@ class _HomeViewState extends State<HomeView> {
                                                                           .w600,
                                                                 ),
                                                               ),
-                                                          
+
                                                               Transform.rotate(
                                                                 angle: 45 *
                                                                     3.14 /
@@ -504,29 +506,30 @@ class _HomeViewState extends State<HomeView> {
                                                                   future: FirebaseCloudStorage()
                                                                       .getPin(e
                                                                           .zoneId),
-                                                                  initialData: '',
+                                                                  initialData:
+                                                                      '',
                                                                   builder: (BuildContext
                                                                           context,
                                                                       AsyncSnapshot<
                                                                               String>
                                                                           snapshot) {
-                                                                    String pinId =
+                                                                    String
+                                                                        pinId =
                                                                         snapshot.data ??
                                                                             '';
-        
+
                                                                     // Set the initial state of _pushPinClickedMap based on the pinId
-        
+
                                                                     _pushPinClickedMap[
                                                                             e.zoneId] =
                                                                         (pinId !=
                                                                             '');
-        
+
                                                                     return GestureDetector(
-                                                                      onTap: () {
-                                                                        _pushPinClickedMap[
-                                                                                e.zoneId] =
-                                                                            !_pushPinClickedMap[
-                                                                                e.zoneId]!;
+                                                                      onTap:
+                                                                          () {
+                                                                        _pushPinClickedMap[e.zoneId] =
+                                                                            !_pushPinClickedMap[e.zoneId]!;
                                                                         if (_pushPinClickedMap[
                                                                             e.zoneId]!) {
                                                                           _handlePushPinClick(
@@ -535,24 +538,21 @@ class _HomeViewState extends State<HomeView> {
                                                                           FirebaseCloudStorage()
                                                                               .unpinZone(e.zoneId)
                                                                               .then((_) {
-                                                                            setState(
-                                                                                () {
-                                                                              _pushPinClickedMap[e.zoneId] =
-                                                                                  false;
+                                                                            setState(() {
+                                                                              _pushPinClickedMap[e.zoneId] = false;
                                                                             });
                                                                             _sortZones();
                                                                           });
                                                                         }
                                                                       },
-                                                                      child: Icon(
+                                                                      child:
+                                                                          Icon(
                                                                         _pushPinClickedMap[e.zoneId] != null &&
-                                                                                snapshot.data !=
-                                                                                    ''
-                                                                            ? Icons
-                                                                                .push_pin
-                                                                            : Icons
-                                                                                .push_pin_outlined,
-                                                                        size: 24,
+                                                                                snapshot.data != ''
+                                                                            ? Icons.push_pin
+                                                                            : Icons.push_pin_outlined,
+                                                                        size:
+                                                                            24,
                                                                         color: _pushPinClickedMap[e.zoneId] != null &&
                                                                                 snapshot.data != ''
                                                                             ? primaryOrange
@@ -562,7 +562,7 @@ class _HomeViewState extends State<HomeView> {
                                                                   },
                                                                 ),
                                                               ),
-        
+
                                                               // )
                                                             ],
                                                           ),
@@ -582,25 +582,24 @@ class _HomeViewState extends State<HomeView> {
                                                               SizedBox(
                                                                 width:
                                                                     200, // set a smaller width to fit the location in the card
-                                                                child:
-                                                                   
-                                                                       Text(
-                                                                        e.locationName,
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontFamily:
-                                                                              'Poppins',
-                                                                          fontStyle:
-                                                                              FontStyle.normal,
-                                                                          fontSize:
-                                                                              11.5,
-                                                                          color:
-                                                                              primaryGray,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                             
+                                                                child: Text(
+                                                                  e.locationName,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontFamily:
+                                                                        'Poppins',
+                                                                    fontStyle:
+                                                                        FontStyle
+                                                                            .normal,
+                                                                    fontSize:
+                                                                        11.5,
+                                                                    color:
+                                                                        primaryGray,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
                                                               ),
                                                             ],
                                                           ),
@@ -617,8 +616,8 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                   )
                                 : Container(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(30, 35, 30, 0),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        30, 35, 30, 0),
                                     child: Column(
                                       children: [
                                         SizedBox(
@@ -648,7 +647,8 @@ class _HomeViewState extends State<HomeView> {
                                                         borderRadius:
                                                             BorderRadius.only(
                                                                 topLeft: Radius
-                                                                    .circular(30),
+                                                                    .circular(
+                                                                        30),
                                                                 topRight: Radius
                                                                     .circular(
                                                                         30)),
@@ -717,7 +717,8 @@ class _HomeViewState extends State<HomeView> {
                                                         borderRadius:
                                                             BorderRadius.only(
                                                                 topLeft: Radius
-                                                                    .circular(30),
+                                                                    .circular(
+                                                                        30),
                                                                 topRight: Radius
                                                                     .circular(
                                                                         30)),
@@ -786,7 +787,8 @@ class _HomeViewState extends State<HomeView> {
                                                         borderRadius:
                                                             BorderRadius.only(
                                                                 topLeft: Radius
-                                                                    .circular(30),
+                                                                    .circular(
+                                                                        30),
                                                                 topRight: Radius
                                                                     .circular(
                                                                         30)),
@@ -871,7 +873,8 @@ class _HomeViewState extends State<HomeView> {
                                           _isAll = true;
                                           isSortZone = false;
                                         });
-                                        await _getZonesData().then((_) => _sortZones());
+                                        await _getZonesData()
+                                            .then((_) => _sortZones());
                                       },
                                       style: ButtonStyle(
                                         backgroundColor:
@@ -1117,29 +1120,39 @@ class _HomeViewState extends State<HomeView> {
                                 ? ListView.builder(
                                     itemCount: _foundZones.length,
                                     itemBuilder: (context, index) {
-                                      final ZoneWithLocationData zone = _foundZones[index];
-                                      return ListTile(
-                                        title: Text(
-                                          zone.zoneName,
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontStyle: FontStyle.normal,
-                                            fontSize: 16.0,
-                                            color: primaryGray,
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          // do something when user taps on the search result
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ReservationView(
-                                                      zoneId: zone.zoneId),
+                                      final ZoneWithLocationData zone =
+                                          _foundZones[index];
+                                      return Column(
+                                        children: [
+                                          ListTile(
+                                            title: Text(
+                                              zone.zoneName,
+                                              style: const TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontStyle: FontStyle.normal,
+                                                fontSize: 16.0,
+                                                color: primaryGray,
+                                                fontWeight: FontWeight.w300,
+                                              ),
                                             ),
-                                          );
-                                        },
+                                            onTap: () {
+                                              // do something when user taps on the search result
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ReservationView(
+                                                          zoneId: zone.zoneId),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          Divider(
+                                            color: primaryGray.withAlpha(70),
+                                            thickness: 1,
+                                            height: 0,
+                                          )
+                                        ],
                                       );
                                     },
                                   )
@@ -1222,6 +1235,12 @@ class _HomeViewState extends State<HomeView> {
                           height: 40,
                           child: TextField(
                             controller: _searchController,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              
+                            ),
                             onTap: () {
                               setState(() {
                                 _isSearching = true;
