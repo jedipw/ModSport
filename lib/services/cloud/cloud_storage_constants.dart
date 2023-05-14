@@ -7,7 +7,7 @@ const userReservationCollection = 'userreservation';
 const zoneCollection = 'zone';
 const deviceCollection = 'device';
 const categoryCollection = 'category';
-const zoneToCategoryCollection = 'zonetocategory';
+const zoneToCategoryCollection = 'zoneToCategory';
 const pinCollection = 'pin';
 
 // ID field
@@ -15,6 +15,7 @@ const locationIdField = 'locationId';
 const zoneIdField = 'zoneId';
 const userIdField = 'userId';
 const categoryIdField = 'categoryId';
+const pinIdField = 'pinId';
 
 // Location field
 const locationNameField = 'locationName';

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
-import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
 import '../utilities/custom_button/next_button.dart';
 import '../utilities/modal.dart';
@@ -25,11 +24,6 @@ class ForgetPasswordView extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    // Navigator.of(context).pushNamedAndRemoveUntil(
-                    //   // navigates to homeRoute screen and removes previous routes
-                    //   loginRoute,
-                    //   (route) => false,
-                    // );
                     Navigator.of(context).pop();
                   },
                   child: const Icon(
@@ -126,9 +120,17 @@ class _CustomPageViewState extends State<CustomPageView> {
                     _isEmailValid = true;
                   });
                 }
-                await FirebaseAuth.instance
-                    .sendPasswordResetEmail(email: emailController.text)
-                    .then((value) => showSuccessForgetModal(context, true));
+                try {
+                  await FirebaseAuth.instance
+                      .sendPasswordResetEmail(email: emailController.text)
+                      .then((value) => showSuccessForgetModal(context, true));
+                } catch (_) {
+                  if (mounted) {
+                    setState(() {
+                      _isEmailValid = false;
+                    });
+                  }
+                }
               } else {
                 if (mounted) {
                   setState(() {

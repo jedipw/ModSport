@@ -2,19 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:shimmer/shimmer.dart';
 
-class TimeSlotLoading extends StatelessWidget {
-  const TimeSlotLoading({
-    super.key,
-  });
+class EditTimeSlotLoading extends StatelessWidget {
+  const EditTimeSlotLoading({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Set the inactive radio button color
     final ThemeData theme = Theme.of(context).copyWith(
       unselectedWidgetColor: Colors.white,
     );
 
-    // Builds a ListView of RadioListTile widgets
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
       shrinkWrap: true,
@@ -90,7 +86,7 @@ class TimeSlotLoading extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(30),
                                   color: Colors.white,
                                 ),
-                                width: 50,
+                                width: 40,
                                 height: 20.0,
                               ),
                             )

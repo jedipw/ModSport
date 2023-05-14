@@ -1,3 +1,5 @@
+import 'package:flutter/rendering.dart';
+
 class ReservationData {
   final String reservationId;
   final DateTime? startTime;
@@ -36,6 +38,22 @@ class ZoneData {
   });
 }
 
+class ZoneWithLocationData {
+  final String zoneId;
+  final String locationId;
+  final String zoneName;
+  final String imgUrl;
+  final String locationName;
+
+  ZoneWithLocationData({
+    required this.zoneId,
+    required this.locationId,
+    required this.zoneName,
+    required this.imgUrl,
+    required this.locationName,
+  });
+}
+
 class DisableData {
   final String disableId;
   final DateTime startDateTime;
@@ -47,6 +65,19 @@ class DisableData {
     required this.disableReason,
   });
 }
+class CategoryData {
+  final String categoryId;
+  final String categoryName;
+
+
+  CategoryData({
+    required this.categoryId,
+    required this.categoryName,
+   
+  });
+}
+
+
 
 class Booking {
   final String zoneId;

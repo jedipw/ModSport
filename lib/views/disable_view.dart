@@ -6,8 +6,10 @@ import 'package:modsport/constants/mode.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modsport/services/cloud/cloud_storage_constants.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
+import 'package:modsport/utilities/disable/close_button.dart';
 
 import 'package:modsport/utilities/disable/date.dart';
+import 'package:modsport/utilities/disable/error_message.dart';
 import 'package:modsport/utilities/disable/facility.dart';
 import 'package:modsport/utilities/disable/finish_button.dart';
 
@@ -267,41 +269,7 @@ class _DisableViewState extends State<DisableView> {
                 : SizedBox(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.error, size: 100, color: primaryGray),
-                            SizedBox(height: 20),
-                            Text(
-                              'Something went wrong!',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                height: 1.5, // 21/14 = 1.5
-                                color: primaryGray,
-                                letterSpacing: 0,
-                              ),
-                            ),
-                            Text(
-                              'Please try again later.',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                height: 1.5, // 21/14 = 1.5
-                                color: primaryGray,
-                                letterSpacing: 0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                    child: const DisableErrorMessage()),
           ),
           Stack(
             children: [
@@ -338,57 +306,49 @@ class _DisableViewState extends State<DisableView> {
               Positioned(
                 left: 10,
                 top: 65,
-                child: ElevatedButton(
-                  onPressed: () {
-                    widget.mode == editMode
-                        ? reasonController.text != widget.reason &&
-                                (numOfCharacter >= 10 && numOfCharacter <= 250)
-                            ? showEditExitConfirmationModal(context, () async {
-                                Navigator.of(context).pop();
-                                showLoadModal(context);
-                                try {
-                                  await FirebaseCloudStorage()
-                                      .updateDisableReason(
-                                        widget.disableIds,
-                                        reasonController.text,
-                                      )
-                                      .then((_) => Navigator.of(context).pop())
-                                      .then((_) => Navigator.of(context).pop());
-                                } catch (e) {
-                                  // Handle error
-                                  showErrorModal(
-                                    context,
-                                    () {
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                    },
-                                  );
-                                }
-                              }, () {
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                              })
-                            : Navigator.of(context).pop()
-                        : numOfCharacter >= 10
-                            ? showDisableExitConfirmationModal(context, () {
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                              })
-                            : Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        widget.mode == editMode ? Colors.white : staffOrange,
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    shape: const CircleBorder(),
-                    fixedSize: const Size.fromRadius(25),
-                    elevation: 0,
-                  ),
-                  child: Icon(Icons.close,
-                      color:
-                          widget.mode == editMode ? staffOrange : Colors.white,
-                      size: 40),
-                ),
+                child: DisableCloseButton(
+                    mode: widget.mode,
+                    onPressed: () {
+                      widget.mode == editMode
+                          ? reasonController.text != widget.reason &&
+                                  (numOfCharacter >= 10 &&
+                                      numOfCharacter <= 250)
+                              ? showEditExitConfirmationModal(context,
+                                  () async {
+                                  Navigator.of(context).pop();
+                                  showLoadModal(context);
+                                  try {
+                                    await FirebaseCloudStorage()
+                                        .updateDisableReason(
+                                          widget.disableIds,
+                                          reasonController.text,
+                                        )
+                                        .then(
+                                            (_) => Navigator.of(context).pop())
+                                        .then(
+                                            (_) => Navigator.of(context).pop());
+                                  } catch (e) {
+                                    // Handle error
+                                    showErrorModal(
+                                      context,
+                                      () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
+                                  }
+                                }, () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                })
+                              : Navigator.of(context).pop()
+                          : numOfCharacter >= 10
+                              ? showDisableExitConfirmationModal(context, () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                })
+                              : Navigator.of(context).pop();
+                    }),
               ),
               Positioned(
                 right: 15,

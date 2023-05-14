@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/services/cloud/cloud_storage_constants.dart';
@@ -12,7 +11,6 @@ import 'package:modsport/services/cloud/cloud_storage_exceptions.dart';
 import 'package:modsport/utilities/reservation/location_name.dart';
 import 'package:modsport/utilities/reservation/zone_name.dart';
 import 'package:modsport/utilities/types.dart';
-import 'package:modsport/views/reservation_view.dart';
 
 class FirebaseCloudStorage {
   final user = FirebaseFirestore.instance.collection(userCollection);
@@ -24,6 +22,7 @@ class FirebaseCloudStorage {
   final disable = FirebaseFirestore.instance.collection(disableCollection);
   final device = FirebaseFirestore.instance.collection(deviceCollection);
   final pin = FirebaseFirestore.instance.collection(pinCollection);
+  final category = FirebaseFirestore.instance.collection(categoryCollection);
 
   Future<bool> getUserHasRole(String userId) async {
     try {
@@ -43,158 +42,185 @@ class FirebaseCloudStorage {
     }
   }
 
-Future<List<Booking>> getBookings() async {
-  try {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    QuerySnapshot userResSnapshot =
-        await userRes.where(userIdField, isEqualTo: userId).get();
-    List<Booking> bookingsList =
-        await Future.wait(userResSnapshot.docs.map((doc) async {
-      final data = doc.data() as Map<String, dynamic>;
-      final startDateTime = DateTime.fromMillisecondsSinceEpoch(
-          data[startDateTimeField].millisecondsSinceEpoch);
-      final formattedDate =
-          DateFormat('d MMM y').format(startDateTime); // Example date format
-      final formattedTime =
-          DateFormat('HH:mm').format(startDateTime); // Example time format
-
-      // Fetch the corresponding zone document to get the zone name
-      final zoneDoc = await zone.doc(data[zoneIdField]).get();
-      final zoneData = zoneDoc.data() as Map<String, dynamic>;
-      final zoneName = zoneData[zoneNameField];
-
-      // Fetch the corresponding reservation document to get the end time
-      final resSnapshot = await res.where(zoneIdField, isEqualTo: data[zoneIdField]).get();
-      final resData = resSnapshot.docs.first.data();
-      final endDateTime = DateTime.fromMillisecondsSinceEpoch(
-          resData[endTimeField].millisecondsSinceEpoch);
-          final formattedEndTime =
-          DateFormat('HH:mm').format(endDateTime);
-
-      return Booking(
-        zoneId: data[zoneIdField],
-        zoneName: zoneName,
-        date: formattedDate,
-        time: formattedTime,
-        dateTime: startDateTime,
-        endTime: formattedEndTime,
-        isSuccessful: data[isSuccessfulField],
-      );
-    }).toList());
-
-    // Sort the bookings list by date
-    bookingsList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
-
-    return bookingsList;
-  } catch (e) {
-    throw CouldNotGetException();
-  }
-}
-
-Future<String> getDisableReason(String disableId) async {
-  try {
-    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection('disable').doc(disableId).get();
-    return documentSnapshot[disableReasonField];
-  } catch (e) {
-    throw CouldNotGetException();
-  }
-}
-
-Future<BookingDetail?> getBookingDetail(String reservationId) async {
-  try {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot reservationSnapshot =
-        await FirebaseFirestore.instance.collection('userreservation').doc(reservationId).get();
-
-    if (reservationSnapshot.exists) {
-      final reservationData = reservationSnapshot.data() as Map<String, dynamic>;
-      final userIdFieldReservation = reservationData[userIdField];
-
-      // Only retrieve the reservation details if it belongs to the current user
-      if (userId == userIdFieldReservation) {
+  Future<List<Booking>> getBookings() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      QuerySnapshot userResSnapshot =
+          await userRes.where(userIdField, isEqualTo: userId).get();
+      List<Booking> bookingsList =
+          await Future.wait(userResSnapshot.docs.map((doc) async {
+        final data = doc.data() as Map<String, dynamic>;
         final startDateTime = DateTime.fromMillisecondsSinceEpoch(
-            reservationData[startDateTimeField].millisecondsSinceEpoch);
+            data[startDateTimeField].millisecondsSinceEpoch);
         final formattedDate =
             DateFormat('d MMM y').format(startDateTime); // Example date format
         final formattedTime =
             DateFormat('HH:mm').format(startDateTime); // Example time format
 
         // Fetch the corresponding zone document to get the zone name
-        final zoneDoc = await zone.doc(reservationData[zoneIdField]).get();
+        final zoneDoc = await zone.doc(data[zoneIdField]).get();
         final zoneData = zoneDoc.data() as Map<String, dynamic>;
         final zoneName = zoneData[zoneNameField];
-        final locationName = await getLocation(reservationData[locationIdField]);
-        final resSnapshot = await res.where(zoneIdField, isEqualTo: reservationData[zoneIdField]).get();
-        final resData = resSnapshot.docs.first.data();
-        final endDateTime = DateTime.fromMillisecondsSinceEpoch(resData[endTimeField].millisecondsSinceEpoch);
-        final formattedEndTime = DateFormat('HH:mm').format(endDateTime);
-        final isSuccessful = reservationData[isSuccessfulField];
 
-        String disableReason = '';
-        if (!isSuccessful) {
-          QuerySnapshot disableSnapshot = await FirebaseFirestore.instance
-              .collection('disable')
-              .where('reservationId', isEqualTo: reservationId)
-              .get();
-          if (disableSnapshot.size > 0) {
-            final disableData = disableSnapshot.docs.first.data() as Map<String, dynamic>;
-            disableReason = disableData[disableReasonField];
+        // Fetch the corresponding reservation document to get the end time
+        final resSnapshot =
+            await res.where(zoneIdField, isEqualTo: data[zoneIdField]).get();
+        final startTimes = <DateTime>[];
+        final reservationIds = <String>[];
+        for (final reservation in resSnapshot.docs) {
+          final resData = reservation.data();
+          final startTime = DateTime.fromMillisecondsSinceEpoch(
+              resData[startTimeField].millisecondsSinceEpoch);
+
+          if (startDateTime.second == startTime.second &&
+              startDateTime.minute == startTime.minute &&
+              startDateTime.hour == startTime.hour &&
+              DateFormat('EEEE', 'en_US').format(startDateTime) ==
+                  DateFormat('EEEE', 'en_US').format(startTime)) {
+            startTimes.add(startTime);
+            reservationIds.add(reservation.id);
           }
         }
 
-        final bookingDetail = BookingDetail(
+        startTimes.sort((a, b) => a.compareTo(b));
+        final reservationId = reservationIds.first;
+        final resDoc = await res.doc(reservationId).get();
+        final resData = resDoc.data() as Map<String, dynamic>;
+        final endDateTime = DateTime.fromMillisecondsSinceEpoch(
+            resData[endTimeField].millisecondsSinceEpoch);
+        final formattedEndTime = DateFormat('HH:mm').format(endDateTime);
+
+        return Booking(
+          zoneId: data[zoneIdField],
           zoneName: zoneName,
-          locationName: locationName,
           date: formattedDate,
-          startTime: formattedTime,
+          time: formattedTime,
+          dateTime: startDateTime,
           endTime: formattedEndTime,
-          isSuccessful: isSuccessful,
-          disableReason: disableReason,
+          isSuccessful: data[isSuccessfulField],
         );
+      }).toList());
 
-        return bookingDetail;
-      }
+      // Sort the bookings list by date
+      bookingsList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+      return bookingsList;
+    } catch (e) {
+      throw CouldNotGetException();
     }
-
-    return null; // Return null if the reservation doesn't exist or doesn't belong to the user
-  } catch (e) {
-    throw CouldNotGetException();
   }
-}
 
-
-  Future<List<ZoneData>> getAllZones() async {
+  Future<String> getIsDisabled(String zoneId, DateTime startDateTime) async {
     try {
-      QuerySnapshot snapshot = await zone.get();
-      log(snapshot.toString());
-      return snapshot.docs
-          .map((document) => ZoneData(
-              zoneId: document.id,
-              imgUrl: document.get(imgUrlField),
-              locationId: document.get(locationIdField),
-              zoneName: document.get(zoneNameField)))
-          .toList();
+      final snapshot = await disable
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first[disableReasonField];
+      } else {
+        return '';
+      }
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<bool> getIsSuccessful(
+      String zoneId, DateTime startDateTime, String userId) async {
+    try {
+      final snapshot = await userRes
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(startDateTimeField, isEqualTo: startDateTime)
+          .where(userIdField, isEqualTo: userId)
+          .get();
+
+      return snapshot.docs.first[isSuccessfulField];
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<DateTime> getEndTime(String zoneId, DateTime startDateTime) async {
+    try {
+      String resId = '';
+
+      final resSnapshot = await res.where(zoneIdField, isEqualTo: zoneId).get();
+      for (final reservation in resSnapshot.docs) {
+        final resData = reservation.data();
+        final startTime = DateTime.fromMillisecondsSinceEpoch(
+            resData[startTimeField].millisecondsSinceEpoch);
+
+        if (startDateTime.second == startTime.second &&
+            startDateTime.minute == startTime.minute &&
+            startDateTime.hour == startTime.hour &&
+            DateFormat('EEEE', 'en_US').format(startDateTime) ==
+                DateFormat('EEEE', 'en_US').format(startTime)) {
+          resId = reservation.id;
+        }
+      }
+      final resDoc = await res.doc(resId).get();
+      final resData = resDoc.data() as Map<String, dynamic>;
+      final endDateTime = DateTime.fromMillisecondsSinceEpoch(
+          resData[endTimeField].millisecondsSinceEpoch);
+      return endDateTime;
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+  Future<List<ZoneWithLocationData>> getAllZones() async {
+    try {
+      QuerySnapshot snapshots = await zone.get();
+      log(snapshots.toString());
+      List<ZoneWithLocationData> zoneWithLocation = [];
+
+      for(final snapshot in snapshots.docs) {
+        String location = await getLocation(snapshot.get(locationIdField));
+        zoneWithLocation.add(ZoneWithLocationData(
+              zoneId: snapshot.id,
+              imgUrl: snapshot.get(imgUrlField),
+              locationId: snapshot.get(locationIdField),
+              zoneName: snapshot.get(zoneNameField),
+              locationName: location
+        ));
+      }
+      return zoneWithLocation;
     } catch (e) {
       throw CouldNotGetException();
     }
   }
 
   Future<List<String>> getAllCategories() async {
-  try {
-    List<String> categories = [];
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection(categoryCollection)
-        .get();
-        log(snapshot.toString());
-    for (var document in snapshot.docs) {
-      categories.add(document.get(
-        categoryNameField));
+    try {
+      List<String> categories = [];
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection(categoryCollection).get();
+      log(snapshot.toString());
+      for (var document in snapshot.docs) {
+        categories.add(document.get(categoryNameField));
+      }
+      return categories;
+    } catch (e) {
+      throw CouldNotGetException();
     }
-    return categories;
-  } catch (e) {
-    throw CouldNotGetException();
   }
-}
+
+  Future<List<CategoryData>> getAllCategorie() async {
+    try {
+      QuerySnapshot snapshot = await category.get();
+      log(snapshot.toString());
+      return snapshot.docs
+          .map((document) => CategoryData(
+              categoryId: document.id,
+              categoryName: document.get(categoryNameField)))
+          .toList();
+    } catch (e) {
+      throw CouldNotGetException();
+    }
+  }
+
+
 
 Future<List<DocumentSnapshot>> getAllZoneToCategory() async {
   try {
@@ -219,13 +245,13 @@ Future<void> pinZone(String zoneId) async {
   }
 }
 
-Future<void> unpinZone(String zoneId) async {
-  try {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-    final querySnapshot = await pin
-        .where(zoneIdField, isEqualTo: zoneId)
-        .where(userIdField, isEqualTo: userId)
-        .get();
+  Future<void> unpinZone(String zoneId) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final querySnapshot = await pin
+          .where(zoneIdField, isEqualTo: zoneId)
+          .where(userIdField, isEqualTo: userId)
+          .get();
 
     if (querySnapshot.docs.isNotEmpty) {
       await Future.wait(querySnapshot.docs.map((doc) async {
@@ -236,6 +262,22 @@ Future<void> unpinZone(String zoneId) async {
     throw CouldNotDeleteException();
   }
 }
+Future<String> getPin(String zoneId) async {
+ 
+  try {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await pin
+        .where(zoneIdField, isEqualTo: zoneId)
+        .where(userIdField, isEqualTo: userId)
+        .get();
+    String pinId = querySnapshot.docs.isNotEmpty ? querySnapshot.docs[0].id : "";
+    print("getPin result: $pinId");
+    return pinId;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+}
+
 Future<List<String>> getPinnedZones() async {
   final userId = FirebaseAuth.instance.currentUser!.uid;
   try {
@@ -246,6 +288,32 @@ Future<List<String>> getPinnedZones() async {
   } catch (e) {
     throw CouldNotGetException();
   }
+}
+Future<List<ZoneWithLocationData>> getZonesByCategoryId(String categoryId) async {
+  List<String> zoneIds = [];
+  List<ZoneWithLocationData> zones = [];
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+    .collection(zoneToCategoryCollection)
+    .where(categoryIdField, isEqualTo: categoryId)
+    .get();
+log('Number of documents: ${snapshot.size}');
+for (var document in snapshot.docs) {
+  log(document.get(zoneIdField));
+  zoneIds.add(document.get(zoneIdField));
+} 
+    for (String id in zoneIds) {
+  
+    ZoneData zone = await FirebaseCloudStorage().getZone(id);
+    String location = await getLocation(zone.locationId);
+    zones.add(ZoneWithLocationData(zoneId: zone.zoneId, locationId: zone.locationId, zoneName: zone.zoneName, imgUrl: zone.imgUrl, locationName: location));
+  
+}
+    return zones;
+  } catch (e) {
+    throw CouldNotGetException();
+  }
+ 
 }
 
   Future<ZoneData> getZone(String zoneId) async {
@@ -439,9 +507,27 @@ Future<List<String>> getPinnedZones() async {
     List<Timestamp> startDateTimeList,
   ) async {
     try {
-      final userIds = <String>[];
+      String getDayOrdinal(int day) {
+        if (day >= 11 && day <= 13) {
+          return '${day}th';
+        }
+        switch (day % 10) {
+          case 1:
+            return '${day}st';
+          case 2:
+            return '${day}nd';
+          case 3:
+            return '${day}rd';
+          default:
+            return '${day}th';
+        }
+      }
+
+      final ZoneData zoneData = await FirebaseCloudStorage().getZone(zoneId);
       for (var startDateTime in startDateTimeList) {
+        final userIds = <String>[];
         // Check if a disable reservation already exists for the given zoneId and startDateTime
+
         final existingDocs = await disable
             .where(zoneIdField, isEqualTo: zoneId)
             .where(startDateTimeField,
@@ -512,9 +598,9 @@ Future<List<String>> getPinnedZones() async {
                   'via': 'FlutterFire Cloud Messaging!!!',
                 },
                 'notification': {
-                  'title': 'Reservation Canceled',
+                  'title': 'Your reservation has been canceled.',
                   'body':
-                      'Your reservation has been canceled. Please check the app for more information.',
+                      'Canceled reservation: ${zoneData.zoneName}, on ${getDayOrdinal(startDateTime.toDate().day)} ${DateFormat('MMMM').format(startDateTime.toDate())}',
                 },
               });
             }
@@ -542,6 +628,23 @@ Future<List<String>> getPinnedZones() async {
     List<Timestamp> startDateTimeList,
   ) async {
     try {
+      String getDayOrdinal(int day) {
+        if (day >= 11 && day <= 13) {
+          return '${day}th';
+        }
+        switch (day % 10) {
+          case 1:
+            return '${day}st';
+          case 2:
+            return '${day}nd';
+          case 3:
+            return '${day}rd';
+          default:
+            return '${day}th';
+        }
+      }
+
+      final ZoneData zoneData = await FirebaseCloudStorage().getZone(zoneId);
       for (final id in reservationIds) {
         final reservationRef = disable.doc(id);
         await reservationRef.delete();
@@ -550,9 +653,8 @@ Future<List<String>> getPinnedZones() async {
       final querySnapshot =
           await userRes.where(zoneIdField, isEqualTo: zoneId).get();
 
-      final userIds = <String>[];
-
       for (var startDateTime in startDateTimeList) {
+        final userIds = <String>[];
         if (querySnapshot.docs.isNotEmpty) {
           await Future.wait(
             querySnapshot.docs.map(
@@ -596,9 +698,9 @@ Future<List<String>> getPinnedZones() async {
                   'via': 'FlutterFire Cloud Messaging!!!',
                 },
                 'notification': {
-                  'title': 'Reservation Available',
+                  'title': 'Your canceled reservation is now available again.',
                   'body':
-                      'Your canceled reservation is now available again. Please check the app for more information.',
+                      'Available reservation: ${zoneData.zoneName}, on ${getDayOrdinal(startDateTime.toDate().day)} ${DateFormat('MMMM').format(startDateTime.toDate())}',
                 },
               });
             }
