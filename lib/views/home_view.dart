@@ -666,17 +666,31 @@ class _HomeViewState extends State<HomeView> {
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          Container(
-                                                            width: 100,
-                                                            height: 16,
-                                                            color: Colors.white,
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Container(
+                                                              width: 100,
+                                                              height: 16,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
                                                           ),
                                                           const SizedBox(
                                                               height: 8),
-                                                          Container(
-                                                            width: 200,
-                                                            height: 16,
-                                                            color: Colors.white,
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Container(
+                                                              width: 200,
+                                                              height: 16,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -736,17 +750,23 @@ class _HomeViewState extends State<HomeView> {
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          Container(
-                                                            width: 100,
-                                                            height: 16,
-                                                            color: Colors.white,
+                                                          ClipRRect(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            child: Container(
+                                                              width: 100,
+                                                              height: 16,
+                                                              color: Colors.white,
+                                                            ),
                                                           ),
                                                           const SizedBox(
                                                               height: 8),
-                                                          Container(
-                                                            width: 200,
-                                                            height: 16,
-                                                            color: Colors.white,
+                                                          ClipRRect(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            child: Container(
+                                                              width: 200,
+                                                              height: 16,
+                                                              color: Colors.white,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -806,17 +826,23 @@ class _HomeViewState extends State<HomeView> {
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          Container(
-                                                            width: 100,
-                                                            height: 16,
-                                                            color: Colors.white,
+                                                          ClipRRect(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            child: Container(
+                                                              width: 100,
+                                                              height: 16,
+                                                              color: Colors.white,
+                                                            ),
                                                           ),
                                                           const SizedBox(
                                                               height: 8),
-                                                          Container(
-                                                            width: 200,
-                                                            height: 16,
-                                                            color: Colors.white,
+                                                          ClipRRect(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            child: Container(
+                                                              width: 200,
+                                                              height: 16,
+                                                              color: Colors.white,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -1239,7 +1265,6 @@ class _HomeViewState extends State<HomeView> {
                               fontFamily: 'Poppins',
                               fontSize: 16.0,
                               fontWeight: FontWeight.w400,
-                              
                             ),
                             onTap: () {
                               setState(() {
