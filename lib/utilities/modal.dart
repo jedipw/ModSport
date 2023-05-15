@@ -319,7 +319,42 @@ dynamic showDoneConfirmationModal(
                     letterSpacing: 0.0,
                   ),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 17),
+                Text(
+                  'Any reservations already made',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'by users will be',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                Text(
+                  'automatically canceled.',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                SizedBox(height: 30),
               ],
             ),
             Column(
@@ -1121,7 +1156,6 @@ dynamic showSaveConfirmationModal(
 
 dynamic showLogoutConfirmationModal(BuildContext context,
     OnPressedCallBack onPressed, bool showSuccess, String mode) {
-
   showDialog(
     context: context,
     barrierColor: Colors.white.withOpacity(0.5),

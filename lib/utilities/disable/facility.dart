@@ -4,7 +4,7 @@ import 'package:shimmer/shimmer.dart';
 
 class FacilityName extends StatelessWidget {
   final bool isZoneNameLoaded;
-  
+
   final String zoneName;
 
   const FacilityName({
@@ -27,10 +27,13 @@ class FacilityName extends StatelessWidget {
                 baseColor: const Color.fromARGB(255, 216, 216, 216),
                 highlightColor: const Color.fromRGBO(173, 173, 173, 0.824),
                 child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.white,
+                  ),
                   margin: const EdgeInsets.only(top: 5),
                   width: 150,
                   height: 25.0,
-                  color: Colors.white,
                 ),
               ),
       ],
