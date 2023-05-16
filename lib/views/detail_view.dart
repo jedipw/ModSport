@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
 
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 import 'package:modsport/utilities/drawer.dart';
-import 'package:modsport/utilities/reservation/location_name.dart';
 import 'package:modsport/utilities/types.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -184,6 +186,14 @@ class _DetaiViewState extends State<DetailView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+              statusBarColor:
+                  Colors.white, // set to Colors.black for black color
+            ),
+          )
+        : null;
     final formattedTime = DateFormat('HH:mm').format(widget.startDateTime);
     final formattedEndTime = DateFormat('HH:mm').format(endTime);
 

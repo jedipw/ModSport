@@ -1,12 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/custom_button/next_button.dart';
 import 'package:modsport/utilities/reservation/go_back_button.dart';
 import 'package:modsport/utilities/reservation/location_name.dart';
-import 'package:modsport/utilities/reservation/reserve_button.dart';
 
 import 'package:modsport/utilities/reservation/time_slot_disable.dart';
 import 'package:modsport/utilities/reservation/time_slot_reserve.dart';
@@ -113,7 +110,8 @@ void main() {
     expect(find.byType(Icon), findsNWidgets(reservation.length));
   });
 
-  testWidgets('ToggleRoleButton displays correctly', (WidgetTester tester) async {
+  testWidgets('ToggleRoleButton displays correctly',
+      (WidgetTester tester) async {
     // Set up variables for the test
     bool onPressedCalled = false;
     bool isError = false;
@@ -220,7 +218,7 @@ void main() {
       ),
     );
 
-    final textOverflow = zoneName.substring(0, 15) + '...';
+    final textOverflow = '${zoneName.substring(0, 15)} ...';
     final truncatedText = tester.widget<Text>(textWidget);
     expect(truncatedText.data, textOverflow);
 
@@ -252,38 +250,36 @@ void main() {
     expect(errorText.style!.fontSize, 26);
     expect(errorText.style!.height, 1.5);
     expect(errorText.style!.color, primaryOrange);
-
   });
 
   testWidgets('GoBackButton displays correctly', (WidgetTester tester) async {
-  // Set up variables for the test
-  const isSwipingUp = true;
-  const isError = false;
-  const isEverythingLoaded = true;
-  const isDisableMenu = false;
+    // Set up variables for the test
+    const isSwipingUp = true;
+    const isError = false;
+    const isEverythingLoaded = true;
+    const isDisableMenu = false;
 
-  // Build the GoBackButton widget
-  await tester.pumpWidget(
-    const MaterialApp(
-      home: Scaffold(
-        body: GoBackButton(
-          isSwipingUp: isSwipingUp,
-          isError: isError,
-          isEverythingLoaded: isEverythingLoaded,
-          isDisableMenu: isDisableMenu,
+    // Build the GoBackButton widget
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: GoBackButton(
+            isSwipingUp: isSwipingUp,
+            isError: isError,
+            isEverythingLoaded: isEverythingLoaded,
+            isDisableMenu: isDisableMenu,
+          ),
         ),
       ),
-    ),
-  );
+    );
 
-  // Verify that the GoBackButton is displayed correctly
-  final elevatedButton = find.byType(ElevatedButton);
-  final icon = find.byIcon(Icons.arrow_back_ios);
+    // Verify that the GoBackButton is displayed correctly
+    final elevatedButton = find.byType(ElevatedButton);
+    final icon = find.byIcon(Icons.arrow_back_ios);
 
-  expect(elevatedButton, findsOneWidget);
-  expect(icon, findsOneWidget);
-
-});
+    expect(elevatedButton, findsOneWidget);
+    expect(icon, findsOneWidget);
+  });
 
   testWidgets('LocationName displays correctly', (WidgetTester tester) async {
     // Set up variables for the test
@@ -317,6 +313,7 @@ void main() {
 
     // Verify the opacity
     final opacityWidget = tester.widget<Opacity>(find.byType(Opacity));
+    // ignore: dead_code
     expect(opacityWidget.opacity, isSwipingUp ? 0.33 : 1);
 
     // Verify the properties of the Text widget
