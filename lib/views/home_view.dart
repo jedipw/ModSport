@@ -1,4 +1,5 @@
 // Import firebase cloud storage
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -34,6 +35,14 @@ class _HomeViewState extends State<HomeView> {
   bool isPinned = true;
   bool _isZoneLoaded = false;
   bool _isButtonLoaded = false;
+  bool areSnapshotsLoaded(List<AsyncSnapshot<String>> snapshots) {
+  for (var snapshot in snapshots) {
+    if (snapshot.connectionState != ConnectionState.done) {
+      return false;
+    }
+  }
+  return true;
+}
   bool _isSearching = false; //detect search bar
   int index = 0;
   CategoryData? selectedCategory;
@@ -153,31 +162,52 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  void _sortZones() async {
-    setState(() async {
-      // get pinned zones and sort them by name
-      List<String> pinnedZoneIds =
-          await FirebaseCloudStorage().getPinnedZones();
-      List<ZoneWithLocationData> pinnedZones = _zoneList
-          .where((zone) => pinnedZoneIds.contains(zone.zoneId))
-          .toList();
-      pinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
+  void _sortZones() {
+  setState(() {
+    isSortZone = false; // Reset the isSortZone flag to false
+  });
 
-      // sort the remaining zones by name
-      List<ZoneWithLocationData> unpinnedZones = _zoneList
-          .where((zone) => !pinnedZoneIds.contains(zone.zoneId))
-          .toList();
-      unpinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
+  Completer<void> completer = Completer<void>(); // Create a completer
 
-      // merge the two lists, with pinned zones first
-      _zoneList.clear();
-      setState(() {
-        _zoneList.addAll(pinnedZones);
-        _zoneList.addAll(unpinnedZones);
-        isSortZone = true;
-      });
+  FirebaseCloudStorage().getPinnedZones().then((List<String> pinnedZoneIds) {
+    // get pinned zones and sort them by name
+    List<ZoneWithLocationData> pinnedZones = _zoneList
+        .where((zone) => pinnedZoneIds.contains(zone.zoneId))
+        .toList();
+    pinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
+
+    // sort the remaining zones by name
+    List<ZoneWithLocationData> unpinnedZones = _zoneList
+        .where((zone) => !pinnedZoneIds.contains(zone.zoneId))
+        .toList();
+    unpinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
+
+    // merge the two lists, with pinned zones first
+    _zoneList.clear();
+    setState(() {
+      _zoneList.addAll(pinnedZones);
+      _zoneList.addAll(unpinnedZones);
+      isSortZone = true;
     });
-  }
+
+    completer.complete(); // Complete the completer when sorting is finished
+  });
+
+  Future.delayed(const Duration(seconds: 5)).then((_) {
+    // If the sorting takes too long (e.g., more than 5 seconds), complete the completer
+    if (!completer.isCompleted) {
+      completer.complete();
+    }
+  });
+
+  // completer.future.then((_) {
+  //   // Do any follow-up actions after the zones are sorted
+  //   // This block will execute when the completer is completed
+  //   // For example, you can update UI elements or trigger additional functions
+  //   // after the sorting is done.
+  // });
+}
+
 
   // Future<void> _fetchPinnedZones() async {
   //   final userId = FirebaseAuth.instance.currentUser!.uid;
@@ -507,6 +537,7 @@ class _HomeViewState extends State<HomeView> {
                                                                             e.zoneId] =
                                                                         (pinId !=
                                                                             '');
+                                                                            
 
                                                                     return GestureDetector(
                                                                       onTap:
@@ -1290,6 +1321,7 @@ class _HomeViewState extends State<HomeView> {
                                           _isSearching = false;
                                           _searchController.clear();
                                           _searchText = '';
+                                          _isAll = true;
                                         });
                                         FocusScope.of(context).unfocus();
                                       },
