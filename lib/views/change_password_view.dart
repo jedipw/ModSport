@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/custom_text_field/password_text_field.dart';
 import 'package:modsport/utilities/drawer.dart';
-// import 'package:path/path.dart';
 
 import '../utilities/custom_text_field/reg_password_field.dart';
 import '../utilities/modal.dart';
@@ -92,7 +94,6 @@ class _CustomPageViewState extends State<CustomPageView> {
       await currentUser
           .reauthenticateWithCredential(cred)
           .then((value) => {currentUser.updatePassword(newPassword)})
-          // .then((value) => log("New password set! ${currentUser.toString()}"))
           .then((value) => {
                 if (mounted)
                   {
@@ -106,7 +107,6 @@ class _CustomPageViewState extends State<CustomPageView> {
               })
           .then((value) => showSuccessPasswordModal(context, true));
     } catch (error) {
-      // log(error.toString());
       if (mounted) {
         setState(() {
           _isCorrectPassword = false;
@@ -126,6 +126,12 @@ class _CustomPageViewState extends State<CustomPageView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.black, // set to Colors.black for black color
+          ))
+        : null;
     return
         // First page
         SingleChildScrollView(
@@ -221,7 +227,6 @@ class _CustomPageViewState extends State<CustomPageView> {
                       _currentPasswordController.text.toString(),
                       "P") ==
                   "OK") {
-                // log("New password OK");
                 if (mounted) {
                   setState(() {
                     _isPasswordValid = true;

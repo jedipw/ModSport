@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
 import '../utilities/custom_button/next_button.dart';
@@ -13,6 +16,14 @@ class ForgetPasswordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+              statusBarColor:
+                  Colors.black, // set to Colors.black for black color
+            ),
+          )
+        : null;
     // required method to build the UI
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -113,7 +124,6 @@ class _CustomPageViewState extends State<CustomPageView> {
             pageIndex: 1,
             controller: _controller,
             onPressed: () async {
-              // toSecondPage();
               if (_isValidEmail(emailController.text)) {
                 if (mounted) {
                   setState(() {
@@ -153,13 +163,10 @@ class _CustomPageViewState extends State<CustomPageView> {
   }
 
   void toSecondPage() {
-    if (_isValidEmail(emailController.text)
-        // && getUserIdFromEmail(emailController.text) != null
-        ) {
+    if (_isValidEmail(emailController.text)) {
       if (mounted) {
         setState(() {
           _isEmailValid = true;
-          // userId = getUserIdFromEmail(emailController.text) as String;
         });
       }
       _controller.animateToPage(

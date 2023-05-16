@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
@@ -38,6 +40,12 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.black, // set to Colors.black for black color
+          ))
+        : null;
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       // User is already signed in
@@ -221,9 +229,6 @@ class _LoginViewState extends State<LoginView> {
                                                   });
                                                 } else {
                                                   /////////////////////////////////////////////// CHANGE NAV NOT VERIFY MAIL HERE ///////////////////////////////////////////////
-                                                  // Navigator.of(context).pushNamed(
-                                                  //   verifyEmailRoute,
-                                                  // );
                                                   Future.delayed(Duration.zero,
                                                       () async {
                                                     await Navigator.of(context)

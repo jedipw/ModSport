@@ -1,6 +1,7 @@
 // Import firebase cloud storage
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 
 import 'package:flutter/material.dart';
@@ -9,9 +10,7 @@ import 'package:modsport/utilities/drawer.dart';
 import 'package:modsport/views/reservation_view.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../services/cloud/cloud_storage_constants.dart';
 import '../utilities/types.dart';
-import 'dart:developer';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -28,14 +27,10 @@ class _HomeViewState extends State<HomeView> {
   // String _selectedCategory = 'All'; // initialize to 'All'
 
   List<ZoneWithLocationData> _zoneList = [];
-  List<String> _categoryList = [];
   List<CategoryData> _category = [];
 
-  List<bool> _pushPinClickedList = [];
-  List<ZoneWithLocationData> _filteredZones = [];
-  List<String> _pinnedZones = [];
-  List<DocumentSnapshot> _zonesByCategory = [];
-  bool _isCategoryLoaded = false;
+  final List<bool> _pushPinClickedList = [];
+  final List<ZoneWithLocationData> _filteredZones = [];
   bool isPinned = true;
   bool _isZoneLoaded = false;
   bool _isButtonLoaded = false;
@@ -46,10 +41,9 @@ class _HomeViewState extends State<HomeView> {
   bool _isError = false;
   bool isSortZone = false;
 
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<ZoneWithLocationData> _foundZones = [];
-  final ScrollController _scrollController = ScrollController();
-  Map<String, bool> _pushPinClickedMap = {};
+  final Map<String, bool> _pushPinClickedMap = {};
 
   @override
   void initState() {
@@ -75,16 +69,6 @@ class _HomeViewState extends State<HomeView> {
       });
     }).catchError((e) {});
     _sortZones();
-    FirebaseCloudStorage().getAllCategories().then((categoryIds) {
-      setState(() {
-        _categoryList = categoryIds;
-      });
-    });
-    FirebaseCloudStorage().getAllZoneToCategory().then((zones) {
-      setState(() {
-        _zonesByCategory = zones;
-      });
-    }).catchError((e) {});
   }
 
   @override
@@ -169,13 +153,6 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  void _handleUnpinClick(String zoneId) {
-    setState(() {
-      _pushPinClickedMap[zoneId] = false;
-      FirebaseCloudStorage().unpinZone(zoneId);
-    });
-  }
-
   void _sortZones() async {
     setState(() async {
       // get pinned zones and sort them by name
@@ -255,6 +232,14 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+              statusBarColor:
+                  Colors.white, // set to Colors.black for black color
+            ),
+          )
+        : null;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -334,8 +319,6 @@ class _HomeViewState extends State<HomeView> {
                                           // Set initial value of push pin clicked status for new items
                                           _pushPinClickedList.add(false);
                                         }
-                                        bool isPushPinClicked =
-                                            _pushPinClickedList[index];
                                         return GestureDetector(
                                           onTap: () {
                                             Navigator.push(
@@ -751,21 +734,29 @@ class _HomeViewState extends State<HomeView> {
                                                                 .start,
                                                         children: [
                                                           ClipRRect(
-                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
                                                             child: Container(
                                                               width: 100,
                                                               height: 16,
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                           ),
                                                           const SizedBox(
                                                               height: 8),
                                                           ClipRRect(
-                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
                                                             child: Container(
                                                               width: 200,
                                                               height: 16,
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                           ),
                                                         ],
@@ -827,21 +818,29 @@ class _HomeViewState extends State<HomeView> {
                                                                 .start,
                                                         children: [
                                                           ClipRRect(
-                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
                                                             child: Container(
                                                               width: 100,
                                                               height: 16,
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                           ),
                                                           const SizedBox(
                                                               height: 8),
                                                           ClipRRect(
-                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
                                                             child: Container(
                                                               width: 200,
                                                               height: 16,
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                           ),
                                                         ],
@@ -868,7 +867,7 @@ class _HomeViewState extends State<HomeView> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: _isButtonLoaded
                           ? Container(
-                              margin: EdgeInsets.only(left: 15),
+                              margin: const EdgeInsets.only(left: 15),
                               // button to filter
                               height: 50,
                               child: ListView(
@@ -890,18 +889,20 @@ class _HomeViewState extends State<HomeView> {
                                       ],
                                     ),
                                     child: ElevatedButton(
-                                      onPressed: () async {
-                                        // Do something when the button is pressed
-                                        // For example, show all zones that have not been filtered yet
-                                        setState(() {
-                                          _isZoneLoaded = false;
-                                          selectedCategory = null;
-                                          _isAll = true;
-                                          isSortZone = false;
-                                        });
-                                        await _getZonesData()
-                                            .then((_) => _sortZones());
-                                      },
+                                      onPressed: _isZoneLoaded
+                                          ? () async {
+                                              // Do something when the button is pressed
+                                              // For example, show all zones that have not been filtered yet
+                                              setState(() {
+                                                _isZoneLoaded = false;
+                                                selectedCategory = null;
+                                                _isAll = true;
+                                                isSortZone = false;
+                                              });
+                                              await _getZonesData()
+                                                  .then((_) => _sortZones());
+                                            }
+                                          : null,
                                       style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all(
@@ -950,15 +951,18 @@ class _HomeViewState extends State<HomeView> {
                                         ],
                                       ),
                                       child: ElevatedButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            _isZoneLoaded = false;
-                                            selectedCategory = e;
-                                            _isAll = false;
-                                            isSortZone = false;
-                                          });
-                                          await _getZonesById(e.categoryId);
-                                        },
+                                        onPressed: _isZoneLoaded
+                                            ? () async {
+                                                setState(() {
+                                                  _isZoneLoaded = false;
+                                                  selectedCategory = e;
+                                                  _isAll = false;
+                                                  isSortZone = false;
+                                                });
+                                                await _getZonesById(
+                                                    e.categoryId);
+                                              }
+                                            : null,
                                         style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
@@ -998,7 +1002,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             )
                           : Container(
-                              padding: EdgeInsets.only(left: 15),
+                              padding: const EdgeInsets.only(left: 15),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(

@@ -1,11 +1,11 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
-// import 'package:modsport/firebase_options.dart';
 import 'package:modsport/utilities/modal.dart';
-// import 'package:dio/dio.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({Key? key}) : super(key: key);
@@ -43,6 +43,12 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.black, // set to Colors.black for black color
+          ))
+        : null;
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return const Text("Loading...");
@@ -76,10 +82,6 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     ],
                   ),
                 ),
-                // SingleChildScrollView(
-                // child:
-                // Expanded(
-                //   child:
                 SingleChildScrollView(
                     child: Center(
                   child: Column(
@@ -138,24 +140,15 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                                 const Color(0x3D000000)),
                             elevation: MaterialStateProperty.all(4),
                           ),
-                          // onPressed: () => (_) => Navigator.of(context).pushNamedAndRemoveUntil(
-                          //   // navigates to homeRoute screen and removes previous routes
-                          //   loginRoute,
-                          //   (route) => false,
-                          // ),
                           onPressed: () async {
-                            // final user = FirebaseAuth.instance.currentUser;
                             try {
                               verifyEmail().then((value) =>
                                   showSuccessMailModal(context, true));
-                             
                             } on FirebaseAuthException catch (_) {
                               (_) => {Navigator.of(context).pop()};
-                              // log(e.toString());
                             }
                           },
                           child: const Text(
-                            // "Resend email",
                             "Send email",
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -169,8 +162,6 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     ],
                   ),
                 )),
-                // ),
-                // ),
               ],
             ),
           ),

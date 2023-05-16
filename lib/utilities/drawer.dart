@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
@@ -107,13 +105,6 @@ class ModSportDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil(homeRoute, (route) => false);
-                  Platform.isIOS
-                      ? SystemChrome.setSystemUIOverlayStyle(
-                          SystemUiOverlayStyle.light.copyWith(
-                          statusBarColor: Colors
-                              .white, // set to Colors.black for black color
-                        ))
-                      : null;
                 },
               ),
               ListTile(
@@ -140,13 +131,6 @@ class ModSportDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil(statusRoute, (route) => false);
-                  Platform.isIOS
-                      ? SystemChrome.setSystemUIOverlayStyle(
-                          SystemUiOverlayStyle.light.copyWith(
-                          statusBarColor: Colors
-                              .white, // set to Colors.black for black color
-                        ))
-                      : null;
                 },
               ),
               ListTile(
@@ -173,14 +157,6 @@ class ModSportDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       helpCenterRoute, (route) => false);
-                  Platform.isIOS
-                      ? SystemChrome.setSystemUIOverlayStyle(
-                          SystemUiOverlayStyle.light.copyWith(
-                            statusBarColor: Colors
-                                .white, // set to Colors.black for black color
-                          ),
-                        )
-                      : null;
                 },
               ),
               ListTile(
@@ -207,14 +183,6 @@ class ModSportDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       changePasswordRoute, (route) => false);
-                  Platform.isIOS
-                      ? SystemChrome.setSystemUIOverlayStyle(
-                          SystemUiOverlayStyle.dark.copyWith(
-                            statusBarColor: Colors
-                                .white, // set to Colors.black for black color
-                          ),
-                        )
-                      : null;
                 },
               ),
             ],
@@ -242,13 +210,8 @@ class ModSportDrawer extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        showLogoutConfirmationModal(context, () {
-                          // Navigator.of(context).pop();
-                          // showLoadModal(context);
-                          // Navigator.of(context).pop();
-                          // Navigator.of(context).pushNamedAndRemoveUntil(
-                          //     loginRoute, (route) => false);
-                        }, false, logOutMode);
+                        showLogoutConfirmationModal(
+                            context, () {}, false, logOutMode);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
