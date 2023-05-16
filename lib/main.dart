@@ -90,6 +90,7 @@ class _MainAppState extends State<MainApp> {
 
     NotificationService(navigatorKey: navigatorKey).initNotification();
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
       // Setting the initial route for the app
       initialRoute: loginRoute,
