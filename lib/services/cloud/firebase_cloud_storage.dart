@@ -271,7 +271,6 @@ Future<String> getPin(String zoneId) async {
         .where(userIdField, isEqualTo: userId)
         .get();
     String pinId = querySnapshot.docs.isNotEmpty ? querySnapshot.docs[0].id : "";
-    print("getPin result: $pinId");
     return pinId;
   } catch (e) {
     throw CouldNotGetException();

@@ -1,6 +1,9 @@
 // Import a neccesary package from Flutter.
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modsport/constants/color.dart';
 
 // Import constants
@@ -505,6 +508,14 @@ class _ReservationViewState extends State<ReservationView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+              statusBarColor:
+                  Colors.white, // set to Colors.black for black color
+            ),
+          )
+        : null;
     // Check if every data has been retrieved from the database
     bool isEverythingLoaded() {
       return _isHasRoleLoaded &&

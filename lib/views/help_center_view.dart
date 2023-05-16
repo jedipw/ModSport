@@ -19,22 +19,15 @@ class _HelpCenterViewState extends State<HelpCenterView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+              statusBarColor:
+                  Colors.white, // set to Colors.black for black color
+            ),
+          )
+        : null;
     return Scaffold(
-      onDrawerChanged: (isOpened) {
-        isOpened && Platform.isIOS
-            ? SystemChrome.setSystemUIOverlayStyle(
-                SystemUiOverlayStyle.dark.copyWith(
-                statusBarColor:
-                    primaryGray, // set to Colors.black for black color
-              ))
-            : Platform.isIOS
-                ? SystemChrome.setSystemUIOverlayStyle(
-                    SystemUiOverlayStyle.light.copyWith(
-                    statusBarColor:
-                        primaryGray, // set to Colors.black for black color
-                  ))
-                : null;
-      },
       key: _scaffoldKey,
       drawer: ModSportDrawer(currentDrawerIndex: _currentDrawerIndex),
       body: Stack(
@@ -100,7 +93,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               ),
                               children: <Widget>[
                                 ListTile(
-                                    // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
                                   "      1) Press the Menu bar\n"
                                   "      2) Navigate to the Reserve Page\n"
@@ -135,7 +127,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               ),
                               children: <Widget>[
                                 ListTile(
-                                    // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
                                   "      1) Press the Menu bar\n"
                                   "      2) Navigate to the Reserve Page\n"
@@ -171,7 +162,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               ),
                               children: <Widget>[
                                 ListTile(
-                                    // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
                                   "      1) Press the Menu bar\n"
                                   "      2) Navigate to the Status Page\n"
@@ -203,7 +193,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               ),
                               children: <Widget>[
                                 ListTile(
-                                    // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
                                   "      1) Press the Menu bar\n"
                                   "      2)	Navigate to the Change Password Page\n"
@@ -256,7 +245,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               ),
                               children: <Widget>[
                                 ListTile(
-                                    // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
                                   "      1) Press the Menu bar\n"
                                   "      2) Navigate to the Reserve Page\n"
@@ -295,7 +283,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               ),
                               children: <Widget>[
                                 ListTile(
-                                    // tileColor: Color.fromARGB(255, 254, 240, 226),
                                     title: Text(
                                   "      1) Press the Menu bar\n"
                                   "      2) Navigate to the Reserve Page\n"
@@ -395,7 +382,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                         children: <Widget>[
                           //Q1
                           ListTile(
-                            // tileColor: const Color.fromARGB(255, 255, 230, 205),
                             title: RichText(
                               text: const TextSpan(
                                 children: [
@@ -428,7 +414,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           //Q2
                           ListTile(
-                            // tileColor: const Color.fromARGB(255, 254, 240, 226),
                             title: RichText(
                               text: const TextSpan(
                                 children: [
@@ -461,7 +446,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           //Q3
                           ListTile(
-                            // tileColor: const Color.fromARGB(255, 255, 230, 205),
                             title: RichText(
                               text: const TextSpan(
                                 children: [
@@ -495,7 +479,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           //Q4
                           ListTile(
-                            // tileColor: const Color.fromARGB(255, 254, 240, 226),
                             title: RichText(
                               text: const TextSpan(
                                 children: [
@@ -568,7 +551,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           children: <Widget>[
                             ListTile(
-                                // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
                               "     If you are unable to log in to the app, "
                               "please ensure that you are using the correct username and password."
@@ -600,7 +582,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           children: [
                             ListTile(
-                                // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
                               "     If you're having trouble making a reservation, check "
                               "that the facility you want to reserve is available.",
@@ -630,7 +611,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           children: <Widget>[
                             ListTile(
-                                // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
                               "     If the facility you wish to reserve is unavailable,"
                               " please consider selecting a different date or time. If the facility "
@@ -662,7 +642,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           children: <Widget>[
                             ListTile(
-                                // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
                               "     If the app crashes or freezes, try restarting your"
                               " device and then launching the app again. If the problem"
@@ -695,7 +674,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           ),
                           children: <Widget>[
                             ListTile(
-                                // tileColor: Color.fromARGB(255, 254, 240, 226),
                                 title: Text(
                               "     If you have any feedback or suggestions for the app,"
                               " please don't hesitate to reach out to our customer support team. "
@@ -723,8 +701,6 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: ExpansionTile(
-                      // collapsedBackgroundColor: Colors.amber,
-                      // backgroundColor: Colors.amber,
                       collapsedIconColor: primaryOrange,
                       iconColor: secondaryOrange,
                       title: const Text(

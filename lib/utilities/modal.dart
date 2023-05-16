@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:modsport/constants/color.dart';
-import 'package:modsport/constants/mode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modsport/services/cloud/firebase_cloud_storage.dart';
 
@@ -84,132 +83,6 @@ dynamic showLoadModal(BuildContext context) {
               SizedBox(height: 60),
             ],
           ),
-        ),
-      );
-    },
-  );
-}
-
-dynamic showConfirmationModal(BuildContext context, OnPressedCallBack onPressed,
-    bool showSuccess, String mode) {
-  String modeWord = '';
-
-  switch (mode) {
-    case editMode:
-      modeWord = 'edit';
-      break;
-    case disableMode:
-      modeWord = 'disable';
-      break;
-    case cancelMode:
-      modeWord = 'cancel';
-      break;
-    case logOutMode:
-      modeWord = 'log out';
-      break;
-    case enableMode:
-      modeWord = 'enable';
-      break;
-  }
-
-  showDialog(
-    context: context,
-    barrierColor: Colors.white.withOpacity(0.5),
-    builder: (BuildContext context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        contentPadding: EdgeInsets.zero,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              children: [
-                const SizedBox(height: 40),
-                Text(
-                  'Are you sure\nyou want to\n$modeWord ?',
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                    color: primaryRed,
-                    height: 1.3,
-                    letterSpacing: 0.0,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 30),
-              ],
-            ),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 84,
-                      height: 43,
-                      child: TextButton(
-                        onPressed: onPressed,
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryGreen,
-                          ),
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                        child: const Text(
-                          'Yes',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20.0,
-                            height: 1.2,
-                            letterSpacing: 0.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 34.0),
-                    SizedBox(
-                      width: 84,
-                      height: 43,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            primaryRed,
-                          ),
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                        child: const Text(
-                          'No',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20.0,
-                            height: 1.2,
-                            letterSpacing: 0.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-          ],
         ),
       );
     },
@@ -319,7 +192,42 @@ dynamic showDoneConfirmationModal(
                     letterSpacing: 0.0,
                   ),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 17),
+                Text(
+                  'Any reservations already made',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'by users will be',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                Text(
+                  'automatically canceled.',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    color: primaryGray,
+                    height: 1.3,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                SizedBox(height: 30),
               ],
             ),
             Column(
@@ -1121,7 +1029,6 @@ dynamic showSaveConfirmationModal(
 
 dynamic showLogoutConfirmationModal(BuildContext context,
     OnPressedCallBack onPressed, bool showSuccess, String mode) {
-
   showDialog(
     context: context,
     barrierColor: Colors.white.withOpacity(0.5),

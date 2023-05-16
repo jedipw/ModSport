@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
@@ -128,6 +131,21 @@ class _DisableViewState extends State<DisableView> {
   // The build method returns a Scaffold widget
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? widget.mode == editMode
+            ? SystemChrome.setSystemUIOverlayStyle(
+                SystemUiOverlayStyle.dark.copyWith(
+                  statusBarColor:
+                      Colors.black, // set to Colors.black for black color
+                ),
+              )
+            : SystemChrome.setSystemUIOverlayStyle(
+                SystemUiOverlayStyle.light.copyWith(
+                  statusBarColor:
+                      Colors.white, // set to Colors.black for black color
+                ),
+              )
+        : null;
     return Scaffold(
       // A Center widget containing a Text widget
       body: Stack(

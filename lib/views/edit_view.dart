@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/mode.dart';
@@ -11,7 +14,6 @@ import 'package:modsport/utilities/modal.dart';
 import 'package:modsport/utilities/reservation/function.dart';
 import 'package:modsport/utilities/types.dart';
 import 'package:modsport/views/disable_view.dart';
-import 'package:shimmer/shimmer.dart';
 
 class EditView extends StatefulWidget {
   const EditView(
@@ -266,6 +268,14 @@ class _EditViewState extends State<EditView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+              statusBarColor:
+                  Colors.white, // set to Colors.black for black color
+            ),
+          )
+        : null;
     int numOfSelectedTimeSlots =
         _selectedTimeSlots.where((element) => element == true).length;
     // Check if every data has been retrieved from the database

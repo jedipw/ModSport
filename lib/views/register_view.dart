@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modsport/constants/color.dart';
 import 'package:modsport/constants/routes.dart';
 import 'package:modsport/utilities/custom_text_field/email_text_field.dart';
@@ -31,8 +34,6 @@ class _RegisterViewState extends State<RegisterView> {
   bool _isLnameValid = true;
   bool _isEmailValid = true;
   bool _isPasswordOk = true;
-  // bool _isQuestionValid = true;
-  // bool _isAnswerValid = true;
 
   @override
   void dispose() {
@@ -48,10 +49,15 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    Platform.isIOS
+        ? SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.black, // set to Colors.black for black color
+          ))
+        : null;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-          // resizeToAvoidBottomInset: false,
           body: SingleChildScrollView(
         child: Column(
           children: [
@@ -116,13 +122,6 @@ class _RegisterViewState extends State<RegisterView> {
                           "confirm password"),
                       isPasswordOk: _isPasswordOk,
                     ),
-                    // QuestionTextField(
-                    //     controller: questionController,
-                    //     isQuestionValid: _isQuestionValid),
-                    // AnswerTextField(
-                    //     controller: answerController,
-                    //     isAnswerValid: _isAnswerValid),
-
                     Center(
                       // centers child widget in the screen
                       child: TextButton(
@@ -136,7 +135,6 @@ class _RegisterViewState extends State<RegisterView> {
                               MaterialStateProperty.all(const Size(130, 64)),
                         ),
                         onPressed: () async {
-                          // if (_formKey.currentState!.validate()) {
                           if (_isEverythingOk(
                               firstNameController.text.trim(),
                               lastNameController.text.trim(),
@@ -174,16 +172,9 @@ class _RegisterViewState extends State<RegisterView> {
                                             .trim()
                                             .toLowerCase(),
                                         'hasRole': false,
-                                        // 'question':
-                                        //     questionController.text.trim(),
-                                        // 'answer': answerController.text.trim(),
                                       })
-                                      .then((value) {
-                                        // log('User added to Firestore');
-                                      })
-                                      .catchError((error) {
-                                        // log('Error adding user to Firestore: $error');
-                                      })
+                                      .then((value) {})
+                                      .catchError((error) {})
                                       .then((value) =>
                                           Navigator.of(context).pop())
                                       .then((value) => Navigator.of(context)
@@ -200,7 +191,6 @@ class _RegisterViewState extends State<RegisterView> {
                                       Navigator.of(context).pop();
                                     },
                                   );
-                                  // throw(e);
                                 }
                               },
                               firstNameController.text
@@ -266,11 +256,11 @@ class _RegisterViewState extends State<RegisterView> {
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.of(context)
-                                              .pushNamedAndRemoveUntil(
-                                            // navigates to homeRoute screen and removes previous routes
-                                            loginRoute,
-                                            (route) => false,
-                                          );
+                                            .pushNamedAndRemoveUntil(
+                                          // navigates to homeRoute screen and removes previous routes
+                                          loginRoute,
+                                          (route) => false,
+                                        );
                                       },
                                       child: const Text(
                                         "Sign in",
@@ -324,14 +314,6 @@ class _RegisterViewState extends State<RegisterView> {
     }
     return "OK";
   }
-
-  // bool _isValidQuestion(String question) {
-  //   return (question != "" && question.length > 10);
-  // }
-
-  // bool _isValidAnswer(String answer) {
-  //   return (answer != "" && answer.length > 3);
-  // }
 
   bool _isEverythingOk(String fName, String lName, String email,
       String password1, String password2, String question, String answer) {
@@ -392,34 +374,6 @@ class _RegisterViewState extends State<RegisterView> {
         });
       }
     }
-    // if (!_isValidQuestion(question)) {
-    //   if (mounted) {
-    //     setState(() {
-    //       _isQuestionValid = false;
-    //     });
-    //   }
-    //   isOk = false;
-    // } else {
-    //   if (mounted) {
-    //     setState(() {
-    //       _isQuestionValid = true;
-    //     });
-    //   }
-    // }
-    // if (!_isValidAnswer(answer)) {
-    //   if (mounted) {
-    //     setState(() {
-    //       _isAnswerValid = false;
-    //     });
-    //   }
-    //   isOk = false;
-    // } else {
-    //   if (mounted) {
-    //     setState(() {
-    //       _isAnswerValid = true;
-    //     });
-    //   }
-    // }
     return isOk;
   }
 }
