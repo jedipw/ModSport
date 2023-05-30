@@ -115,11 +115,21 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                         ),
                       ),
                       const SizedBox(height: 25),
-                      const Text("We will send a verification email to"),
+                      const Text("You’ve entered",style: TextStyle(fontSize: 16),),
                       const SizedBox(height: 8),
-                      Text(FirebaseAuth.instance.currentUser!.email.toString()),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("${FirebaseAuth.instance.currentUser!.email}",style: const TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+                          const Text(" as the",style: TextStyle(fontSize: 16),)
+                        ],
+                      ),
                       const SizedBox(height: 8),
-                      const Text("Please check your email to verify"),
+                      const Text("email address for your account.",style: TextStyle(fontSize: 16)),
+                      const SizedBox(height: 8),
+                      const Text("Please verity this email",style: TextStyle(fontSize: 16)),
+                      const SizedBox(height: 8),
+                      const Text("address by pressing button below.",style: TextStyle(fontSize: 16)),
                       const SizedBox(height: 25),
                       TextButton(
                           style: ButtonStyle(
@@ -130,7 +140,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               borderRadius: BorderRadius.circular(40),
                             )),
                             minimumSize:
-                                MaterialStateProperty.all(const Size(170, 60)),
+                                MaterialStateProperty.all(const Size(300, 60)),
                             side: MaterialStateProperty.all(const BorderSide(
                               color: primaryOrange,
                             )),
@@ -149,7 +159,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                             }
                           },
                           child: const Text(
-                            "Send email",
+                            "Send email verification",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'Poppins',
