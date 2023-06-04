@@ -28,6 +28,7 @@ Instant workout facility reservations at KMUTT (Bangmod Campus)
 1. Sometimes Firebase takes a lot of time to send you a verification email to your university email address. So, we recommend you use this email since you can use both the staff role and the normal user role via this account.
 
 	**Email:** thitipa.neth@kmutt.ac.th
+	
 	**Password:** modsport
 2. Try not to run our code on a browser since we developed our project for mobile applications. Therefore, if you use it in a browser, the text fronts and interface may not be the same as the application on mobile.
 
@@ -35,6 +36,7 @@ Instant workout facility reservations at KMUTT (Bangmod Campus)
 1. If your verified email comes late or you want to use the sport staff role: We recommend you use this email since you can use both the staff role and the normal user role via this account.
 
 	**Email:** thitipa.neth@kmutt.ac.th
+	
 	**Password:** modsport
 
 ## 4. Developer's contact
