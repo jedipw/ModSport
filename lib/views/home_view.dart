@@ -49,15 +49,18 @@ class _HomeViewState extends State<HomeView> {
   bool _isAll = true;
   bool _isError = false;
   bool isSortZone = false;
+  bool _isPinLoaded = false;
 
   final TextEditingController _searchController = TextEditingController();
   List<ZoneWithLocationData> _foundZones = [];
+  List<ZoneWithLocationData> _filteredFoundZones = [];
   final Map<String, bool> _pushPinClickedMap = {};
 
   @override
   void initState() {
     super.initState();
     _foundZones = _zoneList;
+    _filteredFoundZones = List<ZoneWithLocationData>.from(_zoneList);
     fetchData();
 
     FirebaseCloudStorage().getAllZones().then((zoneList) {
@@ -143,6 +146,8 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  
+
   void _handlePushPinClick(String zoneId) {
     setState(() {
       _pushPinClickedMap[zoneId] = true;
@@ -161,6 +166,8 @@ class _HomeViewState extends State<HomeView> {
       _pushPinClickedList.insert(0, true);
     });
   }
+
+  
 
   void _sortZones() {
   setState(() {
@@ -192,6 +199,9 @@ class _HomeViewState extends State<HomeView> {
 
     completer.complete(); // Complete the completer when sorting is finished
   });
+
+  
+  
 
   Future.delayed(const Duration(seconds: 5)).then((_) {
     // If the sorting takes too long (e.g., more than 5 seconds), complete the completer
@@ -274,6 +284,9 @@ class _HomeViewState extends State<HomeView> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
+          if(_isSearching){
+            _isAll = true;
+          }
           _isSearching = false;
           _searchController.clear();
           _searchText = '';
@@ -333,8 +346,8 @@ class _HomeViewState extends State<HomeView> {
                             const SizedBox(height: 230),
 
                             // Start writing your code here
-
-                            _isZoneLoaded && isSortZone
+                            
+                            _isZoneLoaded && isSortZone 
                                 ? Container(
                                     padding: const EdgeInsets.only(top: 35),
                                     child: Column(
@@ -1169,7 +1182,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
               if (_isSearching)
                 Visibility(
-                  visible: true,
+                  visible: true && _filteredFoundZones.isNotEmpty,
                   child: Container(
                     color: Colors.white,
                     width: double.infinity,
@@ -1177,12 +1190,12 @@ class _HomeViewState extends State<HomeView> {
                     child: Container(
                         padding: const EdgeInsets.only(top: 155),
                         child: _searchController.text.isNotEmpty
-                            ? _foundZones.isNotEmpty
+                            ? _filteredFoundZones.isNotEmpty
                                 ? ListView.builder(
-                                    itemCount: _foundZones.length,
+                                    itemCount: _filteredFoundZones.length,
                                     itemBuilder: (context, index) {
                                       final ZoneWithLocationData zone =
-                                          _foundZones[index];
+                                         _filteredFoundZones[index];
                                       return Column(
                                         children: [
                                           ListTile(
@@ -1317,11 +1330,14 @@ class _HomeViewState extends State<HomeView> {
                                         color: primaryOrange,
                                       ),
                                       onPressed: () {
+                                        
                                         setState(() {
                                           _isSearching = false;
                                           _searchController.clear();
                                           _searchText = '';
+                                          
                                           _isAll = true;
+                                          
                                         });
                                         FocusScope.of(context).unfocus();
                                       },
@@ -1336,6 +1352,7 @@ class _HomeViewState extends State<HomeView> {
                                         setState(() {
                                           _searchController.clear();
                                           _searchText = '';
+                                          _isAll = true;
                                         });
                                       },
                                       child: const Icon(
@@ -1353,11 +1370,12 @@ class _HomeViewState extends State<HomeView> {
                             onChanged: (value) {
                               setState(() {
                                 _searchText = value;
-                                _foundZones = _zoneList
-                                    .where((zone) => zone.zoneName
-                                        .toLowerCase()
-                                        .contains(_searchText.toLowerCase()))
-                                    .toList();
+                               _filteredFoundZones = _zoneList.where((zone) {
+  final nameLower = zone.zoneName.toLowerCase();
+  final queryLower = _searchController.text.toLowerCase();
+  return nameLower.contains(queryLower);
+}).toList();
+
                               });
                             },
                           ),
