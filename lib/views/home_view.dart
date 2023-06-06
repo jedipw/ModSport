@@ -86,12 +86,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    fetchData();
-  }
-
-  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -165,23 +159,6 @@ class _HomeViewState extends State<HomeView> {
       // update the list of pinned zones
       _pushPinClickedList.insert(0, true);
     });
-  }
-
-  String _getPinId(String zoneId) {
-    String pinId = ''; // Default pinId value when no data is available
-
-    // Use the getPin function to retrieve the pinId
-    FirebaseCloudStorage().getPin(zoneId).then((result) {
-      setState(() {
-        pinId = result ?? ''; // Update the pinId value
-        _pushPinClickedMap[zoneId] = (pinId != '');
-      });
-    }).catchError((error) {
-      // Handle any errors that occur during the retrieval
-      print('Error retrieving pinId: $error');
-    });
-
-    return pinId;
   }
 
   void _sortZones() {
@@ -297,9 +274,6 @@ class _HomeViewState extends State<HomeView> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
-          if (_isSearching) {
-            _isAll = true;
-          }
           _isSearching = false;
           _searchController.clear();
           _searchText = '';
@@ -1309,7 +1283,7 @@ class _HomeViewState extends State<HomeView> {
                                     },
                                   )
                                 : SingleChildScrollView(
-                                  child: Column(
+                                    child: Column(
                                       children: [
                                         const SizedBox(
                                           height: 200,
@@ -1346,7 +1320,7 @@ class _HomeViewState extends State<HomeView> {
                                         ),
                                       ],
                                     ),
-                                )
+                                  )
                             : Container()),
                   ),
                 ),
@@ -1414,8 +1388,6 @@ class _HomeViewState extends State<HomeView> {
                                           _isSearching = false;
                                           _searchController.clear();
                                           _searchText = '';
-
-                                          _isAll = true;
                                         });
                                         FocusScope.of(context).unfocus();
                                       },
