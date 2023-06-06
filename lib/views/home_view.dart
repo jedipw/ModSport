@@ -116,6 +116,7 @@ class _HomeViewState extends State<HomeView> {
     try {
       List<ZoneWithLocationData> zones =
           await FirebaseCloudStorage().getZonesByCategoryId(categoryId);
+          
       setState(() {
         _zoneList = zones;
         _isZoneLoaded = true;
@@ -1182,7 +1183,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
               if (_isSearching)
                 Visibility(
-                  visible: true && _filteredFoundZones.isNotEmpty,
+                  visible: true,
                   child: Container(
                     color: Colors.white,
                     width: double.infinity,
@@ -1190,7 +1191,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Container(
                         padding: const EdgeInsets.only(top: 155),
                         child: _searchController.text.isNotEmpty
-                            ? _filteredFoundZones.isNotEmpty
+                            ? _filteredFoundZones.isNotEmpty && _foundZones.isNotEmpty
                                 ? ListView.builder(
                                     itemCount: _filteredFoundZones.length,
                                     itemBuilder: (context, index) {
