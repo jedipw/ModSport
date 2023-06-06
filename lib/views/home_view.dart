@@ -24,8 +24,6 @@ class _HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final int _currentDrawerIndex =
       0; // Define current selected index of the drawer
-  String _searchText = '';
-  // String _selectedCategory = 'All'; // initialize to 'All'
 
   List<ZoneWithLocationData> _zoneList = [];
   List<CategoryData> _category = [];
@@ -33,16 +31,18 @@ class _HomeViewState extends State<HomeView> {
   final List<bool> _pushPinClickedList = [];
   final List<ZoneWithLocationData> _filteredZones = [];
   bool isPinned = true;
+
   bool _isZoneLoaded = false;
   bool _isButtonLoaded = false;
   bool areSnapshotsLoaded(List<AsyncSnapshot<String>> snapshots) {
-  for (var snapshot in snapshots) {
-    if (snapshot.connectionState != ConnectionState.done) {
-      return false;
+    for (var snapshot in snapshots) {
+      if (snapshot.connectionState != ConnectionState.done) {
+        return false;
+      }
     }
+    return true;
   }
-  return true;
-}
+
   bool _isSearching = false; //detect search bar
   int index = 0;
   CategoryData? selectedCategory;
@@ -52,18 +52,19 @@ class _HomeViewState extends State<HomeView> {
 
   final TextEditingController _searchController = TextEditingController();
   List<ZoneWithLocationData> _foundZones = [];
+  List<ZoneWithLocationData> _filteredFoundZones = [];
   final Map<String, bool> _pushPinClickedMap = {};
 
   @override
   void initState() {
     super.initState();
     _foundZones = _zoneList;
+    _filteredFoundZones = List<ZoneWithLocationData>.from(_zoneList);
     fetchData();
 
     FirebaseCloudStorage().getAllZones().then((zoneList) {
       setState(() {
         _zoneList = zoneList;
-        // _filteredZones = zoneList;
         if (_pushPinClickedList.isNotEmpty) {
           for (int i = 0; i < _pushPinClickedList.length; i++) {
             if (_pushPinClickedList[i]) {
@@ -78,12 +79,6 @@ class _HomeViewState extends State<HomeView> {
       });
     }).catchError((e) {});
     _sortZones();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    fetchData();
   }
 
   @override
@@ -163,101 +158,50 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _sortZones() {
-  setState(() {
-    isSortZone = false; // Reset the isSortZone flag to false
-  });
-
-  Completer<void> completer = Completer<void>(); // Create a completer
-
-  FirebaseCloudStorage().getPinnedZones().then((List<String> pinnedZoneIds) {
-    // get pinned zones and sort them by name
-    List<ZoneWithLocationData> pinnedZones = _zoneList
-        .where((zone) => pinnedZoneIds.contains(zone.zoneId))
-        .toList();
-    pinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
-
-    // sort the remaining zones by name
-    List<ZoneWithLocationData> unpinnedZones = _zoneList
-        .where((zone) => !pinnedZoneIds.contains(zone.zoneId))
-        .toList();
-    unpinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
-
-    // merge the two lists, with pinned zones first
-    _zoneList.clear();
     setState(() {
-      _zoneList.addAll(pinnedZones);
-      _zoneList.addAll(unpinnedZones);
-      isSortZone = true;
+      isSortZone = false; // Reset the isSortZone flag to false
     });
 
-    completer.complete(); // Complete the completer when sorting is finished
-  });
+    Completer<void> completer = Completer<void>(); // Create a completer
 
-  Future.delayed(const Duration(seconds: 5)).then((_) {
-    // If the sorting takes too long (e.g., more than 5 seconds), complete the completer
-    if (!completer.isCompleted) {
-      completer.complete();
-    }
-  });
+    FirebaseCloudStorage().getPinnedZones().then((List<String> pinnedZoneIds) {
+      // get pinned zones and sort them by name
+      List<ZoneWithLocationData> pinnedZones = _zoneList
+          .where((zone) => pinnedZoneIds.contains(zone.zoneId))
+          .toList();
+      pinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
 
-  // completer.future.then((_) {
-  //   // Do any follow-up actions after the zones are sorted
-  //   // This block will execute when the completer is completed
-  //   // For example, you can update UI elements or trigger additional functions
-  //   // after the sorting is done.
-  // });
-}
+      // sort the remaining zones by name
+      List<ZoneWithLocationData> unpinnedZones = _zoneList
+          .where((zone) => !pinnedZoneIds.contains(zone.zoneId))
+          .toList();
+      unpinnedZones.sort((a, b) => a.zoneName.compareTo(b.zoneName));
 
+      // merge the two lists, with pinned zones first
+      _zoneList.clear();
+      setState(() {
+        _zoneList.addAll(pinnedZones);
+        _zoneList.addAll(unpinnedZones);
+        isSortZone = true;
+      });
 
-  // Future<void> _fetchPinnedZones() async {
-  //   final userId = FirebaseAuth.instance.currentUser!.uid;
+      completer.complete(); // Complete the completer when sorting is finished
+    });
 
-  //   QuerySnapshot<Map<String, dynamic>> querySnapshot =
-  //       await FirebaseCloudStorage().getPin("", userId);
-  //   List<String> pinnedZones = querySnapshot.docs
-  //       .map((doc) => doc.get(zoneIdField) as String)
-  //       .toList();
+    Future.delayed(const Duration(seconds: 5)).then((_) {
+      // If the sorting takes too long (e.g., more than 5 seconds), complete the completer
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    });
+  }
 
-  //   setState(() {
-  //     _pinnedZones = pinnedZones;
-  //   });
-  //   log("This is pin: " + _pinnedZones.toString());
-  // }
-
-//   Future<void> _fetchPinnedZones() async {
-//   final userId = FirebaseAuth.instance.currentUser!.uid;
-
-//   QuerySnapshot<Map<String, dynamic>> querySnapshot =
-//       await FirebaseCloudStorage().getPin("", userId);
-//   List<String> pinnedZoneIds = querySnapshot.docs
-//       .map((doc) => doc.get(zoneIdField) as String)
-//       .toList();
-
-//   // Retrieve the details of the pinned zones from the Firestore database
-//   List<ZoneData> pinnedZones = await FirebaseCloudStorage().getZone(pinnedZoneIds);
-
-//   setState(() {
-//     _pinnedZones = pinnedZones;
-//   });
-// }
-
-  // Future<void> _getPinnedZonesData() async {
-  //   try {
-  //     List<String> pinnedZones = await FirebaseCloudStorage().getPinnedZones();
-  //     setState(() {
-  //       _pinnedZones = pinnedZones;
-  //     });
-  //   } catch (e) {
-  //     _handleError();
-  //   }
-  // }
 
   Future<void> fetchData() async {
     await _getZonesData()
         .then((_) => _getCategorieData())
         .then((_) => _sortZones());
 
-    // _getPinnedZonesData();
   }
 
   @override
@@ -276,7 +220,6 @@ class _HomeViewState extends State<HomeView> {
         setState(() {
           _isSearching = false;
           _searchController.clear();
-          _searchText = '';
         });
       },
       child: Scaffold(
@@ -514,70 +457,70 @@ class _HomeViewState extends State<HomeView> {
                                                                     3.14 /
                                                                     180,
                                                                 child:
-                                                                    FutureBuilder<
-                                                                        String>(
-                                                                  future: FirebaseCloudStorage()
-                                                                      .getPin(e
-                                                                          .zoneId),
-                                                                  initialData:
-                                                                      '',
-                                                                  builder: (BuildContext
-                                                                          context,
-                                                                      AsyncSnapshot<
-                                                                              String>
-                                                                          snapshot) {
-                                                                    String
-                                                                        pinId =
-                                                                        snapshot.data ??
-                                                                            '';
-
-                                                                    // Set the initial state of _pushPinClickedMap based on the pinId
-
+                                                                    GestureDetector(
+                                                                  onTap: () {
                                                                     _pushPinClickedMap[
                                                                             e.zoneId] =
-                                                                        (pinId !=
-                                                                            '');
-                                                                            
+                                                                        !_pushPinClickedMap[
+                                                                            e.zoneId]!;
+                                                                    if (_pushPinClickedMap[
+                                                                        e.zoneId]!) {
+                                                                      _handlePushPinClick(
+                                                                          e.zoneId);
+                                                                    } else {
+                                                                      FirebaseCloudStorage()
+                                                                          .unpinZone(e
+                                                                              .zoneId)
+                                                                          .then(
+                                                                              (_) {
+                                                                        setState(
+                                                                            () {
+                                                                          _pushPinClickedMap[e.zoneId] =
+                                                                              false;
+                                                                        });
+                                                                        _sortZones();
+                                                                      });
+                                                                    }
+                                                                  },
+                                                                  child:
+                                                                      FutureBuilder<
+                                                                          String>(
+                                                                    future: FirebaseCloudStorage()
+                                                                        .getPin(
+                                                                            e.zoneId),
+                                                                    initialData:
+                                                                        '',
+                                                                    builder: (BuildContext
+                                                                            context,
+                                                                        AsyncSnapshot<String>
+                                                                            snapshot) {
+                                                                      String
+                                                                          pinId =
+                                                                          snapshot.data ??
+                                                                              '';
 
-                                                                    return GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        _pushPinClickedMap[e.zoneId] =
-                                                                            !_pushPinClickedMap[e.zoneId]!;
-                                                                        if (_pushPinClickedMap[
-                                                                            e.zoneId]!) {
-                                                                          _handlePushPinClick(
-                                                                              e.zoneId);
-                                                                        } else {
-                                                                          FirebaseCloudStorage()
-                                                                              .unpinZone(e.zoneId)
-                                                                              .then((_) {
-                                                                            setState(() {
-                                                                              _pushPinClickedMap[e.zoneId] = false;
-                                                                            });
-                                                                            _sortZones();
-                                                                          });
-                                                                        }
-                                                                      },
-                                                                      child:
-                                                                          Icon(
+                                                                      // Set the initial state of _pushPinClickedMap based on the pinId
+                                                                      _pushPinClickedMap[
+                                                                              e.zoneId] =
+                                                                          (pinId !=
+                                                                              '');
+
+                                                                      return Icon(
                                                                         _pushPinClickedMap[e.zoneId] != null &&
-                                                                                snapshot.data != ''
+                                                                                _pushPinClickedMap[e.zoneId]!
                                                                             ? Icons.push_pin
                                                                             : Icons.push_pin_outlined,
                                                                         size:
                                                                             24,
                                                                         color: _pushPinClickedMap[e.zoneId] != null &&
-                                                                                snapshot.data != ''
+                                                                                _pushPinClickedMap[e.zoneId]!
                                                                             ? primaryOrange
                                                                             : primaryGray,
-                                                                      ),
-                                                                    );
-                                                                  },
+                                                                      );
+                                                                    },
+                                                                  ),
                                                                 ),
                                                               ),
-
-                                                              // )
                                                             ],
                                                           ),
                                                           const SizedBox(
@@ -1177,12 +1120,13 @@ class _HomeViewState extends State<HomeView> {
                     child: Container(
                         padding: const EdgeInsets.only(top: 155),
                         child: _searchController.text.isNotEmpty
-                            ? _foundZones.isNotEmpty
+                            ? _filteredFoundZones.isNotEmpty &&
+                                    _foundZones.isNotEmpty
                                 ? ListView.builder(
-                                    itemCount: _foundZones.length,
+                                    itemCount: _filteredFoundZones.length,
                                     itemBuilder: (context, index) {
                                       final ZoneWithLocationData zone =
-                                          _foundZones[index];
+                                          _filteredFoundZones[index];
                                       return Column(
                                         children: [
                                           ListTile(
@@ -1217,42 +1161,44 @@ class _HomeViewState extends State<HomeView> {
                                       );
                                     },
                                   )
-                                : Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 200,
-                                      ),
-                                      const SizedBox(
-                                        width: 119.0,
-                                        height: 119.0,
-                                        child: Icon(
-                                          Icons.search,
-                                          size: 80.0,
-                                          color: Color(0xFF808080),
+                                : SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 200,
                                         ),
-                                      ),
-                                      const Text(
-                                        'No result found',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontStyle: FontStyle.normal,
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.w500,
-                                          color: primaryGray,
+                                        const SizedBox(
+                                          width: 119.0,
+                                          height: 119.0,
+                                          child: Icon(
+                                            Icons.search,
+                                            size: 80.0,
+                                            color: Color(0xFF808080),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 8.0),
-                                      Text(
-                                        'Try searching for something else',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16.0,
-                                          color: Colors.grey[400],
+                                        const Text(
+                                          'No result found',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontStyle: FontStyle.normal,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w500,
+                                            color: primaryGray,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 8.0),
+                                        Text(
+                                          'Try searching for something else',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontStyle: FontStyle.normal,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0,
+                                            color: Colors.grey[400],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   )
                             : Container()),
                   ),
@@ -1320,8 +1266,6 @@ class _HomeViewState extends State<HomeView> {
                                         setState(() {
                                           _isSearching = false;
                                           _searchController.clear();
-                                          _searchText = '';
-                                          _isAll = true;
                                         });
                                         FocusScope.of(context).unfocus();
                                       },
@@ -1335,7 +1279,7 @@ class _HomeViewState extends State<HomeView> {
                                       onTap: () {
                                         setState(() {
                                           _searchController.clear();
-                                          _searchText = '';
+                                          _isAll = true;
                                         });
                                       },
                                       child: const Icon(
@@ -1352,12 +1296,12 @@ class _HomeViewState extends State<HomeView> {
                             ),
                             onChanged: (value) {
                               setState(() {
-                                _searchText = value;
-                                _foundZones = _zoneList
-                                    .where((zone) => zone.zoneName
-                                        .toLowerCase()
-                                        .contains(_searchText.toLowerCase()))
-                                    .toList();
+                                _filteredFoundZones = _zoneList.where((zone) {
+                                  final nameLower = zone.zoneName.toLowerCase();
+                                  final queryLower =
+                                      _searchController.text.toLowerCase();
+                                  return nameLower.contains(queryLower);
+                                }).toList();
                               });
                             },
                           ),
