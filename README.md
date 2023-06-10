@@ -20,7 +20,7 @@ Instant workout facility reservations at KMUTT (Bangmod Campus)
 1. Run `choco upgrade dart` in terminal
 2. Run `flutter channel stable` in terminal
 3. Run `flutter upgrade` in terminal
-##### Connect to firebase (need to contract us):
+##### Connect to firebase (need to contact us):
 1. Run `flutter pub upgrade firebase_core` in terminal
 2. Run `dart pub global activate flutterfire_cli` in terminal
 3. Run `flutterfire configure` in terminal
